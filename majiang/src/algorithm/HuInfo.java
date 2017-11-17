@@ -5,14 +5,14 @@ package algorithm;
  */
 public class HuInfo
 {
-	public int needGui = 0;
-	public int jiang = -1;
-	public int hupai;
+	public byte needGui;
+	public byte jiang;
+	public byte hupai;
 
 	@Override
 	public String toString()
 	{
-		return "胡" + (hupai + 1) + " 将" + (jiang + 1);
+		return "胡" + (hupai + 1) + " 将" + (jiang + 1) + " 鬼" + needGui;
 	}
 
 	@Override
@@ -29,7 +29,9 @@ public class HuInfo
 			return false;
 		if (jiang != huInfo.jiang)
 			return false;
-		return hupai == huInfo.hupai;
+		if (hupai != huInfo.hupai)
+			return false;
+		return true;
 	}
 
 	@Override
