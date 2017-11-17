@@ -1,12 +1,22 @@
 package algorithm;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Created by bjzhaoxin on 2017/11/17.
  */
 public class HuTable
 {
+	public static ConcurrentHashMap<Long, List<HuTableInfo>> table = new ConcurrentHashMap<>();
+	public static AtomicLong N = new AtomicLong(0);
+
 	public static void gen()
 	{
 		HashSet<Long> card = new HashSet<>();
@@ -19,11 +29,16 @@ public class HuTable
 
 		System.out.print(card.size());
 
-		for (long l : card)
+		ExecutorService fixedThreadPool = Executors.newFixedThreadPool(4);
+		for (final long l : card)
 		{
-			check_hu(l);
+			fixedThreadPool.execute(new Runnable() {
+				public void run()
+				{
+					check_hu(l);
+				}
+			});
 		}
-
 	}
 
 	public static void check_hu(long card)
@@ -41,9 +56,6 @@ public class HuTable
 		{
 			total += num[i];
 		}
-
-		System.out.println("--------------------------------");
-		System.out.println(show_card(card));
 
 		HashSet<HuInfo> huInfos = new HashSet<>();
 
@@ -86,10 +98,55 @@ public class HuTable
 			}
 		}
 
+		HashMap<Integer, HuTableInfo> huTableInfos = new HashMap<>();
 		for (HuInfo huInfo : huInfos)
 		{
-			System.out.println(huInfo);
+			int key = huInfo.needGui * 10 + (huInfo.jiang != -1 ? 1 : 0);
+
+			if (huTableInfos.get(key) != null)
+			{
+				if (huInfo.hupai == -1)
+				{
+					huTableInfos.get(key).hupai = null;
+				}
+				if (huTableInfos.get(key).hupai != null)
+				{
+					if (huTableInfos.get(key).hupai[huInfo.hupai] == 0)
+					{
+						huTableInfos.get(key).hupai[huInfo.hupai]++;
+					}
+				}
+			}
+			else
+			{
+				HuTableInfo huTableInfo = new HuTableInfo();
+				huTableInfo.needGui = huInfo.needGui;
+				huTableInfo.jiang = huInfo.jiang != -1;
+				huTableInfo.hupai = new byte[9];
+				if (huInfo.hupai == -1)
+				{
+					huTableInfo.hupai = null;
+				}
+				else
+				{
+					huTableInfo.hupai[huInfo.hupai]++;
+				}
+				huTableInfos.put(key, huTableInfo);
+			}
 		}
+
+		List<HuTableInfo> tmphu = new ArrayList<>();
+		tmphu.addAll(huTableInfos.values());
+		table.put(card, tmphu);
+
+		N.addAndGet(tmphu.size());
+
+		System.out.println("-------------------------------- " + N);
+//		System.out.println(show_card(card));
+//		for (HuTableInfo huTableInfo : huTableInfos.values())
+//		{
+//			System.out.println(huTableInfo);
+//		}
 	}
 
 	public static void check_hu(HashSet<HuInfo> huInfos, int[] num, int jiang, int in, int gui)
@@ -137,9 +194,9 @@ public class HuTable
 		}
 
 		HuInfo huInfo = new HuInfo();
-		huInfo.hupai = (byte)in;
-		huInfo.jiang = (byte)jiang;
-		huInfo.needGui = (byte)gui;
+		huInfo.hupai = (byte) in;
+		huInfo.jiang = (byte) jiang;
+		huInfo.needGui = (byte) gui;
 		huInfos.add(huInfo);
 	}
 
