@@ -5,9 +5,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Created by bjzhaoxin on 2017/11/17.
@@ -15,7 +12,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class HuTable
 {
 	public static ConcurrentHashMap<Long, List<HuTableInfo>> table = new ConcurrentHashMap<>();
-	public static AtomicLong N = new AtomicLong(0);
+	public static int N;
 
 	public static void gen()
 	{
@@ -29,15 +26,9 @@ public class HuTable
 
 		System.out.print(card.size());
 
-		ExecutorService fixedThreadPool = Executors.newFixedThreadPool(4);
 		for (final long l : card)
 		{
-			fixedThreadPool.execute(new Runnable() {
-				public void run()
-				{
-					check_hu(l);
-				}
-			});
+			check_hu(l);
 		}
 	}
 
@@ -139,14 +130,14 @@ public class HuTable
 		tmphu.addAll(huTableInfos.values());
 		table.put(card, tmphu);
 
-		N.addAndGet(tmphu.size());
+		N += tmphu.size();
 
 		System.out.println("-------------------------------- " + N);
-//		System.out.println(show_card(card));
-//		for (HuTableInfo huTableInfo : huTableInfos.values())
-//		{
-//			System.out.println(huTableInfo);
-//		}
+		//		System.out.println(show_card(card));
+		//		for (HuTableInfo huTableInfo : huTableInfos.values())
+		//		{
+		//			System.out.println(huTableInfo);
+		//		}
 	}
 
 	public static void check_hu(HashSet<HuInfo> huInfos, int[] num, int jiang, int in, int gui)
