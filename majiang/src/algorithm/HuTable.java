@@ -198,12 +198,17 @@ public class HuTable
 					tt = tt / 10;
 				}
 
+				boolean max = false;
 				for (int i = 0; i < 9; i++)
 				{
 					num[i] += tmpguinum[i];
+					if (num[i] > 4)
+					{
+						max = true;
+					}
 				}
 
-				for (int i = 0; i < 9; i++)
+				for (int i = 0; i < 9 && !max; i++)
 				{
 					check_hu(huInfos, num, -1, -1, guinum);
 					num[i]++;
