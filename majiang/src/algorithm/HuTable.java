@@ -1,5 +1,7 @@
 package algorithm;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,7 +14,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class HuTable
 {
 	public static ConcurrentHashMap<Long, List<HuTableInfo>> table = new ConcurrentHashMap<>();
-	public static int N;
 
 	public static void gen()
 	{
@@ -24,11 +25,140 @@ public class HuTable
 			gen_card(card, num, 0, i);
 		}
 
-		System.out.print(card.size());
+		System.out.println(card.size());
 
-		for (final long l : card)
+		try
 		{
-			check_hu(l);
+			File file = new File("majiang_client.txt");
+			if (file.exists())
+			{
+				file.delete();
+			}
+			file.createNewFile();
+			FileOutputStream out = new FileOutputStream(file, true);
+
+			File file1 = new File("majiang_server.txt");
+			if (file1.exists())
+			{
+				file1.delete();
+			}
+			file1.createNewFile();
+			FileOutputStream out1 = new FileOutputStream(file1, true);
+
+			long begin = System.currentTimeMillis();
+			int i = 0;
+			for (final long l : card)
+			{
+				check_hu(l);
+				output(l, out);
+				output_server(l, out1);
+
+				i++;
+				long now = System.currentTimeMillis();
+				float per = (float) (now - begin) / i;
+				System.out.println((float) i / card.size() + " 需要" + per * (card.size() - i) / 60 / 1000 + "分");
+			}
+
+			out.close();
+			out1.close();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	private static void output_server(long card, FileOutputStream out) throws Exception
+	{
+		long key = card;
+
+		List<HuTableInfo> huTableInfos = table.get(card);
+		if (huTableInfos.isEmpty())
+		{
+			String str = String.format("%09d ", key);
+			str += show_card(key);
+			str += " 不胡";
+			str += "\n";
+
+			out.write(str.toString().getBytes("utf-8"));
+		}
+		else
+		{
+			for (HuTableInfo huTableInfo : huTableInfos)
+			{
+				String str = String.format("%09d ", key);
+				str += huTableInfo.needGui + " ";
+				str += huTableInfo.jiang ? "1 " : "0 ";
+				if (huTableInfo.hupai == null)
+				{
+					str += "000000000";
+				}
+				else
+				{
+					for (int i : huTableInfo.hupai)
+					{
+						str += i + "";
+					}
+				}
+				str += " ";
+				str += show_card(key) + " ";
+				str += "鬼" + huTableInfo.needGui + " ";
+				str += huTableInfo.jiang ? "有将 " : "无将 ";
+				if (huTableInfo.hupai == null)
+				{
+					str += "胡了";
+				}
+				else
+				{
+					int index = 1;
+					for (int i : huTableInfo.hupai)
+					{
+						if (i > 0)
+						{
+							str += "胡" + index + "万";
+						}
+						index++;
+					}
+				}
+
+				str += "\n";
+				out.write(str.toString().getBytes("utf-8"));
+			}
+		}
+	}
+
+	private static void output(long card, FileOutputStream out) throws Exception
+	{
+		long key = card;
+
+		List<HuTableInfo> huTableInfos = table.get(card);
+		if (huTableInfos.isEmpty())
+		{
+			String str = String.format("%09d", key);
+			out.write(str.toString().getBytes("utf-8"));
+		}
+		else
+		{
+			for (HuTableInfo huTableInfo : huTableInfos)
+			{
+				String str = String.format("%09d", key);
+				str += " ";
+				str += huTableInfo.needGui + " ";
+				str += huTableInfo.jiang ? "1 " : "0 ";
+				if (huTableInfo.hupai == null)
+				{
+					str += "0";
+				}
+				else
+				{
+					for (int i : huTableInfo.hupai)
+					{
+						str += i + "";
+					}
+				}
+				str += "\n";
+				out.write(str.toString().getBytes("utf-8"));
+			}
 		}
 	}
 
@@ -129,15 +259,6 @@ public class HuTable
 		List<HuTableInfo> tmphu = new ArrayList<>();
 		tmphu.addAll(huTableInfos.values());
 		table.put(card, tmphu);
-
-		N += tmphu.size();
-
-		System.out.println("-------------------------------- " + N);
-		//		System.out.println(show_card(card));
-		//		for (HuTableInfo huTableInfo : huTableInfos.values())
-		//		{
-		//			System.out.println(huTableInfo);
-		//		}
 	}
 
 	public static void check_hu(HashSet<HuInfo> huInfos, int[] num, int jiang, int in, int gui)
@@ -232,7 +353,6 @@ public class HuTable
 			num[8 - i] = (int) (tmp % 10);
 			tmp = tmp / 10;
 		}
-		String str = String.format("%09d", card);
 		String ret = "";
 		int index = 1;
 		for (int i : num)
@@ -240,11 +360,10 @@ public class HuTable
 			String str1 = index + "万";
 			for (int j = 0; j < i; j++)
 			{
-				ret += str1 + " ";
+				ret += str1 + "";
 			}
 			index++;
 		}
-		ret += " " + str;
 		return ret;
 	}
 
