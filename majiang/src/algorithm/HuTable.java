@@ -57,7 +57,7 @@ public class HuTable
 				long now = System.currentTimeMillis();
 				float per = (float) (now - begin) / i;
 				System.out.println((float) i / card.size() + " 需要" + per * (card.size() - i) / 60 / 1000 + "分" + " 用时"
-						+ (now - begin) / 60 / 1000 + "分");
+						+ (now - begin) / 60 / 1000 + "分" + " 速度" + i / ((float) (now - begin) / 1000) + "条/秒");
 			}
 
 			out.close();
@@ -182,7 +182,7 @@ public class HuTable
 
 		HashSet<HuInfo> huInfos = new HashSet<>();
 
-		for (int guinum = 0; guinum <= 7 && total + guinum < 13; guinum++)
+		for (int guinum = 0; guinum <= 7 && total + guinum <= 13; guinum++)
 		{
 			int[] tmpnum = new int[9];
 			HashSet<Long> tmpcard = new HashSet<>();
