@@ -56,7 +56,8 @@ public class HuTable
 				i++;
 				long now = System.currentTimeMillis();
 				float per = (float) (now - begin) / i;
-				System.out.println((float) i / card.size() + " 需要" + per * (card.size() - i) / 60 / 1000 + "分");
+				System.out.println((float) i / card.size() + " 需要" + per * (card.size() - i) / 60 / 1000 + "分" + " 用时"
+						+ (now - begin) / 60 / 1000 + "分");
 			}
 
 			out.close();
@@ -135,6 +136,7 @@ public class HuTable
 		if (huTableInfos.isEmpty())
 		{
 			String str = String.format("%09d", key);
+			str += "\n";
 			out.write(str.toString().getBytes("utf-8"));
 		}
 		else
