@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by bjzhaoxin on 2017/11/17.
@@ -17,7 +20,7 @@ public class HuTable
 
 	public static void gen()
 	{
-		HashSet<Long> card = new HashSet<>();
+		final HashSet<Long> card = new HashSet<>();
 
 		for (int i = 1; i <= 13; i++)
 		{
@@ -35,7 +38,7 @@ public class HuTable
 				file.delete();
 			}
 			file.createNewFile();
-			FileOutputStream out = new FileOutputStream(file, true);
+			final FileOutputStream out = new FileOutputStream(file, true);
 
 			File file1 = new File("majiang_server.txt");
 			if (file1.exists())
@@ -43,21 +46,64 @@ public class HuTable
 				file1.delete();
 			}
 			file1.createNewFile();
-			FileOutputStream out1 = new FileOutputStream(file1, true);
+			final FileOutputStream out1 = new FileOutputStream(file1, true);
 
-			long begin = System.currentTimeMillis();
-			int i = 0;
+			File file2 = new File("majiang.sql");
+			if (file2.exists())
+			{
+				file2.delete();
+			}
+			file2.createNewFile();
+			final FileOutputStream out2 = new FileOutputStream(file2, true);
+			out2.write(("drop table normal;\n" + "\n" + "CREATE TABLE [normal] (\n" + "  [card] INT, \n"
+					+ "  [gui] INT, \n" + "  [jiang] INT, \n" + "  [hu] INT);\n\n").toString().getBytes("utf-8"));
+
+			ExecutorService fixedThreadPool = Executors.newFixedThreadPool(4);
+
+			final long begin = System.currentTimeMillis();
+			final AtomicInteger i = new AtomicInteger(0);
 			for (final long l : card)
 			{
-				check_hu(l);
-				output(l, out);
-				output_server(l, out1);
+				fixedThreadPool.execute(new Runnable() {
+					public void run()
+					{
+						try
+						{
+							check_hu(l);
+							output(l, out);
+							output_server(l, out1);
+							output_sql(l, out2);
 
-				i++;
-				long now = System.currentTimeMillis();
-				float per = (float) (now - begin) / i;
-				System.out.println((float) i / card.size() + " 需要" + per * (card.size() - i) / 60 / 1000 + "分" + " 用时"
-						+ (now - begin) / 60 / 1000 + "分" + " 速度" + i / ((float) (now - begin) / 1000) + "条/秒");
+							i.addAndGet(1);
+							long now = System.currentTimeMillis();
+							float per = (float) (now - begin) / i.intValue();
+							synchronized (HuTable.class)
+							{
+								System.out.println((float) i.intValue() / card.size() + " 需要"
+										+ per * (card.size() - i.intValue()) / 60 / 1000 + "分" + " 用时"
+										+ (now - begin) / 60 / 1000 + "分" + " 速度"
+										+ i.intValue() / ((float) (now - begin) / 1000) + "条/秒");
+							}
+						}
+						catch (Exception e)
+						{
+							e.printStackTrace();
+						}
+					}
+				});
+			}
+
+			fixedThreadPool.shutdown();
+			while (!fixedThreadPool.isTerminated())
+			{
+				try
+				{
+					Thread.sleep(100);
+				}
+				catch (InterruptedException e)
+				{
+					e.printStackTrace();
+				}
 			}
 
 			out.close();
@@ -74,32 +120,25 @@ public class HuTable
 		long key = card;
 
 		List<HuTableInfo> huTableInfos = table.get(card);
-		if (huTableInfos.isEmpty())
-		{
-			String str = String.format("%09d ", key);
-			str += show_card(key);
-			str += " 不胡";
-			str += "\n";
-
-			out.write(str.toString().getBytes("utf-8"));
-		}
-		else
+		if (!huTableInfos.isEmpty())
 		{
 			for (HuTableInfo huTableInfo : huTableInfos)
 			{
-				String str = String.format("%09d ", key);
+				String str = key + " ";
 				str += huTableInfo.needGui + " ";
 				str += huTableInfo.jiang ? "1 " : "0 ";
 				if (huTableInfo.hupai == null)
 				{
-					str += "000000000";
+					str += "-1";
 				}
 				else
 				{
+					int hu = 0;
 					for (int i : huTableInfo.hupai)
 					{
-						str += i + "";
+						hu = hu * 10 + i;
 					}
+					str += hu + "";
 				}
 				str += " ";
 				str += show_card(key) + " ";
@@ -123,7 +162,44 @@ public class HuTable
 				}
 
 				str += "\n";
-				out.write(str.toString().getBytes("utf-8"));
+				synchronized (HuTable.class)
+				{
+					out.write(str.toString().getBytes("utf-8"));
+				}
+			}
+		}
+	}
+
+	private static void output_sql(long card, FileOutputStream out) throws Exception
+	{
+		long key = card;
+
+		List<HuTableInfo> huTableInfos = table.get(card);
+		if (!huTableInfos.isEmpty())
+		{
+			for (HuTableInfo huTableInfo : huTableInfos)
+			{
+				String str = "INSERT INTO normal( card, gui, jiang, hu) VALUES (" + key + ", ";
+				str += huTableInfo.needGui + ", ";
+				str += huTableInfo.jiang ? "1, " : "0, ";
+				if (huTableInfo.hupai == null)
+				{
+					str += "-1";
+				}
+				else
+				{
+					int hu = 0;
+					for (int i : huTableInfo.hupai)
+					{
+						hu = hu * 10 + i;
+					}
+					str += hu + "";
+				}
+				str += ");\n";
+				synchronized (HuTable.class)
+				{
+					out.write(str.toString().getBytes("utf-8"));
+				}
 			}
 		}
 	}
@@ -133,33 +209,31 @@ public class HuTable
 		long key = card;
 
 		List<HuTableInfo> huTableInfos = table.get(card);
-		if (huTableInfos.isEmpty())
-		{
-			String str = String.format("%09d", key);
-			str += "\n";
-			out.write(str.toString().getBytes("utf-8"));
-		}
-		else
+		if (!huTableInfos.isEmpty())
 		{
 			for (HuTableInfo huTableInfo : huTableInfos)
 			{
-				String str = String.format("%09d", key);
-				str += " ";
+				String str = key + " ";
 				str += huTableInfo.needGui + " ";
 				str += huTableInfo.jiang ? "1 " : "0 ";
 				if (huTableInfo.hupai == null)
 				{
-					str += "0";
+					str += "-1";
 				}
 				else
 				{
+					int hu = 0;
 					for (int i : huTableInfo.hupai)
 					{
-						str += i + "";
+						hu = hu * 10 + i;
 					}
+					str += hu + "";
 				}
 				str += "\n";
-				out.write(str.toString().getBytes("utf-8"));
+				synchronized (HuTable.class)
+				{
+					out.write(str.toString().getBytes("utf-8"));
+				}
 			}
 		}
 	}
