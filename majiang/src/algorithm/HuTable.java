@@ -282,9 +282,9 @@ public class HuTable
 					}
 				}
 
+				check_hu(huInfos, num, -1, -1, guinum);
 				for (int i = 0; i < 9 && !max; i++)
 				{
-					check_hu(huInfos, num, -1, -1, guinum);
 					num[i]++;
 					if (num[i] <= 4)
 					{
