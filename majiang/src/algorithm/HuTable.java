@@ -256,7 +256,7 @@ public class HuTable
 
 		HashSet<HuInfo> huInfos = new HashSet<>();
 
-		for (int guinum = 0; guinum <= 7 && total + guinum <= 13; guinum++)
+		for (int guinum = 0; guinum <= 8 && total + guinum <= 13; guinum++)
 		{
 			int[] tmpnum = new int[9];
 			HashSet<Long> tmpcard = new HashSet<>();
