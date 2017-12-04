@@ -58,7 +58,7 @@ public class HuTable
 			out2.write(("drop table normal;\n" + "\n" + "CREATE TABLE [normal] (\n" + "  [card] INT, \n"
 					+ "  [gui] INT, \n" + "  [jiang] INT, \n" + "  [hu] INT);\n\n").toString().getBytes("utf-8"));
 
-			ExecutorService fixedThreadPool = Executors.newFixedThreadPool(4);
+			ExecutorService fixedThreadPool = Executors.newFixedThreadPool(8);
 
 			final long begin = System.currentTimeMillis();
 			final AtomicInteger i = new AtomicInteger(0);
