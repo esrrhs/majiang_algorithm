@@ -1,5 +1,6 @@
 package algorithm;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -7,10 +8,19 @@ import java.util.List;
  */
 public class HuUtil
 {
-	public static boolean isHu(List<Integer> cards, int guiIndex)
+	public static boolean isHu(List<Integer> input, int guiCard)
 	{
-		int guiNum = cards.get(guiIndex);
-		cards.set(guiIndex, 0);
+		List<Integer> cards = new ArrayList<>();
+		for (int i = 0; i < MaJiangDef.MAX_NUM; i++)
+		{
+			cards.add(0);
+		}
+		for (int c : input)
+		{
+			cards.set(c - 1, cards.get(c - 1) + 1);
+		}
+		int guiNum = cards.get(guiCard - 1);
+		cards.set(guiCard - 1, 0);
 
 		long wan_key = 0;
 		long tong_key = 0;
@@ -69,6 +79,61 @@ public class HuUtil
 			return false;
 		}
 
+		List<List<HuTableInfo>> tmp = new ArrayList<>();
+		if (wanHuTableInfo != null)
+		{
+			tmp.add(wanHuTableInfo);
+		}
+		if (tongHuTableInfo != null)
+		{
+			tmp.add(tongHuTableInfo);
+		}
+		if (tiaoHuTableInfo != null)
+		{
+			tmp.add(tiaoHuTableInfo);
+		}
+		if (fengHuTableInfo != null)
+		{
+			tmp.add(fengHuTableInfo);
+		}
+		if (jianHuTableInfo != null)
+		{
+			tmp.add(jianHuTableInfo);
+		}
+
+		return isHu(tmp, 0, guiNum, false);
+	}
+
+	private static boolean isHu(List<List<HuTableInfo>> tmp, int index, int guiNum, boolean jiang)
+	{
+		if (index >= tmp.size())
+		{
+			return guiNum == 0 && jiang == true;
+		}
+		List<HuTableInfo> huTableInfos = tmp.get(index);
+		for (HuTableInfo huTableInfo : huTableInfos)
+		{
+			if (jiang)
+			{
+				if (huTableInfo.hupai == null && huTableInfo.needGui <= guiNum && huTableInfo.jiang == false)
+				{
+					if (isHu(tmp, index + 1, guiNum - huTableInfo.needGui, jiang))
+					{
+						return true;
+					}
+				}
+			}
+			else
+			{
+				if (huTableInfo.hupai == null && huTableInfo.needGui <= guiNum)
+				{
+					if (isHu(tmp, index + 1, guiNum - huTableInfo.needGui, huTableInfo.jiang))
+					{
+						return true;
+					}
+				}
+			}
+		}
 		return false;
 	}
 }
