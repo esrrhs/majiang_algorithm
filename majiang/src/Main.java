@@ -23,9 +23,10 @@ public class Main
 
 	public static void test()
 	{
-		String init = "1万,1万,1万,2筒,2条,3条,东,中";
+		String init = "1万,1万,1万,1筒,2筒,2条,3条,4条,东,西,南";
+		String gui = "1万";
 		List<Integer> cards = MaJiangDef.stringToCards(init);
-		System.out.println(HuUtil.isHu(cards, 3));
+		System.out.println(HuUtil.isHu(cards, MaJiangDef.stringToCard(gui)));
 	}
 
 	public static void main(String[] args)

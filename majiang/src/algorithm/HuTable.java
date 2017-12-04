@@ -482,7 +482,7 @@ public class HuTable
 				HuTableInfo huTableInfo = new HuTableInfo();
 				huTableInfo.needGui = (byte) gui;
 				huTableInfo.jiang = jiang != 0;
-				huTableInfo.hupai = num;
+				huTableInfo.hupai = hu == -1 ? null : num;
 				huTableInfos.add(huTableInfo);
 				total++;
 			}

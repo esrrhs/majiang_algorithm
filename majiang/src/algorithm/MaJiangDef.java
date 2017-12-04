@@ -56,7 +56,7 @@ public class MaJiangDef
 	public static final int HUA_ZHU = 41;
 	public static final int HUA_JU = 42;
 
-	public static final int MAX_NUM = 43;
+	public static final int MAX_NUM = 42;
 
 	public static final int TYPE_WAN = 1;
 	public static final int TYPE_TONG = 2;
