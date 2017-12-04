@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Created by bjzhaoxin on 2017/11/17.
  */
-public class HuTable
+public class HuTableZi
 {
 	public static ConcurrentHashMap<Long, List<HuTableInfo>> table = new ConcurrentHashMap<>();
 
@@ -77,7 +77,7 @@ public class HuTable
 							i.addAndGet(1);
 							long now = System.currentTimeMillis();
 							float per = (float) (now - begin) / i.intValue();
-							synchronized (HuTable.class)
+							synchronized (HuTableZi.class)
 							{
 								System.out.println((float) i.intValue() / card.size() + " 需要"
 										+ per * (card.size() - i.intValue()) / 60 / 1000 + "分" + " 用时"
@@ -162,7 +162,7 @@ public class HuTable
 				}
 
 				str += "\n";
-				synchronized (HuTable.class)
+				synchronized (HuTableZi.class)
 				{
 					out.write(str.toString().getBytes("utf-8"));
 				}
@@ -196,7 +196,7 @@ public class HuTable
 					str += hu + "";
 				}
 				str += ");\n";
-				synchronized (HuTable.class)
+				synchronized (HuTableZi.class)
 				{
 					out.write(str.toString().getBytes("utf-8"));
 				}
@@ -230,7 +230,7 @@ public class HuTable
 					str += hu + "";
 				}
 				str += "\n";
-				synchronized (HuTable.class)
+				synchronized (HuTableZi.class)
 				{
 					out.write(str.toString().getBytes("utf-8"));
 				}

@@ -14,9 +14,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Created by bjzhaoxin on 2017/11/17.
  */
-public class HuTable
+public class HuTableJian
 {
 	public static ConcurrentHashMap<Long, List<HuTableInfo>> table = new ConcurrentHashMap<>();
+	public static String ziname[] = new String[]{"中","发","白"};
 
 	public static void gen()
 	{
@@ -24,7 +25,7 @@ public class HuTable
 
 		for (int i = 1; i <= 13; i++)
 		{
-			int[] num = new int[9];
+			int[] num = new int[3];
 			gen_card(card, num, 0, i);
 		}
 
@@ -32,7 +33,7 @@ public class HuTable
 
 		try
 		{
-			File file = new File("majiang_client.txt");
+			File file = new File("majiang_jian_client.txt");
 			if (file.exists())
 			{
 				file.delete();
@@ -40,7 +41,7 @@ public class HuTable
 			file.createNewFile();
 			final FileOutputStream out = new FileOutputStream(file, true);
 
-			File file1 = new File("majiang_server.txt");
+			File file1 = new File("majiang_jian_server.txt");
 			if (file1.exists())
 			{
 				file1.delete();
@@ -48,14 +49,14 @@ public class HuTable
 			file1.createNewFile();
 			final FileOutputStream out1 = new FileOutputStream(file1, true);
 
-			File file2 = new File("majiang.sql");
+			File file2 = new File("majiang_jian.sql");
 			if (file2.exists())
 			{
 				file2.delete();
 			}
 			file2.createNewFile();
 			final FileOutputStream out2 = new FileOutputStream(file2, true);
-			out2.write(("drop table normal;\n" + "\n" + "CREATE TABLE [normal] (\n" + "  [card] INT, \n"
+			out2.write(("drop table jian;\n" + "\n" + "CREATE TABLE [jian] (\n" + "  [card] INT, \n"
 					+ "  [gui] INT, \n" + "  [jiang] INT, \n" + "  [hu] INT);\n\n").toString().getBytes("utf-8"));
 
 			ExecutorService fixedThreadPool = Executors.newFixedThreadPool(4);
@@ -77,7 +78,7 @@ public class HuTable
 							i.addAndGet(1);
 							long now = System.currentTimeMillis();
 							float per = (float) (now - begin) / i.intValue();
-							synchronized (HuTable.class)
+							synchronized (HuTableJian.class)
 							{
 								System.out.println((float) i.intValue() / card.size() + " 需要"
 										+ per * (card.size() - i.intValue()) / 60 / 1000 + "分" + " 用时"
@@ -155,14 +156,14 @@ public class HuTable
 					{
 						if (i > 0)
 						{
-							str += "胡" + index + "万";
+							str += "胡" + ziname[index - 1];
 						}
 						index++;
 					}
 				}
 
 				str += "\n";
-				synchronized (HuTable.class)
+				synchronized (HuTableJian.class)
 				{
 					out.write(str.toString().getBytes("utf-8"));
 				}
@@ -179,7 +180,7 @@ public class HuTable
 		{
 			for (HuTableInfo huTableInfo : huTableInfos)
 			{
-				String str = "INSERT INTO normal( card, gui, jiang, hu) VALUES (" + key + ", ";
+				String str = "INSERT INTO jian( card, gui, jiang, hu) VALUES (" + key + ", ";
 				str += huTableInfo.needGui + ", ";
 				str += huTableInfo.jiang ? "1, " : "0, ";
 				if (huTableInfo.hupai == null)
@@ -196,7 +197,7 @@ public class HuTable
 					str += hu + "";
 				}
 				str += ");\n";
-				synchronized (HuTable.class)
+				synchronized (HuTableJian.class)
 				{
 					out.write(str.toString().getBytes("utf-8"));
 				}
@@ -230,7 +231,7 @@ public class HuTable
 					str += hu + "";
 				}
 				str += "\n";
-				synchronized (HuTable.class)
+				synchronized (HuTableJian.class)
 				{
 					out.write(str.toString().getBytes("utf-8"));
 				}
@@ -240,16 +241,16 @@ public class HuTable
 
 	public static void check_hu(long card)
 	{
-		int[] num = new int[9];
+		int[] num = new int[3];
 		long tmp = card;
-		for (int i = 0; i < 9; i++)
+		for (int i = 0; i < 3; i++)
 		{
-			num[8 - i] = (int) (tmp % 10);
+			num[2 - i] = (int) (tmp % 10);
 			tmp = tmp / 10;
 		}
 
 		int total = 0;
-		for (int i = 0; i < 9; i++)
+		for (int i = 0; i < 3; i++)
 		{
 			total += num[i];
 		}
@@ -258,22 +259,22 @@ public class HuTable
 
 		for (int guinum = 0; guinum <= 8 && total + guinum <= 13; guinum++)
 		{
-			int[] tmpnum = new int[9];
+			int[] tmpnum = new int[3];
 			HashSet<Long> tmpcard = new HashSet<>();
 			gen_card(tmpcard, tmpnum, 0, guinum);
 
 			for (long tmpgui : tmpcard)
 			{
-				int[] tmpguinum = new int[9];
+				int[] tmpguinum = new int[3];
 				long tt = tmpgui;
-				for (int i = 0; i < 9; i++)
+				for (int i = 0; i < 3; i++)
 				{
-					tmpguinum[8 - i] = (int) (tt % 10);
+					tmpguinum[2 - i] = (int) (tt % 10);
 					tt = tt / 10;
 				}
 
 				boolean max = false;
-				for (int i = 0; i < 9; i++)
+				for (int i = 0; i < 3; i++)
 				{
 					num[i] += tmpguinum[i];
 					if (num[i] > 4)
@@ -282,7 +283,7 @@ public class HuTable
 					}
 				}
 
-				for (int i = 0; i < 9 && !max; i++)
+				for (int i = 0; i < 3 && !max; i++)
 				{
 					check_hu(huInfos, num, -1, -1, guinum);
 					num[i]++;
@@ -293,7 +294,7 @@ public class HuTable
 					num[i]--;
 				}
 
-				for (int i = 0; i < 9; i++)
+				for (int i = 0; i < 3; i++)
 				{
 					num[i] -= tmpguinum[i];
 				}
@@ -324,7 +325,7 @@ public class HuTable
 				HuTableInfo huTableInfo = new HuTableInfo();
 				huTableInfo.needGui = huInfo.needGui;
 				huTableInfo.jiang = huInfo.jiang != -1;
-				huTableInfo.hupai = new byte[9];
+				huTableInfo.hupai = new byte[3];
 				if (huInfo.hupai == -1)
 				{
 					huTableInfo.hupai = null;
@@ -344,9 +345,9 @@ public class HuTable
 
 	public static void check_hu(HashSet<HuInfo> huInfos, int[] num, int jiang, int in, int gui)
 	{
-		for (int i = 0; i < 9; i++)
+		for (int i = 0; i < 3; i++)
 		{
-			if (num[i] > 0 && i + 1 < 9 && num[i + 1] > 0 && i + 2 < 9 && num[i + 2] > 0)
+			if (num[i] > 0 && i + 1 < 3 && num[i + 1] > 0 && i + 2 < 3 && num[i + 2] > 0)
 			{
 				num[i]--;
 				num[i + 1]--;
@@ -358,7 +359,7 @@ public class HuTable
 			}
 		}
 
-		for (int i = 0; i < 9; i++)
+		for (int i = 0; i < 3; i++)
 		{
 			if (num[i] >= 2 && jiang == -1)
 			{
@@ -368,7 +369,7 @@ public class HuTable
 			}
 		}
 
-		for (int i = 0; i < 9; i++)
+		for (int i = 0; i < 3; i++)
 		{
 			if (num[i] >= 3)
 			{
@@ -378,7 +379,7 @@ public class HuTable
 			}
 		}
 
-		for (int i = 0; i < 9; i++)
+		for (int i = 0; i < 3; i++)
 		{
 			if (num[i] != 0)
 			{
@@ -395,7 +396,7 @@ public class HuTable
 
 	private static void gen_card(HashSet<Long> card, int num[], int index, int total)
 	{
-		if (index == 8)
+		if (index == 2)
 		{
 			if (total > 4)
 			{
@@ -427,18 +428,18 @@ public class HuTable
 
 	public static String show_card(long card)
 	{
-		int[] num = new int[9];
+		int[] num = new int[3];
 		long tmp = card;
-		for (int i = 0; i < 9; i++)
+		for (int i = 0; i < 3; i++)
 		{
-			num[8 - i] = (int) (tmp % 10);
+			num[2 - i] = (int) (tmp % 10);
 			tmp = tmp / 10;
 		}
 		String ret = "";
 		int index = 1;
 		for (int i : num)
 		{
-			String str1 = index + "万";
+			String str1 = ziname[index - 1];
 			for (int j = 0; j < i; j++)
 			{
 				ret += str1 + "";
