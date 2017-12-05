@@ -347,6 +347,8 @@ public class HuTableJian
 	{
 		for (int i = 0; i < 3; i++)
 		{
+			// 江西麻将的 中发白是连子
+			/*
 			if (num[i] > 0 && i + 1 < 3 && num[i + 1] > 0 && i + 2 < 3 && num[i + 2] > 0)
 			{
 				num[i]--;
@@ -356,7 +358,7 @@ public class HuTableJian
 				num[i]++;
 				num[i + 1]++;
 				num[i + 2]++;
-			}
+			}*/
 		}
 
 		for (int i = 0; i < 3; i++)
