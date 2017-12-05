@@ -21,7 +21,7 @@ public class HuTable
 	{
 		final HashSet<Long> card = new HashSet<>();
 
-		for (int i = 1; i <= 13; i++)
+		for (int i = 1; i <= 14; i++)
 		{
 			int[] num = new int[9];
 			gen_card(card, num, 0, i);
@@ -255,7 +255,7 @@ public class HuTable
 
 		HashSet<HuInfo> huInfos = new HashSet<>();
 
-		for (int guinum = 0; guinum <= 8 && total + guinum <= 13; guinum++)
+		for (int guinum = 0; guinum <= 8 && total + guinum <= 14; guinum++)
 		{
 			int[] tmpnum = new int[9];
 			HashSet<Long> tmpcard = new HashSet<>();
