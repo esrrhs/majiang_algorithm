@@ -1,5 +1,3 @@
-drop table normal;
-
 CREATE TABLE [normal] (
   [card] INT, 
   [gui] INT, 
