@@ -52,7 +52,7 @@ public class HuTableFeng {
                     + "  [gui] INT, \n" + "  [jiang] INT, \n" + "  [hu] INT);\n\n" + "\n" +
                     "CREATE INDEX [cardfeng]\n" +
                     "ON [feng](\n" +
-                    "    [card]);").toString().getBytes("utf-8"));
+                    "    [card]);\n").toString().getBytes("utf-8"));
 
             ExecutorService fixedThreadPool = Executors.newFixedThreadPool(4);
 
