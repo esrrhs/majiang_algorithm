@@ -55,7 +55,7 @@ public class HuTableFeng
 			}
 			file2.createNewFile();
 			final FileOutputStream out2 = new FileOutputStream(file2, true);
-			out2.write(("drop table feng;\n" + "\n" + "CREATE TABLE [feng] (\n" + "  [card] INT, \n"
+			out2.write(("drop table if exists feng;\n" + "\n" + "CREATE TABLE [feng] (\n" + "  [card] INT, \n"
 					+ "  [gui] INT, \n" + "  [jiang] INT, \n" + "  [hu] INT);\n\n").toString().getBytes("utf-8"));
 
 			ExecutorService fixedThreadPool = Executors.newFixedThreadPool(4);
