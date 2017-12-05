@@ -51,7 +51,7 @@ public class HuTable {
                     + "  [gui] INT, \n" + "  [jiang] INT, \n" + "  [hu] INT);\n\n" + "\n" +
                     "CREATE INDEX [card]\n" +
                     "ON [normal](\n" +
-                    "    [card]);").toString().getBytes("utf-8"));
+                    "    [card]);\n").toString().getBytes("utf-8"));
 
             ExecutorService fixedThreadPool = Executors.newFixedThreadPool(8);
 
