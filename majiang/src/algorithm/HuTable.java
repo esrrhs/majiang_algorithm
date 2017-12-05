@@ -1,7 +1,6 @@
 package algorithm;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -448,4 +447,51 @@ public class HuTable
 		return ret;
 	}
 
+	public static void load()
+	{
+		FileInputStream inputStream = null;
+		int total = 0;
+		try
+		{
+			inputStream = new FileInputStream("majiang_client.txt");
+			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+
+			String str = null;
+			while ((str = bufferedReader.readLine()) != null)
+			{
+				String[] strs = str.split(" ");
+				long key = Long.parseLong(strs[0]);
+				int gui = Integer.parseInt(strs[1]);
+				int jiang = Integer.parseInt(strs[2]);
+				int hu = Integer.parseInt(strs[3]);
+
+				List<HuTableInfo> huTableInfos = table.get(key);
+				if (huTableInfos == null)
+				{
+					huTableInfos = new ArrayList<>();
+					table.put(key, huTableInfos);
+				}
+
+				byte[] num = new byte[9];
+				long tmp = hu;
+				for (int i = 0; i < 9; i++)
+				{
+					num[8 - i] = (byte) (tmp % 10);
+					tmp = tmp / 10;
+				}
+				HuTableInfo huTableInfo = new HuTableInfo();
+				huTableInfo.needGui = (byte) gui;
+				huTableInfo.jiang = jiang != 0;
+				huTableInfo.hupai = hu == -1 ? null : num;
+				huTableInfos.add(huTableInfo);
+				total++;
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+
+		System.out.println(table.size() + " " + total);
+	}
 }

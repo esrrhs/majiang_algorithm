@@ -1,7 +1,6 @@
 package algorithm;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,7 +16,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class HuTableJian
 {
 	public static ConcurrentHashMap<Long, List<HuTableInfo>> table = new ConcurrentHashMap<>();
-	public static String ziname[] = new String[]{"中","发","白"};
+	public static String ziname[] = new String[]
+	{ "中", "发", "白" };
 
 	public static void gen()
 	{
@@ -56,8 +56,8 @@ public class HuTableJian
 			}
 			file2.createNewFile();
 			final FileOutputStream out2 = new FileOutputStream(file2, true);
-			out2.write(("drop table jian;\n" + "\n" + "CREATE TABLE [jian] (\n" + "  [card] INT, \n"
-					+ "  [gui] INT, \n" + "  [jiang] INT, \n" + "  [hu] INT);\n\n").toString().getBytes("utf-8"));
+			out2.write(("drop table jian;\n" + "\n" + "CREATE TABLE [jian] (\n" + "  [card] INT, \n" + "  [gui] INT, \n"
+					+ "  [jiang] INT, \n" + "  [hu] INT);\n\n").toString().getBytes("utf-8"));
 
 			ExecutorService fixedThreadPool = Executors.newFixedThreadPool(4);
 
@@ -449,4 +449,51 @@ public class HuTableJian
 		return ret;
 	}
 
+	public static void load()
+	{
+		FileInputStream inputStream = null;
+        int total = 0;
+		try
+		{
+			inputStream = new FileInputStream("majiang_jian_client.txt");
+			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+
+			String str = null;
+			while ((str = bufferedReader.readLine()) != null)
+			{
+				String[] strs = str.split(" ");
+				long key = Long.parseLong(strs[0]);
+				int gui = Integer.parseInt(strs[1]);
+				int jiang = Integer.parseInt(strs[2]);
+				int hu = Integer.parseInt(strs[3]);
+
+				List<HuTableInfo> huTableInfos = table.get(key);
+				if (huTableInfos == null)
+				{
+					huTableInfos = new ArrayList<>();
+					table.put(key, huTableInfos);
+				}
+
+                byte[] num = new byte[9];
+				long tmp = hu;
+				for (int i = 0; i < 9; i++)
+				{
+					num[8 - i] = (byte) (tmp % 10);
+					tmp = tmp / 10;
+				}
+                HuTableInfo huTableInfo = new HuTableInfo();
+                huTableInfo.needGui = (byte)gui;
+                huTableInfo.jiang = jiang != 0;
+				huTableInfo.hupai = hu == -1 ? null : num;
+				huTableInfos.add(huTableInfo);
+                total++;
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+
+        System.out.println(table.size() + " " + total);
+	}
 }
