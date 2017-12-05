@@ -1,4 +1,3 @@
-drop table jian;
 
 CREATE TABLE [jian] (
   [card] INT, 
