@@ -1,4 +1,3 @@
-drop table feng;
 
 CREATE TABLE [feng] (
   [card] INT, 
