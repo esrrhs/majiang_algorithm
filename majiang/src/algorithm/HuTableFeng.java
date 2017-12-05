@@ -346,7 +346,8 @@ public class HuTableFeng
 	{
 		for (int i = 0; i < 4; i++)
 		{
-			if (num[i] > 0 && i + 1 < 4 && num[i + 1] > 0 && i + 2 < 4 && num[i + 2] > 0)
+			// 江西麻将的 东南西北任意3个是连子
+			/*if (num[i] > 0 && i + 1 < 4 && num[i + 1] > 0 && i + 2 < 4 && num[i + 2] > 0)
 			{
 				num[i]--;
 				num[i + 1]--;
@@ -375,7 +376,7 @@ public class HuTableFeng
 				num[i]++;
 				num[i + 3]++;
 				num[i + 3]++;
-			}
+			}*/
 		}
 
 		for (int i = 0; i < 4; i++)
