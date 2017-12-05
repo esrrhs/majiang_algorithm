@@ -1,7 +1,6 @@
 package algorithm;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -23,6 +22,11 @@ public class HuUtil
 		int guiNum = cards.get(guiCard - 1);
 		cards.set(guiCard - 1, 0);
 
+		return isHuCard(cards, guiNum);
+	}
+
+	public static boolean isHuCard(List<Integer> cards, int guiNum)
+	{
 		long wan_key = 0;
 		long tong_key = 0;
 		long tiao_key = 0;
@@ -54,55 +58,57 @@ public class HuUtil
 			int num = cards.get(i - 1);
 			jian_key = jian_key * 10 + num;
 		}
-		List<HuTableInfo> wanHuTableInfo = HuTable.table.get(wan_key);
-		List<HuTableInfo> tongHuTableInfo = HuTable.table.get(tong_key);
-		List<HuTableInfo> tiaoHuTableInfo = HuTable.table.get(tiao_key);
-		List<HuTableInfo> fengHuTableInfo = HuTableFeng.table.get(feng_key);
-		List<HuTableInfo> jianHuTableInfo = HuTableJian.table.get(jian_key);
-		if (wan_key != 0 && wanHuTableInfo == null)
-		{
-			return false;
-		}
-		if (tong_key != 0 && tongHuTableInfo == null)
-		{
-			return false;
-		}
-		if (tiao_key != 0 && tiaoHuTableInfo == null)
-		{
-			return false;
-		}
-		if (feng_key != 0 && fengHuTableInfo == null)
-		{
-			return false;
-		}
-		if (jian_key != 0 && jianHuTableInfo == null)
-		{
-			return false;
-		}
 
 		List<List<HuTableInfo>> tmp = new ArrayList<>();
-		if (wanHuTableInfo != null)
+		if (wan_key != 0)
 		{
+			List<HuTableInfo> wanHuTableInfo = HuTable.table.get(wan_key);
 			tmp.add(wanHuTableInfo);
 		}
-		if (tongHuTableInfo != null)
+		if (tong_key != 0)
 		{
+			List<HuTableInfo> tongHuTableInfo = HuTable.table.get(tong_key);
 			tmp.add(tongHuTableInfo);
 		}
-		if (tiaoHuTableInfo != null)
+		if (tiao_key != 0 )
 		{
+			List<HuTableInfo> tiaoHuTableInfo = HuTable.table.get(tiao_key);
 			tmp.add(tiaoHuTableInfo);
 		}
-		if (fengHuTableInfo != null)
+		if (feng_key != 0 )
 		{
+			List<HuTableInfo> fengHuTableInfo = HuTableFeng.table.get(feng_key);
 			tmp.add(fengHuTableInfo);
 		}
-		if (jianHuTableInfo != null)
+		if (jian_key != 0)
 		{
+			List<HuTableInfo> jianHuTableInfo = HuTableJian.table.get(jian_key);
 			tmp.add(jianHuTableInfo);
 		}
 
-		return isHu(tmp, 0, guiNum, false);
+		List<List<HuTableInfo>> tmp1 = new ArrayList<>();
+		for (List<HuTableInfo> huTableInfos : tmp)
+		{
+			if (huTableInfos == null)
+			{
+				return false;
+			}
+			List<HuTableInfo> tmp2 = new ArrayList<>();
+			for (HuTableInfo huTableInfo : huTableInfos)
+			{
+				if (huTableInfo.hupai == null && huTableInfo.needGui <= guiNum )
+				{
+					tmp2.add(huTableInfo);
+				}
+			}
+			if (tmp2.isEmpty())
+			{
+				return false;
+			}
+			tmp1.add(tmp2);
+		}
+
+		return isHu(tmp1, 0, guiNum, false);
 	}
 
 	private static boolean isHu(List<List<HuTableInfo>> tmp, int index, int guiNum, boolean jiang)
