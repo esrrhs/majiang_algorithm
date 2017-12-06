@@ -1,6 +1,9 @@
-import java.util.List;
-
 import algorithm.*;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.Statement;
+import java.util.List;
 
 /**
  * Created by bjzhaoxin on 2017/11/17.
@@ -29,26 +32,10 @@ public class Main
 		System.out.println(HuUtil.isHu(cards, MaJiangDef.stringToCard(gui)));
 	}
 
-    public static void sql()
-    {
-        Runtime rt = Runtime.getRuntime();
-        Process ps = null;  //Process可以控制该子进程的执行或获取该子进程的信息。
-        try
-        {
-            ps = rt.exec("cmd /c start sql.bat");   //该对象的exec()方法指示Java虚拟机创建一个子进程执行指定的可执行程序，并返回与该子进程对应的Process对象实例。
-            ps.waitFor();  //等待子进程完成再往下执行。
-        }
-        catch (Exception e1)
-        {
-            e1.printStackTrace();
-        }
-    }
-
 	public static void main(String[] args)
 	{
 		gen();
 		load();
 		test();
-        sql();
 	}
 }
