@@ -1,6 +1,8 @@
 package algorithm;
 
 import java.io.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -47,6 +49,7 @@ public class HuTable
 			file1.createNewFile();
 			final FileOutputStream out1 = new FileOutputStream(file1, true);
 
+			Connection c =	DriverManager.getConnection("jdbc:sqlite:test.db");
 			File file2 = new File("majiang.sql");
 			if (file2.exists())
 			{
