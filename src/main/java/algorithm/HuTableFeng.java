@@ -1,6 +1,9 @@
 package algorithm;
 
 import java.io.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -49,16 +52,13 @@ public class HuTableFeng
 			file1.createNewFile();
 			final FileOutputStream out1 = new FileOutputStream(file1, true);
 
-			File file2 = new File("majiang_feng.sql");
-			if (file2.exists())
-			{
-				file2.delete();
-			}
-			file2.createNewFile();
-			final FileOutputStream out2 = new FileOutputStream(file2, true);
-			out2.write(("drop table if exists feng;\n" + "\n" + "CREATE TABLE [feng] (\n" + "  [card] INT, \n"
+			Class.forName("org.sqlite.JDBC");
+			Connection c = DriverManager.getConnection("jdbc:sqlite:majiang.db");
+			Statement stmt = c.createStatement();
+			stmt.executeUpdate(("drop table if exists feng;\n" + "\n" + "CREATE TABLE [feng] (\n" + "  [card] INT, \n"
 					+ "  [gui] INT, \n" + "  [jiang] INT, \n" + "  [hu] INT);\n\n" + "\n" + "CREATE INDEX [cardfeng]\n"
-					+ "ON [feng](\n" + "    [card]);\n").toString().getBytes("utf-8"));
+					+ "ON [feng](\n" + "    [card]);\n").toString());
+			stmt.executeUpdate("BEGIN;");
 
 			ExecutorService fixedThreadPool = Executors.newFixedThreadPool(4);
 
@@ -74,7 +74,7 @@ public class HuTableFeng
 							check_hu(l);
 							output(l, out);
 							output_server(l, out1);
-							output_sql(l, out2);
+							output_sql(l, stmt);
 
 							i.addAndGet(1);
 							long now = System.currentTimeMillis();
@@ -110,6 +110,10 @@ public class HuTableFeng
 
 			out.close();
 			out1.close();
+
+			stmt.executeUpdate("COMMIT;");
+			stmt.close();
+			c.close();
 		}
 		catch (Exception e)
 		{
@@ -172,7 +176,7 @@ public class HuTableFeng
 		}
 	}
 
-	private static void output_sql(long card, FileOutputStream out) throws Exception
+	private static void output_sql(long card, Statement stmt) throws Exception
 	{
 		long key = card;
 
@@ -200,7 +204,7 @@ public class HuTableFeng
 				str += ");\n";
 				synchronized (HuTableFeng.class)
 				{
-					out.write(str.toString().getBytes("utf-8"));
+					stmt.execute(str);
 				}
 			}
 		}
