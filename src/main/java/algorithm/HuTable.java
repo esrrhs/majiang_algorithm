@@ -24,7 +24,7 @@ public class HuTable
 	{
 		final HashSet<Long> card = new HashSet<>();
 
-		for (int i = 1; i <= 14; i++)
+		for (int i = 0; i <= 14; i++)
 		{
 			int[] num = new int[9];
 			gen_card(card, num, 0, i);
