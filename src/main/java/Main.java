@@ -31,15 +31,15 @@ public class Main
 
 	public static void testTing()
 	{
-		String init = "1万,1万,1万,1筒,2筒,2条,3条,东,东,东";
-		String gui = "1万";
+		String init = "1万,1万,1筒,3筒,2筒,2条,3条,4条,东,东";
+		String gui = "1筒";
 		List<Integer> cards = MaJiangDef.stringToCards(init);
 		System.out.println(MaJiangDef.cardsToString(HuUtil.isTing(cards, MaJiangDef.stringToCard(gui))));
 	}
 
 	public static void main(String[] args)
 	{
-		gen();
+		//gen();
 		load();
 		testHu();
 		testTing();
