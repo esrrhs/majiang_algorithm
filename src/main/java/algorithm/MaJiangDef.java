@@ -1,6 +1,7 @@
 package algorithm;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -65,7 +66,37 @@ public class MaJiangDef
 	public static final int TYPE_JIAN = 5;
 	public static final int TYPE_HUA = 6;
 
+	public static int toCard(int type, int index)
+	{
+		switch (type)
+		{
+			case TYPE_WAN:
+				return WAN1 + index;
+			case TYPE_TONG:
+				return TONG1 + index;
+			case TYPE_TIAO:
+				return TIAO1 + index;
+			case TYPE_FENG:
+				return FENG_DONG + index;
+			case TYPE_JIAN:
+				return JIAN_ZHONG + index;
+			case TYPE_HUA:
+				return HUA_CHUN + index;
+		}
+		return 0;
+	}
+
 	public static String cardsToString(List<Integer> card)
+	{
+		String ret = "";
+		for (int c : card)
+		{
+			ret += cardToString(c) + ",";
+		}
+		return ret;
+	}
+
+	public static String cardsToString(HashSet<Integer> card)
 	{
 		String ret = "";
 		for (int c : card)

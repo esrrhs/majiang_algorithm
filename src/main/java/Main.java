@@ -1,9 +1,6 @@
-import algorithm.*;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.Statement;
 import java.util.List;
+
+import algorithm.*;
 
 /**
  * Created by bjzhaoxin on 2017/11/17.
@@ -24,7 +21,7 @@ public class Main
 		HuTable.load();
 	}
 
-	public static void test()
+	public static void testHu()
 	{
 		String init = "1万,1万,1万,1筒,2筒,2条,3条,4条,东,东,东";
 		String gui = "1万";
@@ -32,10 +29,19 @@ public class Main
 		System.out.println(HuUtil.isHu(cards, MaJiangDef.stringToCard(gui)));
 	}
 
+	public static void testTing()
+	{
+		String init = "1万,1万,1万,1筒,2筒,2条,3条,东,东,东";
+		String gui = "1万";
+		List<Integer> cards = MaJiangDef.stringToCards(init);
+		System.out.println(MaJiangDef.cardsToString(HuUtil.isTing(cards, MaJiangDef.stringToCard(gui))));
+	}
+
 	public static void main(String[] args)
 	{
-		gen();
+		//gen();
 		load();
-		test();
+		testHu();
+		testTing();
 	}
 }
