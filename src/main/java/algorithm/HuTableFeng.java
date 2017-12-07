@@ -500,11 +500,11 @@ public class HuTableFeng
 					table.put(key, huTableInfos);
 				}
 
-				byte[] num = new byte[9];
+				byte[] num = new byte[4];
 				long tmp = hu;
-				for (int i = 0; i < 9; i++)
+				for (int i = 0; i < 4; i++)
 				{
-					num[8 - i] = (byte) (tmp % 10);
+					num[3 - i] = (byte) (tmp % 10);
 					tmp = tmp / 10;
 				}
 				HuTableInfo huTableInfo = new HuTableInfo();
