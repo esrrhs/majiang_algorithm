@@ -1,7 +1,6 @@
 package algorithm;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -197,43 +196,49 @@ public class HuUtil
 		}
 
 		List<Integer> tmpType = new ArrayList<>();
+		List<List<HuTableInfo>> tmpTing = new ArrayList<>();
 		List<List<HuTableInfo>> tmp = new ArrayList<>();
+
+		List<HuTableInfo> wanHuTableInfo = HuTable.table.get(wan_key);
+		tmpTing.add(wanHuTableInfo);
 		if (wan_key != 0)
 		{
-			List<HuTableInfo> wanHuTableInfo = HuTable.table.get(wan_key);
 			tmpType.add(MaJiangDef.TYPE_WAN);
 			tmp.add(wanHuTableInfo);
 		}
+		List<HuTableInfo> tongHuTableInfo = HuTable.table.get(tong_key);
+		tmpTing.add(tongHuTableInfo);
 		if (tong_key != 0)
 		{
-			List<HuTableInfo> tongHuTableInfo = HuTable.table.get(tong_key);
 			tmpType.add(MaJiangDef.TYPE_TONG);
 			tmp.add(tongHuTableInfo);
 		}
+		List<HuTableInfo> tiaoHuTableInfo = HuTable.table.get(tiao_key);
+		tmpTing.add(tiaoHuTableInfo);
 		if (tiao_key != 0)
 		{
-			List<HuTableInfo> tiaoHuTableInfo = HuTable.table.get(tiao_key);
 			tmpType.add(MaJiangDef.TYPE_TIAO);
 			tmp.add(tiaoHuTableInfo);
 		}
+		List<HuTableInfo> fengHuTableInfo = HuTableFeng.table.get(feng_key);
+		tmpTing.add(fengHuTableInfo);
 		if (feng_key != 0)
 		{
-			List<HuTableInfo> fengHuTableInfo = HuTableFeng.table.get(feng_key);
 			tmpType.add(MaJiangDef.TYPE_FENG);
 			tmp.add(fengHuTableInfo);
 		}
+		List<HuTableInfo> jianHuTableInfo = HuTableJian.table.get(jian_key);
+		tmpTing.add(jianHuTableInfo);
 		if (jian_key != 0)
 		{
-			List<HuTableInfo> jianHuTableInfo = HuTableJian.table.get(jian_key);
 			tmpType.add(MaJiangDef.TYPE_JIAN);
 			tmp.add(jianHuTableInfo);
 		}
 
 		List<Integer> ret = new ArrayList<>();
-		for (int i = 0; i < tmpType.size(); i++)
+		for (int type = MaJiangDef.TYPE_WAN; type <= MaJiangDef.TYPE_JIAN; type++)
 		{
-			int type = tmpType.get(i);
-			List<HuTableInfo> huTableInfos = tmp.get(i);
+			List<HuTableInfo> huTableInfos = tmpTing.get(type - 1);
 			int[] cache = new int[9];
 			for (HuTableInfo huTableInfo : huTableInfos)
 			{
