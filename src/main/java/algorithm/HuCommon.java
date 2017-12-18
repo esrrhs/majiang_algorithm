@@ -357,17 +357,20 @@ public class HuCommon
 
 	public static void check_hu(HashSet<HuInfo> huInfos, int[] num, int jiang, int in, int gui, long tmpgui)
 	{
-		for (int i = 0; i < N; i++)
+		if (huLian)
 		{
-			if (num[i] > 0 && i + 1 < N && num[i + 1] > 0 && i + 2 < N && num[i + 2] > 0)
+			for (int i = 0; i < N; i++)
 			{
-				num[i]--;
-				num[i + 1]--;
-				num[i + 2]--;
-				check_hu(huInfos, num, jiang, in, gui, tmpgui);
-				num[i]++;
-				num[i + 1]++;
-				num[i + 2]++;
+				if (num[i] > 0 && i + 1 < N && num[i + 1] > 0 && i + 2 < N && num[i + 2] > 0)
+				{
+					num[i]--;
+					num[i + 1]--;
+					num[i + 2]--;
+					check_hu(huInfos, num, jiang, in, gui, tmpgui);
+					num[i]++;
+					num[i + 1]++;
+					num[i + 2]++;
+				}
 			}
 		}
 
