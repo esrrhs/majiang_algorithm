@@ -8,11 +8,12 @@ public class HuInfo
 	public byte needGui;
 	public byte jiang;
 	public byte hupai;
+	public long guiCard;
 
 	@Override
 	public String toString()
 	{
-		return "胡" + (hupai + 1) + " 将" + (jiang + 1) + " 鬼" + needGui;
+		return "胡" + (hupai + 1) + " 将" + (jiang + 1) + " 鬼" + needGui + " 鬼" + guiCard;
 	}
 
 	@Override
@@ -31,6 +32,8 @@ public class HuInfo
 			return false;
 		if (hupai != huInfo.hupai)
 			return false;
+		if (guiCard != huInfo.guiCard)
+			return false;
 		return true;
 	}
 
@@ -40,6 +43,7 @@ public class HuInfo
 		int result = needGui;
 		result = 31 * result + jiang;
 		result = 31 * result + hupai;
+		result = 31 * result + (int) guiCard;
 		return result;
 	}
 }
