@@ -57,9 +57,9 @@ public class HuCommon
 			Class.forName("org.sqlite.JDBC");
 			Connection c = DriverManager.getConnection("jdbc:sqlite:majiang.db");
 			Statement stmt = c.createStatement();
-			stmt.executeUpdate(("drop table if exists " + NAME + ";\n" + "\n" + "CREATE TABLE [" + NAME + "] (\n"
-					+ "  [card] INT, \n" + "  [gui] INT, \n" + "  [jiang] INT, \n" + "  [hu] INT);\n\n" + "\n"
-					+ "CREATE INDEX [card" + NAME + "]\n" + "ON [" + NAME + "](\n" + "    [card]);\n"));
+			stmt.executeUpdate(("drop table if exists " + NAME + "; CREATE TABLE [" + NAME
+					+ "] (  [card] INT,   [gui] INT,   [jiang] INT,   [guiCard] INT,   [hu] INT);\n\n CREATE INDEX [card"
+					+ NAME + "] ON [" + NAME + "](   [card]);\n"));
 			stmt.executeUpdate("BEGIN;");
 
 			ExecutorService fixedThreadPool = Executors.newFixedThreadPool(8);
@@ -191,9 +191,10 @@ public class HuCommon
 		{
 			for (HuTableInfo huTableInfo : huTableInfos)
 			{
-				String str = "INSERT INTO normal( card, gui, jiang, hu) VALUES (" + key + ", ";
+				String str = "INSERT INTO " + NAME + "( card, gui, jiang, guiCard, hu) VALUES (" + key + ", ";
 				str += huTableInfo.needGui + ", ";
 				str += huTableInfo.jiang ? "1, " : "0, ";
+				str += huTableInfo.guiCard + ", ";
 				if (huTableInfo.hupai == null)
 				{
 					str += "-1";
@@ -228,6 +229,7 @@ public class HuCommon
 				String str = key + " ";
 				str += huTableInfo.needGui + " ";
 				str += huTableInfo.jiang ? "1 " : "0 ";
+				str += huTableInfo.guiCard + " ";
 				if (huTableInfo.hupai == null)
 				{
 					str += "-1";
@@ -481,7 +483,8 @@ public class HuCommon
 				long key = Long.parseLong(strs[0]);
 				int gui = Integer.parseInt(strs[1]);
 				int jiang = Integer.parseInt(strs[2]);
-				int hu = Integer.parseInt(strs[3]);
+				int guiCard = Integer.parseInt(strs[3]);
+				int hu = Integer.parseInt(strs[4]);
 
 				List<HuTableInfo> huTableInfos = table.get(key);
 				if (huTableInfos == null)
@@ -500,6 +503,7 @@ public class HuCommon
 				HuTableInfo huTableInfo = new HuTableInfo();
 				huTableInfo.needGui = (byte) gui;
 				huTableInfo.jiang = jiang != 0;
+				huTableInfo.guiCard = guiCard;
 				huTableInfo.hupai = hu == -1 ? null : num;
 				huTableInfos.add(huTableInfo);
 				total++;
