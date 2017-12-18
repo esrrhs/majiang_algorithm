@@ -58,7 +58,7 @@ public class HuCommon
 			Connection c = DriverManager.getConnection("jdbc:sqlite:majiang.db");
 			Statement stmt = c.createStatement();
 			stmt.executeUpdate(("drop table if exists " + NAME + "; CREATE TABLE [" + NAME
-					+ "] (  [card] INT,   [gui] INT,   [jiang] INT,   [guiCard] INT,   [hu] INT);\n\n CREATE INDEX [card"
+					+ "] (  [card] INT,   [gui] INT,   [jiang] INT,   [hu] INT);\n\n CREATE INDEX [card"
 					+ NAME + "] ON [" + NAME + "](   [card]);\n"));
 			stmt.executeUpdate("BEGIN;");
 
@@ -135,7 +135,6 @@ public class HuCommon
 				String str = key + " ";
 				str += huTableInfo.needGui + " ";
 				str += huTableInfo.jiang ? "1 " : "0 ";
-				str += huTableInfo.guiCard + " ";
 				if (huTableInfo.hupai == null)
 				{
 					str += "-1";
@@ -153,8 +152,6 @@ public class HuCommon
 				str += show_card(key) + " ";
 				str += "鬼" + huTableInfo.needGui + " ";
 				str += huTableInfo.jiang ? "有将 " : "无将 ";
-
-				str += show_card(huTableInfo.guiCard) + " ";
 
 				if (huTableInfo.hupai == null)
 				{
@@ -191,10 +188,9 @@ public class HuCommon
 		{
 			for (HuTableInfo huTableInfo : huTableInfos)
 			{
-				String str = "INSERT INTO " + NAME + "( card, gui, jiang, guiCard, hu) VALUES (" + key + ", ";
+				String str = "INSERT INTO " + NAME + "( card, gui, jiang, hu) VALUES (" + key + ", ";
 				str += huTableInfo.needGui + ", ";
 				str += huTableInfo.jiang ? "1, " : "0, ";
-				str += huTableInfo.guiCard + ", ";
 				if (huTableInfo.hupai == null)
 				{
 					str += "-1";
@@ -229,7 +225,6 @@ public class HuCommon
 				String str = key + " ";
 				str += huTableInfo.needGui + " ";
 				str += huTableInfo.jiang ? "1 " : "0 ";
-				str += huTableInfo.guiCard + " ";
 				if (huTableInfo.hupai == null)
 				{
 					str += "-1";
@@ -296,13 +291,13 @@ public class HuCommon
 					}
 				}
 
-				check_hu(huInfos, num, -1, -1, guinum, tmpgui);
+				check_hu(huInfos, num, -1, -1, guinum);
 				for (int i = 0; i < N && !max; i++)
 				{
 					num[i]++;
 					if (num[i] <= 4)
 					{
-						check_hu(huInfos, num, -1, i, guinum, tmpgui);
+						check_hu(huInfos, num, -1, i, guinum);
 					}
 					num[i]--;
 				}
@@ -314,10 +309,10 @@ public class HuCommon
 			}
 		}
 
-		HashMap<Long, HuTableInfo> huTableInfos = new HashMap<>();
+		HashMap<Integer, HuTableInfo> huTableInfos = new HashMap<>();
 		for (HuInfo huInfo : huInfos)
 		{
-			long key = huInfo.guiCard * 100 + huInfo.needGui * 10 + (huInfo.jiang != -1 ? 1 : 0);
+			int key = huInfo.needGui * 10 + (huInfo.jiang != -1 ? 1 : 0);
 
 			if (huTableInfos.get(key) != null)
 			{
@@ -338,7 +333,6 @@ public class HuCommon
 				HuTableInfo huTableInfo = new HuTableInfo();
 				huTableInfo.needGui = huInfo.needGui;
 				huTableInfo.jiang = huInfo.jiang != -1;
-				huTableInfo.guiCard = huInfo.guiCard;
 				huTableInfo.hupai = new byte[N];
 				if (huInfo.hupai == -1)
 				{
@@ -357,7 +351,7 @@ public class HuCommon
 		table.put(card, tmphu);
 	}
 
-	public static void check_hu(HashSet<HuInfo> huInfos, int[] num, int jiang, int in, int gui, long tmpgui)
+	public static void check_hu(HashSet<HuInfo> huInfos, int[] num, int jiang, int in, int gui)
 	{
 		if (huLian)
 		{
@@ -368,7 +362,7 @@ public class HuCommon
 					num[i]--;
 					num[i + 1]--;
 					num[i + 2]--;
-					check_hu(huInfos, num, jiang, in, gui, tmpgui);
+					check_hu(huInfos, num, jiang, in, gui);
 					num[i]++;
 					num[i + 1]++;
 					num[i + 2]++;
@@ -381,7 +375,7 @@ public class HuCommon
 			if (num[i] >= 2 && jiang == -1)
 			{
 				num[i] -= 2;
-				check_hu(huInfos, num, i, in, gui, tmpgui);
+				check_hu(huInfos, num, i, in, gui);
 				num[i] += 2;
 			}
 		}
@@ -391,7 +385,7 @@ public class HuCommon
 			if (num[i] >= 3)
 			{
 				num[i] -= 3;
-				check_hu(huInfos, num, jiang, in, gui, tmpgui);
+				check_hu(huInfos, num, jiang, in, gui);
 				num[i] += 3;
 			}
 		}
@@ -408,7 +402,6 @@ public class HuCommon
 		huInfo.hupai = (byte) in;
 		huInfo.jiang = (byte) jiang;
 		huInfo.needGui = (byte) gui;
-		huInfo.guiCard = tmpgui;
 		huInfos.add(huInfo);
 	}
 
@@ -503,7 +496,6 @@ public class HuCommon
 				HuTableInfo huTableInfo = new HuTableInfo();
 				huTableInfo.needGui = (byte) gui;
 				huTableInfo.jiang = jiang != 0;
-				huTableInfo.guiCard = guiCard;
 				huTableInfo.hupai = hu == -1 ? null : num;
 				huTableInfos.add(huTableInfo);
 				total++;
