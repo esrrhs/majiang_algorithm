@@ -7,7 +7,6 @@ public class HuTableInfo
 {
 	public byte needGui;
 	public boolean jiang;
-	public long guiCard;
 	public byte[] hupai = new byte[9];
 
 	@Override
