@@ -476,8 +476,7 @@ public class HuCommon
 				long key = Long.parseLong(strs[0]);
 				int gui = Integer.parseInt(strs[1]);
 				int jiang = Integer.parseInt(strs[2]);
-				int guiCard = Integer.parseInt(strs[3]);
-				int hu = Integer.parseInt(strs[4]);
+				int hu = Integer.parseInt(strs[3]);
 
 				List<HuTableInfo> huTableInfos = table.get(key);
 				if (huTableInfos == null)
