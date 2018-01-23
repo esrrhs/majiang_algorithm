@@ -115,7 +115,7 @@ public class HuUtil
 	{
 		if (index >= tmp.size())
 		{
-			return guiNum == 0 && jiang == true;
+			return (guiNum % 3 == 0 && jiang == true) || (guiNum % 3 == 2 && jiang == false);
 		}
 		List<HuTableInfo> huTableInfos = tmp.get(index);
 		for (HuTableInfo huTableInfo : huTableInfos)
