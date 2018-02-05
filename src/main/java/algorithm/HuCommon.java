@@ -24,6 +24,16 @@ public class HuCommon
 	public static String[] CARD;
 	public static boolean huLian;
 
+	public static void main(String[] args)
+	{
+		HuCommon.table = new ConcurrentHashMap<>();
+		HuCommon.N = 9;
+		HuCommon.NAME = "normal";
+		HuCommon.CARD = HuTable.names;
+		HuCommon.huLian = true;
+		check_hu(333000004);
+	}
+
 	public static void gen()
 	{
 		final HashSet<Long> card = new HashSet<>();
@@ -58,8 +68,8 @@ public class HuCommon
 			Connection c = DriverManager.getConnection("jdbc:sqlite:majiang.db");
 			Statement stmt = c.createStatement();
 			stmt.executeUpdate(("drop table if exists " + NAME + "; CREATE TABLE [" + NAME
-					+ "] (  [card] INT,   [gui] INT,   [jiang] INT,   [hu] INT);\n\n CREATE INDEX [card"
-					+ NAME + "] ON [" + NAME + "](   [card]);\n"));
+					+ "] (  [card] INT,   [gui] INT,   [jiang] INT,   [hu] INT);\n\n CREATE INDEX [card" + NAME
+					+ "] ON [" + NAME + "](   [card]);\n"));
 			stmt.executeUpdate("BEGIN;");
 
 			ExecutorService fixedThreadPool = Executors.newFixedThreadPool(8);
@@ -291,7 +301,10 @@ public class HuCommon
 					}
 				}
 
-				check_hu(huInfos, num, -1, -1, guinum);
+				if (!max)
+				{
+					check_hu(huInfos, num, -1, -1, guinum);
+				}
 				for (int i = 0; i < N && !max; i++)
 				{
 					num[i]++;
