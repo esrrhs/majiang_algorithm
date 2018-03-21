@@ -39,7 +39,8 @@ public class Main
 
 	public static void main(String[] args)
 	{
-		gen();
+		// 需要生成文件时 加上gen()
+		//gen();
 		load();
 		testHu();
 		testTing();
