@@ -39,6 +39,6 @@ public class HuTableFeng
 		HuCommon.NAME = "feng";
 		HuCommon.CARD = ziname;
 		HuCommon.huLian = false;
-		HuCommon.load();
+		HuCommon.load(lines);
 	}
 }

@@ -39,6 +39,6 @@ public class HuTable
 		HuCommon.NAME = "normal";
 		HuCommon.CARD = names;
 		HuCommon.huLian = true;
-		HuCommon.load();
+		HuCommon.load(lines);
 	}
 }

@@ -39,6 +39,6 @@ public class HuTableJian
 		HuCommon.NAME = "jian";
 		HuCommon.CARD = ziname;
 		HuCommon.huLian = false;
-		HuCommon.load();
+		HuCommon.load(lines);
 	}
 }
