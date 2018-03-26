@@ -1,4 +1,4 @@
-package algorithm;
+package com.github.esrrhs.majiang_algorithm;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -23,6 +23,16 @@ public class HuTable
 	}
 
 	public static void load()
+	{
+		HuCommon.table = table;
+		HuCommon.N = 9;
+		HuCommon.NAME = "normal";
+		HuCommon.CARD = names;
+		HuCommon.huLian = true;
+		HuCommon.load();
+	}
+
+	public static void load(List<String> lines)
 	{
 		HuCommon.table = table;
 		HuCommon.N = 9;

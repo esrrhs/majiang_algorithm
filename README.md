@@ -2,6 +2,25 @@
 麻将作为国粹，为大众所喜爱，每个地区的玩法都不太一样，但是大部分都会有鬼牌，或者叫癞子，本文主要讲的是带多张鬼牌的胡牌算法。首先，简单说下麻将的基本概念。<br />
 [github地址](https://github.com/esrrhs/majiang_algorithm)
 
+# 使用
+## maven
+``` xml
+<dependency>
+    <groupId>com.github.esrrhs</groupId>
+    <artifactId>majiang_algorithm</artifactId>
+    <version>1.0.1</version>
+</dependency>
+```
+``` java
+// load
+HuTableJian.load(Files.readAllLines(xxx));
+HuTableFeng.load(Files.readAllLines(xxx));
+HuTable.load(Files.readAllLines(xxx));
+// check
+boolean isHu = HuUtil.isHu(cards, gui);
+List<Integer> tingCards = HuUtil.isTing(cards, gui);
+```
+
 # 花色分类
 - 普通牌：万筒条，每门有序数从一至九的牌各四张<br />
 ![image](https://github.com/esrrhs/majiang_algorithm/raw/master/img/wan.png)

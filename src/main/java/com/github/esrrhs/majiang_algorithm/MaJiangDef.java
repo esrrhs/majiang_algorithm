@@ -1,4 +1,4 @@
-package algorithm;
+package com.github.esrrhs.majiang_algorithm;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -173,4 +173,5 @@ public class MaJiangDef
 
 		return 0;
 	}
+
 }
