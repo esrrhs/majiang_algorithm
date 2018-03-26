@@ -1,4 +1,4 @@
-package algorithm;
+package com.github.esrrhs.majiang_algorithm;
 
 import java.io.*;
 import java.sql.Connection;
@@ -13,9 +13,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * Created by bjzhaoxin on 2017/11/17.
- */
 public class HuCommon
 {
 	public static ConcurrentHashMap<Long, List<HuTableInfo>> table;
@@ -475,15 +472,31 @@ public class HuCommon
 
 	public static void load()
 	{
-		FileInputStream inputStream = null;
+		try
+		{
+			FileInputStream inputStream = new FileInputStream("majiang_clien_" + NAME + ".txt");
+			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+
+			List<String> lines = new ArrayList<>();
+			String str = null;
+			while ((str = bufferedReader.readLine()) != null)
+			{
+				lines.add(str);
+			}
+			load(lines);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	public static void load(List<String> lines)
+	{
 		int total = 0;
 		try
 		{
-			inputStream = new FileInputStream("majiang_clien_" + NAME + ".txt");
-			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-
-			String str = null;
-			while ((str = bufferedReader.readLine()) != null)
+			for (String str : lines)
 			{
 				String[] strs = str.split(" ");
 				long key = Long.parseLong(strs[0]);
@@ -517,7 +530,5 @@ public class HuCommon
 		{
 			e.printStackTrace();
 		}
-
-		System.out.println(table.size() + " " + total);
 	}
 }

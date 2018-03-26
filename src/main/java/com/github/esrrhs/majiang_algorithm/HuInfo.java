@@ -1,8 +1,5 @@
-package algorithm;
+package com.github.esrrhs.majiang_algorithm;
 
-/**
- * Created by bjzhaoxin on 2017/11/17.
- */
 public class HuInfo
 {
 	public byte needGui;
