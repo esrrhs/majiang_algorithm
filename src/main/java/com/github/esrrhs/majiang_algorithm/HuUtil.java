@@ -25,6 +25,33 @@ public class HuUtil
 		return isHuCard(cards, guiNum);
 	}
 
+	public static boolean isHuExtra(List<Integer> input, List<Integer> guiCard, int extra)
+	{
+		List<Integer> cards = new ArrayList<>();
+		for (int i = 0; i < MaJiangDef.MAX_NUM; i++)
+		{
+			cards.add(0);
+		}
+		for (int c : input)
+		{
+			cards.set(c - 1, cards.get(c - 1) + 1);
+		}
+
+		int guiNum = 0;
+		for (int gui : guiCard)
+		{
+			guiNum += cards.get(gui - 1);
+			cards.set(gui - 1, 0);
+		}
+
+		if (extra != 0)
+		{
+			cards.set(extra - 1, cards.get(extra - 1) + 1);
+		}
+
+		return isHuCard(cards, guiNum);
+	}
+
 	public static boolean isHuCard(List<Integer> cards, int guiNum)
 	{
 		long wan_key = 0;
@@ -108,10 +135,10 @@ public class HuUtil
 			tmp1.add(tmp2);
 		}
 
-		return isHu(tmp1, 0, guiNum, false);
+		return isHuTableInfo(tmp1, 0, guiNum, false);
 	}
 
-	private static boolean isHu(List<List<HuTableInfo>> tmp, int index, int guiNum, boolean jiang)
+	private static boolean isHuTableInfo(List<List<HuTableInfo>> tmp, int index, int guiNum, boolean jiang)
 	{
 		if (index >= tmp.size())
 		{
@@ -124,7 +151,7 @@ public class HuUtil
 			{
 				if (huTableInfo.hupai == null && huTableInfo.needGui <= guiNum && huTableInfo.jiang == false)
 				{
-					if (isHu(tmp, index + 1, guiNum - huTableInfo.needGui, jiang))
+					if (isHuTableInfo(tmp, index + 1, guiNum - huTableInfo.needGui, jiang))
 					{
 						return true;
 					}
@@ -134,7 +161,7 @@ public class HuUtil
 			{
 				if (huTableInfo.hupai == null && huTableInfo.needGui <= guiNum)
 				{
-					if (isHu(tmp, index + 1, guiNum - huTableInfo.needGui, huTableInfo.jiang))
+					if (isHuTableInfo(tmp, index + 1, guiNum - huTableInfo.needGui, huTableInfo.jiang))
 					{
 						return true;
 					}
@@ -254,7 +281,7 @@ public class HuUtil
 						}
 					}
 
-					if (!cached && isTing(tmpType, tmp, 0, guiNum - huTableInfo.needGui, huTableInfo.jiang, type))
+					if (!cached && isTingHuTableInfo(tmpType, tmp, 0, guiNum - huTableInfo.needGui, huTableInfo.jiang, type))
 					{
 						for (int j = 0; j < huTableInfo.hupai.length; j++)
 						{
@@ -274,7 +301,7 @@ public class HuUtil
 		return ret;
 	}
 
-	private static boolean isTing(List<Integer> tmpType, List<List<HuTableInfo>> tmp, int index, int guiNum,
+	private static boolean isTingHuTableInfo(List<Integer> tmpType, List<List<HuTableInfo>> tmp, int index, int guiNum,
 			boolean jiang, int tingType)
 	{
 		if (index >= tmp.size())
@@ -283,7 +310,7 @@ public class HuUtil
 		}
 		if (tmpType.get(index) == tingType)
 		{
-			return isTing(tmpType, tmp, index + 1, guiNum, jiang, tingType);
+			return isTingHuTableInfo(tmpType, tmp, index + 1, guiNum, jiang, tingType);
 		}
 		List<HuTableInfo> huTableInfos = tmp.get(index);
 		for (HuTableInfo huTableInfo : huTableInfos)
@@ -294,7 +321,7 @@ public class HuUtil
 				{
 					if (huTableInfo.jiang == false)
 					{
-						if (isTing(tmpType, tmp, index + 1, guiNum - huTableInfo.needGui, jiang, tingType))
+						if (isTingHuTableInfo(tmpType, tmp, index + 1, guiNum - huTableInfo.needGui, jiang, tingType))
 						{
 							return true;
 						}
@@ -302,7 +329,7 @@ public class HuUtil
 				}
 				else
 				{
-					if (isTing(tmpType, tmp, index + 1, guiNum - huTableInfo.needGui, huTableInfo.jiang, tingType))
+					if (isTingHuTableInfo(tmpType, tmp, index + 1, guiNum - huTableInfo.needGui, huTableInfo.jiang, tingType))
 					{
 						return true;
 					}
