@@ -174,4 +174,33 @@ public class MaJiangDef
 		return 0;
 	}
 
+	public static int type(int card)
+	{
+		if (card >= WAN1 && card <= WAN9)
+		{
+			return TYPE_WAN;
+		}
+		if (card >= TONG1 && card <= TONG9)
+		{
+			return TYPE_TONG;
+		}
+		if (card >= TIAO1 && card <= TIAO9)
+		{
+			return TYPE_TIAO;
+		}
+		if (card >= FENG_DONG && card <= FENG_BEI)
+		{
+			return TYPE_FENG;
+		}
+		if (card >= JIAN_ZHONG && card <= JIAN_BAI)
+		{
+			return TYPE_JIAN;
+		}
+		if (card >= HUA_CHUN && card <= HUA_JU)
+		{
+			return TYPE_HUA;
+		}
+		return 0;
+	}
+
 }
