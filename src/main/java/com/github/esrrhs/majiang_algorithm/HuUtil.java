@@ -188,6 +188,28 @@ public class HuUtil
 		return isTingCard(cards, guiNum);
 	}
 
+	public static List<Integer> isTingExtra(List<Integer> input, List<Integer> guiCard)
+	{
+		List<Integer> cards = new ArrayList<>();
+		for (int i = 0; i < MaJiangDef.MAX_NUM; i++)
+		{
+			cards.add(0);
+		}
+		for (int c : input)
+		{
+			cards.set(c - 1, cards.get(c - 1) + 1);
+		}
+
+		int guiNum = 0;
+		for (int gui : guiCard)
+		{
+			guiNum += cards.get(gui - 1);
+			cards.set(gui - 1, 0);
+		}
+
+		return isTing(cards, guiNum);
+	}
+
 	public static List<Integer> isTingCard(List<Integer> cards, int guiNum)
 	{
 		long wan_key = 0;

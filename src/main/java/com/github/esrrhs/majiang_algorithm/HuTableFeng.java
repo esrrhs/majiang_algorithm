@@ -24,6 +24,7 @@ public class HuTableFeng
 
 	public static void load()
 	{
+		table.clear();
 		HuCommon.table = table;
 		HuCommon.N = 4;
 		HuCommon.NAME = "feng";
@@ -34,6 +35,7 @@ public class HuTableFeng
 
 	public static void load(List<String> lines)
 	{
+		table.clear();
 		HuCommon.table = table;
 		HuCommon.N = 4;
 		HuCommon.NAME = "feng";
