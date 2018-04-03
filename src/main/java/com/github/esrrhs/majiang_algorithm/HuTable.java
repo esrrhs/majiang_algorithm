@@ -24,6 +24,7 @@ public class HuTable
 
 	public static void load()
 	{
+		table.clear();
 		HuCommon.table = table;
 		HuCommon.N = 9;
 		HuCommon.NAME = "normal";
@@ -34,6 +35,7 @@ public class HuTable
 
 	public static void load(List<String> lines)
 	{
+		table.clear();
 		HuCommon.table = table;
 		HuCommon.N = 9;
 		HuCommon.NAME = "normal";
