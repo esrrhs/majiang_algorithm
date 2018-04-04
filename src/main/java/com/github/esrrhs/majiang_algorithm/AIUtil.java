@@ -174,7 +174,7 @@ public class AIUtil
 
 	public static void testOut()
 	{
-		String init = "1万,2万,2万,1条,1条,2筒,4筒,4筒";
+		String init = "1万,2万,3万,1条,1条,东";
 		String guiStr = "1万";
 		List<Integer> cards = MaJiangDef.stringToCards(init);
 		List<Integer> gui = MaJiangDef.stringToCards(guiStr);
