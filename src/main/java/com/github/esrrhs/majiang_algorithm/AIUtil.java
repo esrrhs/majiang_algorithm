@@ -139,6 +139,31 @@ public class AIUtil
 		return ret;
 	}
 
+	public static boolean pengAI(List<Integer> input, List<Integer> guiCard, int card, double award)
+	{
+		double score = calc(input, guiCard);
+
+		List<Integer> tmp = new ArrayList<>(input);
+		tmp.remove((Integer) card);
+		tmp.remove((Integer) card);
+		double scoreNew = calc(tmp, guiCard);
+
+		return scoreNew + award >= score;
+	}
+
+	public static boolean gangAI(List<Integer> input, List<Integer> guiCard, int card, double award)
+	{
+		double score = calc(input, guiCard);
+
+		List<Integer> tmp = new ArrayList<>(input);
+		tmp.remove((Integer) card);
+		tmp.remove((Integer) card);
+		tmp.remove((Integer) card);
+		double scoreNew = calc(tmp, guiCard);
+
+		return scoreNew + award >= score;
+	}
+
 	public static void testOut()
 	{
 		String init = "1万,2万,2万,1条,1条,2筒,4筒,4筒";
@@ -148,6 +173,26 @@ public class AIUtil
 
 		int out = outAI(cards, gui);
 		System.out.println(MaJiangDef.cardToString(out));
+	}
+
+	public static void testPeng()
+	{
+		String init = "1万,2万,2万,1条,1条,2筒,4筒,4筒";
+		String guiStr = "1万";
+		List<Integer> cards = MaJiangDef.stringToCards(init);
+		List<Integer> gui = MaJiangDef.stringToCards(guiStr);
+
+		System.out.println(pengAI(cards, gui, MaJiangDef.stringToCard("2万"), 0.d));
+	}
+
+	public static void testGang()
+	{
+		String init = "1万,2万,2万,2万,3万,4万,4筒,4筒";
+		String guiStr = "1万";
+		List<Integer> cards = MaJiangDef.stringToCards(init);
+		List<Integer> gui = MaJiangDef.stringToCards(guiStr);
+
+		System.out.println(gangAI(cards, gui, MaJiangDef.stringToCard("2万"), 1.d));
 	}
 
 	public static void gen()
@@ -171,6 +216,8 @@ public class AIUtil
 		HuUtil.load();
 		load();
 		testOut();
+		testPeng();
+		testGang();
 	}
 
 }
