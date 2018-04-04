@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class AIUtil
 {
-	private static double calc(List<Integer> input, List<Integer> guiCard)
+	public static double calc(List<Integer> input, List<Integer> guiCard)
 	{
 		List<Integer> cards = new ArrayList<>();
 		for (int i = 0; i < MaJiangDef.MAX_NUM; i++)
@@ -118,7 +118,7 @@ public class AIUtil
 		}
 	}
 
-	private static int outAI(List<Integer> input, List<Integer> guiCard)
+	public static int outAI(List<Integer> input, List<Integer> guiCard)
 	{
 		int ret = 0;
 		double max = Double.MIN_VALUE;
