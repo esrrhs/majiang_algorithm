@@ -141,6 +141,10 @@ public class AIUtil
 
 	public static boolean pengAI(List<Integer> input, List<Integer> guiCard, int card, double award)
 	{
+		if (guiCard.contains(card))
+		{
+			return false;
+		}
 		double score = calc(input, guiCard);
 
 		List<Integer> tmp = new ArrayList<>(input);
@@ -153,6 +157,10 @@ public class AIUtil
 
 	public static boolean gangAI(List<Integer> input, List<Integer> guiCard, int card, double award)
 	{
+		if (guiCard.contains(card))
+		{
+			return false;
+		}
 		double score = calc(input, guiCard);
 
 		List<Integer> tmp = new ArrayList<>(input);
