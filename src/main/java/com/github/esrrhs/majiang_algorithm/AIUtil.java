@@ -122,19 +122,24 @@ public class AIUtil
 	{
 		int ret = 0;
 		double max = Double.MIN_VALUE;
+		int[] cache = new int[MaJiangDef.MAX_NUM + 1];
 		for (Integer c : input)
 		{
-			if (!guiCard.contains(c))
+			if (cache[c] == 0)
 			{
-				List<Integer> tmp = new ArrayList<>(input);
-				tmp.remove(c);
-				double score = calc(tmp, guiCard);
-				if (score > max)
+				if (!guiCard.contains(c))
 				{
-					max = score;
-					ret = c;
+					List<Integer> tmp = new ArrayList<>(input);
+					tmp.remove(c);
+					double score = calc(tmp, guiCard);
+					if (score > max)
+					{
+						max = score;
+						ret = c;
+					}
 				}
 			}
+			cache[c] = 1;
 		}
 		return ret;
 	}
@@ -174,7 +179,7 @@ public class AIUtil
 
 	public static void testOut()
 	{
-		String init = "1万,2万,3万,1条,1条,东";
+		String init = "1万,2万,2万,1条,1条,东";
 		String guiStr = "1万";
 		List<Integer> cards = MaJiangDef.stringToCards(init);
 		List<Integer> gui = MaJiangDef.stringToCards(guiStr);
