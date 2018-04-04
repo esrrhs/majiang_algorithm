@@ -71,13 +71,13 @@ boolean isGang = AIUtil.gangAI(cards, gui, gangCard, 0.d);
 ## 评估方法
 为了评价这副牌的积分，也就是胡牌的概率，我们可以给他再摸N张牌，看看胡牌情况。参考如下示例，可以很直观得出牌面积分：1万2万3万 > 1万2万3万2条3条 > 1万2万3万2条。
 - 1万2万3万<br />
-![image](https://github.com/esrrhs/majiang_algorithm/raw/master/img/ai4.png)
+![image](https://github.com/esrrhs/majiang_algorithm/raw/master/img/ai4.png)<br />
 已经胡了，胜率为1
 - 1万2万3万2条<br />
-![image](https://github.com/esrrhs/majiang_algorithm/raw/master/img/ai1.png)
+![image](https://github.com/esrrhs/majiang_algorithm/raw/master/img/ai1.png)<br />
 只摸1张牌，那么只有当摸2条的时候，才会赢，胜率为1/9*摸条的概率，此时有将。
 - 1万2万3万2条3条<br />
-![image](https://github.com/esrrhs/majiang_algorithm/raw/master/img/ai5.png)
+![image](https://github.com/esrrhs/majiang_algorithm/raw/master/img/ai5.png)<br />
 只摸1张牌，那么只有当摸1条4条的时候，才会赢，胜率为2/9*摸条的概率，此时无将。
 
 
@@ -130,7 +130,7 @@ M是花色数目，M<=5
 - 遍历手上的非鬼牌，计算排除掉这张牌后的牌面积分最大值，这张牌就是要打的牌。
 - 如果打出能听牌了，就取一个听牌最多的牌打出去。
 - 考虑如下的牌<br />
-![image](https://github.com/esrrhs/majiang_algorithm/raw/master/img/ai6.png)
+![image](https://github.com/esrrhs/majiang_algorithm/raw/master/img/ai6.png)<br />
 打出2万3万，积分为3.02<br />
 打出1条，积分为2.07<br />
 打出东，积分为4.02<br />
