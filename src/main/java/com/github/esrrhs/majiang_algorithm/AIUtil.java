@@ -21,9 +21,17 @@ public class AIUtil
 			cards.set(c - 1, cards.get(c - 1) + 1);
 		}
 
+		int guiNum = 0;
 		for (int gui : guiCard)
 		{
+			guiNum += cards.get(gui - 1);
 			cards.set(gui - 1, 0);
+		}
+
+		List<Integer> ting = HuUtil.isTingCard(cards, guiNum);
+		if (!ting.isEmpty())
+		{
+			return ting.size() * 10;
 		}
 
 		long wan_key = 0;
@@ -119,6 +127,7 @@ public class AIUtil
 			if (!guiCard.contains(c))
 			{
 				List<Integer> tmp = new ArrayList<>(input);
+				tmp.remove(c);
 				double score = calc(tmp, guiCard);
 				if (score > max)
 				{
@@ -132,7 +141,7 @@ public class AIUtil
 
 	public static void testOut()
 	{
-		String init = "1万,2万,2万,4万,东,1条";
+		String init = "1万,2万,2万,1条,1条,2筒,4筒,4筒";
 		String guiStr = "1万";
 		List<Integer> cards = MaJiangDef.stringToCards(init);
 		List<Integer> gui = MaJiangDef.stringToCards(guiStr);
@@ -158,7 +167,8 @@ public class AIUtil
 	public static void main(String[] args)
 	{
 		// 需要生成文件时 加上gen()
-		gen();
+		//gen();
+		HuUtil.load();
 		load();
 		testOut();
 	}
