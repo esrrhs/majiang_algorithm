@@ -222,6 +222,46 @@ public class AIUtil
 		AITable.load();
 	}
 
+	private static void testHu()
+	{
+		ArrayList<Integer> total = new ArrayList<>();
+		for (int i = MaJiangDef.WAN1; i <= MaJiangDef.JIAN_BAI; i++)
+		{
+			total.add(i);
+			total.add(i);
+			total.add(i);
+			total.add(i);
+		}
+		Collections.shuffle(total);
+
+		ArrayList<Integer> cards = new ArrayList<>();
+		for (int i = 0; i < 14; i++)
+		{
+			cards.add(total.remove(0));
+		}
+
+		Collections.sort(cards);
+		System.out.println("before " + MaJiangDef.cardsToString(cards));
+
+		List<Integer> gui = new ArrayList<>();
+
+		int step = 0;
+		while (!total.isEmpty())
+		{
+			if (HuUtil.isHuExtra(cards, gui, 0))
+			{
+				Collections.sort(cards);
+				System.out.println("after " + MaJiangDef.cardsToString(cards));
+				System.out.println("step " + step);
+				break;
+			}
+			step++;
+			int out = outAI(cards, gui);
+			cards.remove((Integer) out);
+			cards.add(total.remove(0));
+		}
+	}
+
 	public static void main(String[] args)
 	{
 		// 需要生成文件时 加上gen()
@@ -231,6 +271,7 @@ public class AIUtil
 		testOut();
 		testPeng();
 		testGang();
+		testHu();
 	}
 
 }
