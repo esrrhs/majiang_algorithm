@@ -249,6 +249,10 @@ public class HuUtil
 		List<List<HuTableInfo>> tmp = new ArrayList<>();
 
 		List<HuTableInfo> wanHuTableInfo = HuTable.table.get(wan_key);
+		if (wanHuTableInfo == null)
+		{
+			return new ArrayList<>();
+		}
 		tmpTing.add(wanHuTableInfo);
 		if (wan_key != 0)
 		{
@@ -256,6 +260,10 @@ public class HuUtil
 			tmp.add(wanHuTableInfo);
 		}
 		List<HuTableInfo> tongHuTableInfo = HuTable.table.get(tong_key);
+		if (tongHuTableInfo == null)
+		{
+			return new ArrayList<>();
+		}
 		tmpTing.add(tongHuTableInfo);
 		if (tong_key != 0)
 		{
@@ -263,6 +271,10 @@ public class HuUtil
 			tmp.add(tongHuTableInfo);
 		}
 		List<HuTableInfo> tiaoHuTableInfo = HuTable.table.get(tiao_key);
+		if (tiaoHuTableInfo == null)
+		{
+			return new ArrayList<>();
+		}
 		tmpTing.add(tiaoHuTableInfo);
 		if (tiao_key != 0)
 		{
@@ -270,6 +282,10 @@ public class HuUtil
 			tmp.add(tiaoHuTableInfo);
 		}
 		List<HuTableInfo> fengHuTableInfo = HuTableFeng.table.get(feng_key);
+		if (fengHuTableInfo == null)
+		{
+			return new ArrayList<>();
+		}
 		tmpTing.add(fengHuTableInfo);
 		if (feng_key != 0)
 		{
@@ -277,6 +293,10 @@ public class HuUtil
 			tmp.add(fengHuTableInfo);
 		}
 		List<HuTableInfo> jianHuTableInfo = HuTableJian.table.get(jian_key);
+		if (jianHuTableInfo == null)
+		{
+			return new ArrayList<>();
+		}
 		tmpTing.add(jianHuTableInfo);
 		if (jian_key != 0)
 		{
@@ -303,7 +323,8 @@ public class HuUtil
 						}
 					}
 
-					if (!cached && isTingHuTableInfo(tmpType, tmp, 0, guiNum - huTableInfo.needGui, huTableInfo.jiang, type))
+					if (!cached && isTingHuTableInfo(tmpType, tmp, 0, guiNum - huTableInfo.needGui, huTableInfo.jiang,
+							type))
 					{
 						for (int j = 0; j < huTableInfo.hupai.length; j++)
 						{
@@ -351,7 +372,8 @@ public class HuUtil
 				}
 				else
 				{
-					if (isTingHuTableInfo(tmpType, tmp, index + 1, guiNum - huTableInfo.needGui, huTableInfo.jiang, tingType))
+					if (isTingHuTableInfo(tmpType, tmp, index + 1, guiNum - huTableInfo.needGui, huTableInfo.jiang,
+							tingType))
 					{
 						return true;
 					}
