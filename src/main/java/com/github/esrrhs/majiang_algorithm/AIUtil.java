@@ -150,6 +150,12 @@ public class AIUtil
 		{
 			return false;
 		}
+
+		if (Collections.frequency(input, card) < 2)
+		{
+			return false;
+		}
+
 		double score = calc(input, guiCard);
 
 		List<Integer> tmp = new ArrayList<>(input);
@@ -166,9 +172,16 @@ public class AIUtil
 		{
 			return false;
 		}
+
+		if (Collections.frequency(input, card) < 3)
+		{
+			return false;
+		}
+
 		double score = calc(input, guiCard);
 
 		List<Integer> tmp = new ArrayList<>(input);
+		tmp.remove((Integer) card);
 		tmp.remove((Integer) card);
 		tmp.remove((Integer) card);
 		tmp.remove((Integer) card);
