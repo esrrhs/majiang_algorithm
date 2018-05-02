@@ -7,7 +7,7 @@
     <groupId>com.github.esrrhs</groupId>
     <artifactId>majiang_algorithm</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.12</version>
+    <version>1.0.13</version>
 
     <parent>
         <groupId>org.sonatype.oss</groupId>
