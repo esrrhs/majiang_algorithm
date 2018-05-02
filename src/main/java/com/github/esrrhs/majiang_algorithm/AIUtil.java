@@ -144,6 +144,28 @@ public class AIUtil
 		return ret;
 	}
 
+	public static boolean chiAI(List<Integer> input, List<Integer> guiCard, int card, int card1, int card2)
+	{
+		if (guiCard.contains(card) || guiCard.contains(card1) || guiCard.contains(card2))
+		{
+			return false;
+		}
+
+		if (Collections.frequency(input, card1) < 1 || Collections.frequency(input, card2) < 1)
+		{
+			return false;
+		}
+
+		double score = calc(input, guiCard);
+
+		List<Integer> tmp = new ArrayList<>(input);
+		tmp.remove((Integer) card1);
+		tmp.remove((Integer) card2);
+		double scoreNew = calc(tmp, guiCard);
+
+		return scoreNew >= score;
+	}
+
 	public static boolean pengAI(List<Integer> input, List<Integer> guiCard, int card, double award)
 	{
 		if (guiCard.contains(card))
@@ -199,6 +221,17 @@ public class AIUtil
 
 		int out = outAI(cards, gui);
 		System.out.println(MaJiangDef.cardToString(out));
+	}
+
+	public static void testChi()
+	{
+		String init = "1万,2万,2万,1条,1条,2筒,4筒,4筒";
+		String guiStr = "1万";
+		List<Integer> cards = MaJiangDef.stringToCards(init);
+		List<Integer> gui = MaJiangDef.stringToCards(guiStr);
+
+		System.out.println(chiAI(cards, gui, MaJiangDef.stringToCard("3筒"), MaJiangDef.stringToCard("2筒"),
+				MaJiangDef.stringToCard("4筒")));
 	}
 
 	public static void testPeng()
@@ -282,6 +315,7 @@ public class AIUtil
 		HuUtil.load();
 		load();
 		testOut();
+		testChi();
 		testPeng();
 		testGang();
 		testHu();
