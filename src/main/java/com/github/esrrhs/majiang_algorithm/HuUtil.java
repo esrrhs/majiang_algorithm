@@ -207,7 +207,7 @@ public class HuUtil
 			cards.set(gui - 1, 0);
 		}
 
-		return isTing(cards, guiNum);
+		return isTingCard(cards, guiNum);
 	}
 
 	public static List<Integer> isTingCard(List<Integer> cards, int guiNum)
@@ -411,6 +411,7 @@ public class HuUtil
 		String gui = "1筒";
 		List<Integer> cards = MaJiangDef.stringToCards(init);
 		System.out.println(MaJiangDef.cardsToString(HuUtil.isTing(cards, MaJiangDef.stringToCard(gui))));
+		System.out.println(MaJiangDef.cardsToString(HuUtil.isTingExtra(cards, MaJiangDef.stringToCards(gui))));
 	}
 
 	public static void main(String[] args)
