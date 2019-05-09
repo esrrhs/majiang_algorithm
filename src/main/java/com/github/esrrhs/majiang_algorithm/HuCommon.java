@@ -484,6 +484,9 @@ public class HuCommon
 				lines.add(str);
 			}
 			load(lines);
+
+			bufferedReader.close();
+			inputStream.close();
 		}
 		catch (Exception e)
 		{
