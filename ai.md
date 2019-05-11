@@ -10,7 +10,7 @@
 <dependency>
     <groupId>com.github.esrrhs</groupId>
     <artifactId>majiang_algorithm</artifactId>
-    <version>1.0.14</version>
+    <version>1.0.15</version>
 </dependency>
 ```
 ``` java
