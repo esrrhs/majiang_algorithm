@@ -8,5 +8,5 @@
 
 # Stargazers over time
 
-[![Stargazers over time](https://starchart.cc/esrrhs/fake.svg)](https://starchart.cc/esrrhs/fake)
+[![Stargazers over time](https://starchart.cc/esrrhs/majiang_algorithm.svg)](https://starchart.cc/esrrhs/majiang_algorithm)
       
