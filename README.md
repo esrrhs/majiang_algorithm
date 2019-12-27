@@ -5,3 +5,8 @@
 # 其他
 <a href="https://github.com/esrrhs/texas_algorithm">德州算法</a>
 <a href="https://github.com/esrrhs/teenpatti_algorithm">印度炸金花算法</a>
+
+# Stargazers over time
+
+[![Stargazers over time](https://starchart.cc/esrrhs/fake.svg)](https://starchart.cc/esrrhs/fake)
+      
