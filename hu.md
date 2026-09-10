@@ -1,6 +1,9 @@
+# 胡牌算法
+
+[English Version](./hu_en.md) | [GitHub](https://github.com/esrrhs/majiang_algorithm)
+
 # 简述
-麻将作为国粹，为大众所喜爱，每个地区的玩法都不太一样，但是大部分都会有鬼牌，或者叫癞子，本文主要讲的是带多张鬼牌的胡牌算法。首先，简单说下麻将的基本概念。<br />
-[github地址](https://github.com/esrrhs/majiang_algorithm)
+麻将作为国粹，为大众所喜爱，每个地区的玩法都不太一样，但是大部分都会有鬼牌，或者叫癞子，本文主要讲的是带多张鬼牌的胡牌算法。首先，简单说下麻将的基本概念。
 
 # 使用
 ## maven

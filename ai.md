@@ -1,8 +1,11 @@
+# AI 出牌算法
+
+[English Version](./ai_en.md) | [GitHub](https://github.com/esrrhs/majiang_algorithm)
+
 # 简述
 打麻将，需要运气，也需要脑力。作为玩家，需要搭好牌架子，然后一张一张的摸牌，最后达到听牌，最终胡牌。<br />
 本文讲述的即是AI如何尽量做到高智商的打麻将。其中摸牌我们是控制不了的，所以就在打牌上下手。<br />
-首先还是先复习下麻将玩法。<br />
-[github地址](https://github.com/esrrhs/majiang_algorithm)
+首先还是先复习下麻将玩法。
 
 # 使用
 ## maven
