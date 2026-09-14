@@ -472,21 +472,21 @@ public class HuCommon
 
 	public static void load()
 	{
-		try
+		File file = new File("majiang_clien_" + NAME + ".txt");
+		if (!file.exists())
 		{
-			FileInputStream inputStream = new FileInputStream("majiang_clien_" + NAME + ".txt");
-			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-
+			return;
+		}
+		try (BufferedReader bufferedReader = new BufferedReader(
+				new InputStreamReader(new FileInputStream(file), java.nio.charset.StandardCharsets.UTF_8)))
+		{
 			List<String> lines = new ArrayList<>();
-			String str = null;
+			String str;
 			while ((str = bufferedReader.readLine()) != null)
 			{
 				lines.add(str);
 			}
 			load(lines);
-
-			bufferedReader.close();
-			inputStream.close();
 		}
 		catch (Exception e)
 		{

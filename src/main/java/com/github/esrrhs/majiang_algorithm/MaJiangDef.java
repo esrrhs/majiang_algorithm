@@ -86,24 +86,18 @@ public class MaJiangDef
 		return 0;
 	}
 
-	public static String cardsToString(List<Integer> card)
+	public static String cardsToString(Iterable<Integer> card)
 	{
-		String ret = "";
+		if (card == null)
+		{
+			return "";
+		}
+		StringBuilder ret = new StringBuilder();
 		for (int c : card)
 		{
-			ret += cardToString(c) + ",";
+			ret.append(cardToString(c)).append(",");
 		}
-		return ret;
-	}
-
-	public static String cardsToString(HashSet<Integer> card)
-	{
-		String ret = "";
-		for (int c : card)
-		{
-			ret += cardToString(c) + ",";
-		}
-		return ret;
+		return ret.toString();
 	}
 
 	public static String cardToString(int card)
