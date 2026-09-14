@@ -1,0 +1,10 @@
+target/
+*.class
+.idea/
+*.iml
+.project
+.classpath
+.settings/
+majiang.db
+dependency-reduced-pom.xml
+*.log

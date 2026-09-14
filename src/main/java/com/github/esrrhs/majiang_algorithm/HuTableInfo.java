@@ -9,11 +9,11 @@ public class HuTableInfo
 	@Override
 	public String toString()
 	{
-		String tmp = "";
+		StringBuilder tmp = new StringBuilder();
 		int index = 1;
 		if (hupai == null)
 		{
-			tmp = "胡清";
+			tmp.append("胡清");
 		}
 		else
 		{
@@ -21,12 +21,13 @@ public class HuTableInfo
 			{
 				if (i > 0)
 				{
-					tmp += "胡" + (index);
+					tmp.append("胡").append(index);
 				}
 				index++;
 			}
 		}
-		return tmp + " 将" + (jiang ? "1" : "0") + " 鬼" + needGui;
+		tmp.append(" 将").append(jiang ? "1" : "0").append(" 鬼").append(needGui);
+		return tmp.toString();
 	}
 
 }
