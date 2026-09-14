@@ -2,7 +2,7 @@
 
 [<img src="https://img.shields.io/github/license/esrrhs/majiang_algorithm">](https://github.com/esrrhs/majiang_algorithm)
 [<img src="https://img.shields.io/github/languages/top/esrrhs/majiang_algorithm">](https://github.com/esrrhs/majiang_algorithm)
-[<img src="https://img.shields.io/maven-central/v/com.github.esrrhs/majiang_algorithm">](https://search.maven.org/artifact/com.github.esrrhs/majiang_algorithm)
+[<img src="https://img.shields.io/maven-central/v/com.github.esrrhs/majiang_algorithm">](https://central.sonatype.com/artifact/com.github.esrrhs/majiang_algorithm)
 [<img src="https://img.shields.io/github/actions/workflow/status/esrrhs/majiang_algorithm/maven.yml?branch=master">](https://github.com/esrrhs/majiang_algorithm/actions)
 
 > 高性能麻将胡牌 & AI 出牌算法，基于**查表法**实现，支持多张鬼牌（癞子）。
