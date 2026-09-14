@@ -1,0 +1,99 @@
+name: Publish to Maven Central
+
+on:
+  push:
+    paths:
+      - 'pom.xml'
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 2
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: 'maven'
+
+    - name: Check version change
+      id: check_version
+      run: |
+        CUR_VER=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+        echo "Current version: $CUR_VER"
+        echo "current_version=$CUR_VER" >> $GITHUB_OUTPUT
+        
+        # If manually triggered or HEAD^ does not exist, proceed
+        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          echo "Triggered manually. Proceeding to publish."
+          echo "should_publish=true" >> $GITHUB_OUTPUT
+          exit 0
+        fi
+
+        git checkout HEAD^ pom.xml || true
+        PREV_VER=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout || echo "")
+        git checkout HEAD pom.xml || true
+        echo "Previous version: $PREV_VER"
+
+        if [ "$CUR_VER" != "$PREV_VER" ]; then
+          echo "Version changed from '$PREV_VER' to '$CUR_VER'. Proceeding to publish."
+          echo "should_publish=true" >> $GITHUB_OUTPUT
+        else
+          echo "Version has not changed ($CUR_VER). Skipping publish."
+          echo "should_publish=false" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Import GPG key
+      if: steps.check_version.outputs.should_publish == 'true'
+      env:
+        GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+      run: |
+        if [ -z "$GPG_PRIVATE_KEY" ]; then
+          echo "GPG_PRIVATE_KEY secret is not set. Please configure it in repository secrets."
+          exit 1
+        fi
+        mkdir -p ~/.gnupg
+        chmod 700 ~/.gnupg
+        echo "allow-loopback-pinentry" > ~/.gnupg/gpg-agent.conf
+        echo "pinentry-mode loopback" > ~/.gnupg/gpg.conf
+        gpgconf --kill gpg-agent || true
+        gpg-agent --daemon || true
+        echo "$GPG_PRIVATE_KEY" | gpg --batch --import --pinentry-mode loopback
+
+    - name: Configure Maven settings
+      if: steps.check_version.outputs.should_publish == 'true'
+      env:
+        MAVEN_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
+        MAVEN_PASSWORD: ${{ secrets.CENTRAL_TOKEN }}
+      run: |
+        mkdir -p ~/.m2
+        cat << 'EOF' > ~/.m2/settings.xml
+        <settings>
+          <servers>
+            <server>
+              <id>central</id>
+              <username>${env.MAVEN_USERNAME}</username>
+              <password>${env.MAVEN_PASSWORD}</password>
+            </server>
+          </servers>
+        </settings>
+        EOF
+
+    - name: Publish to Central Repository via Sonatype Portal
+      if: steps.check_version.outputs.should_publish == 'true'
+      env:
+        MAVEN_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
+        MAVEN_PASSWORD: ${{ secrets.CENTRAL_TOKEN }}
+      run: |
+        ./mvnw -B clean deploy -Prelease \
+          -DskipTests \
+          -Dgpg.passphrase="${{ secrets.GPG_PASSPHRASE }}"
