@@ -7,7 +7,7 @@
     <groupId>com.github.esrrhs</groupId>
     <artifactId>majiang_algorithm</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.17</version>
+    <version>1.0.18</version>
 
     <name>majiang_algorithm</name>
     <description>High-performance Mahjong winning-hand detection &amp; AI discard algorithm based on lookup tables.</description>

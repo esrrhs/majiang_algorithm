@@ -29,7 +29,7 @@
 <dependency>
     <groupId>com.github.esrrhs</groupId>
     <artifactId>majiang_algorithm</artifactId>
-    <version>1.0.17</version>
+    <version>1.0.18</version>
 </dependency>
 ```
 
@@ -67,6 +67,8 @@ boolean isGang = AIUtil.gangAI(cards, gui, gangCard, 0.0d);
 ---
 
 ## 网页端对战与算法演示平台
+
+> 🌐 **在线体验地址**：👉 **[http://majiang.esrrhs.xyz](http://majiang.esrrhs.xyz)**
 
 仿照经典腾讯麻将规则与仿真绿色麻将桌设计的交互式网页端对战与算法实验室：
 
