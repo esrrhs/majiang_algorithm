@@ -86,6 +86,11 @@ public class AIUtil
 		List<Double> ret = new ArrayList<>();
 		calcAITableInfo(ret, tmp, 0, false, 0.d);
 
+		if (ret.isEmpty())
+		{
+			return 0.d;
+		}
+
 		Double d = Collections.max(ret);
 		return d;
 	}
@@ -102,6 +107,10 @@ public class AIUtil
 			return;
 		}
 		List<AITableInfo> aiTableInfos = tmp.get(index);
+		if (aiTableInfos == null)
+		{
+			return;
+		}
 		for (AITableInfo aiTableInfo : aiTableInfos)
 		{
 			if (jiang)
@@ -121,7 +130,7 @@ public class AIUtil
 	public static int outAI(List<Integer> input, List<Integer> guiCard)
 	{
 		int ret = 0;
-		double max = Double.MIN_VALUE;
+		double max = -Double.MAX_VALUE;
 		int[] cache = new int[MaJiangDef.MAX_NUM + 1];
 		for (Integer c : input)
 		{

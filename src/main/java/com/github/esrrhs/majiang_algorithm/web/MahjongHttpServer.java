@@ -135,19 +135,26 @@ public class MahjongHttpServer {
                 sendJsonResponse(exchange, 204, "");
                 return;
             }
-            String body = readBody(exchange);
-            JsonObject json = gson.fromJson(body, JsonObject.class);
-            int card = json.get("card").getAsInt();
+            try {
+                String body = readBody(exchange);
+                JsonObject json = gson.fromJson(body, JsonObject.class);
+                int card = json.get("card").getAsInt();
 
-            boolean success;
-            synchronized (MahjongHttpServer.this) {
-                success = currentGame.discard(0, card);
+                boolean success;
+                synchronized (MahjongHttpServer.this) {
+                    success = currentGame.discard(0, card);
+                }
+                GameStateView view = currentGame.createView(0);
+                Map<String, Object> resp = new HashMap<>();
+                resp.put("success", success);
+                resp.put("view", view);
+                sendJsonResponse(exchange, 200, resp);
+            } catch (Throwable t) {
+                t.printStackTrace();
+                Map<String, Object> err = new HashMap<>();
+                err.put("error", t.getMessage() != null ? t.getMessage() : "Internal Error");
+                sendJsonResponse(exchange, 500, err);
             }
-            GameStateView view = currentGame.createView(0);
-            Map<String, Object> resp = new HashMap<>();
-            resp.put("success", success);
-            resp.put("view", view);
-            sendJsonResponse(exchange, 200, resp);
         }
     }
 
@@ -158,22 +165,29 @@ public class MahjongHttpServer {
                 sendJsonResponse(exchange, 204, "");
                 return;
             }
-            String body = readBody(exchange);
-            JsonObject json = gson.fromJson(body, JsonObject.class);
-            String action = json.get("action").getAsString();
-            int card = json.has("card") ? json.get("card").getAsInt() : 0;
-            int chi1 = json.has("chi1") ? json.get("chi1").getAsInt() : 0;
-            int chi2 = json.has("chi2") ? json.get("chi2").getAsInt() : 0;
+            try {
+                String body = readBody(exchange);
+                JsonObject json = gson.fromJson(body, JsonObject.class);
+                String action = json.get("action").getAsString();
+                int card = json.has("card") ? json.get("card").getAsInt() : 0;
+                int chi1 = json.has("chi1") ? json.get("chi1").getAsInt() : 0;
+                int chi2 = json.has("chi2") ? json.get("chi2").getAsInt() : 0;
 
-            boolean success;
-            synchronized (MahjongHttpServer.this) {
-                success = currentGame.userAction(action, card, chi1, chi2);
+                boolean success;
+                synchronized (MahjongHttpServer.this) {
+                    success = currentGame.userAction(action, card, chi1, chi2);
+                }
+                GameStateView view = currentGame.createView(0);
+                Map<String, Object> resp = new HashMap<>();
+                resp.put("success", success);
+                resp.put("view", view);
+                sendJsonResponse(exchange, 200, resp);
+            } catch (Throwable t) {
+                t.printStackTrace();
+                Map<String, Object> err = new HashMap<>();
+                err.put("error", t.getMessage() != null ? t.getMessage() : "Internal Error");
+                sendJsonResponse(exchange, 500, err);
             }
-            GameStateView view = currentGame.createView(0);
-            Map<String, Object> resp = new HashMap<>();
-            resp.put("success", success);
-            resp.put("view", view);
-            sendJsonResponse(exchange, 200, resp);
         }
     }
 
@@ -184,20 +198,27 @@ public class MahjongHttpServer {
                 sendJsonResponse(exchange, 204, "");
                 return;
             }
-            String body = readBody(exchange);
-            JsonObject json = gson.fromJson(body, JsonObject.class);
-            String action = json.get("action").getAsString();
-            int card = json.has("card") ? json.get("card").getAsInt() : 0;
+            try {
+                String body = readBody(exchange);
+                JsonObject json = gson.fromJson(body, JsonObject.class);
+                String action = json.get("action").getAsString();
+                int card = json.has("card") ? json.get("card").getAsInt() : 0;
 
-            boolean success;
-            synchronized (MahjongHttpServer.this) {
-                success = currentGame.userSelfAction(action, card);
+                boolean success;
+                synchronized (MahjongHttpServer.this) {
+                    success = currentGame.userSelfAction(action, card);
+                }
+                GameStateView view = currentGame.createView(0);
+                Map<String, Object> resp = new HashMap<>();
+                resp.put("success", success);
+                resp.put("view", view);
+                sendJsonResponse(exchange, 200, resp);
+            } catch (Throwable t) {
+                t.printStackTrace();
+                Map<String, Object> err = new HashMap<>();
+                err.put("error", t.getMessage() != null ? t.getMessage() : "Internal Error");
+                sendJsonResponse(exchange, 500, err);
             }
-            GameStateView view = currentGame.createView(0);
-            Map<String, Object> resp = new HashMap<>();
-            resp.put("success", success);
-            resp.put("view", view);
-            sendJsonResponse(exchange, 200, resp);
         }
     }
 

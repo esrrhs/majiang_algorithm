@@ -487,9 +487,14 @@ function onHandCardLeave() {
     document.getElementById('tileTingTooltip').style.display = 'none';
 }
 
-// 点击手牌：仅选中切换，绝不直接打出！必须点击【打牌】按钮操作
+// 点击手牌：首次点击选中抬起，再次点击直接打出！也可以点击【打牌】按钮打出
 function onHandCardClick(card) {
     if (gameState.currentSeat !== 0 || gameState.phase !== 'DISCARD') {
+        return;
+    }
+    if (selectedHandCard === card) {
+        selectedHandCard = null;
+        doDiscard(card);
         return;
     }
     selectedHandCard = card;
