@@ -37,6 +37,7 @@ public class MahjongHttpServer {
         server.createContext("/api/status", new StatusHandler());
         server.createContext("/api/game/new", new NewGameHandler());
         server.createContext("/api/game/state", new StateHandler());
+        server.createContext("/api/game/spectator", new SpectatorHandler());
         server.createContext("/api/game/discard", new DiscardHandler());
         server.createContext("/api/game/action", new ActionHandler());
         server.createContext("/api/game/self_action", new SelfActionHandler());
@@ -125,6 +126,34 @@ public class MahjongHttpServer {
                 view = currentGame.createView(0);
             }
             sendJsonResponse(exchange, 200, view);
+        }
+    }
+
+    private class SpectatorHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
+                sendJsonResponse(exchange, 204, "");
+                return;
+            }
+            try {
+                String body = readBody(exchange);
+                JsonObject json = gson.fromJson(body, JsonObject.class);
+                boolean spectator = json.get("spectator").getAsBoolean();
+                synchronized (MahjongHttpServer.this) {
+                    currentGame.setSpectatorMode(spectator);
+                }
+                GameStateView view;
+                synchronized (MahjongHttpServer.this) {
+                    view = currentGame.createView(0);
+                }
+                sendJsonResponse(exchange, 200, view);
+            } catch (Throwable t) {
+                t.printStackTrace();
+                Map<String, Object> err = new HashMap<>();
+                err.put("error", t.getMessage() != null ? t.getMessage() : "Internal Error");
+                sendJsonResponse(exchange, 500, err);
+            }
         }
     }
 

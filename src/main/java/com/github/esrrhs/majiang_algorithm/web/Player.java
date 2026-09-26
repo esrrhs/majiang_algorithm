@@ -11,8 +11,8 @@ import java.util.List;
  */
 public class Player {
     private final int seat;          // 0: 玩家/东, 1: 下家/南, 2: 对家/西, 3: 上家/北
-    private final String name;       // 玩家名字
-    private final boolean isAi;      // 是否 AI
+    private String name;             // 玩家名字
+    private boolean isAi;            // 是否 AI
     private final List<Integer> hand;      // 纯手牌（未公开）
     private final List<Meld> melds;        // 副牌（吃碰杠，已公开）
     private final List<Integer> discards;  // 弃牌河里的牌
@@ -47,8 +47,16 @@ public class Player {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public boolean isAi() {
         return isAi;
+    }
+
+    public void setAi(boolean isAi) {
+        this.isAi = isAi;
     }
 
     public List<Integer> getHand() {

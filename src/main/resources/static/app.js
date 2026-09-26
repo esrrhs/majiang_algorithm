@@ -81,18 +81,22 @@ function setPlaySpeed(speed) {
     });
 }
 
-function toggleSpectatorMode() {
+async function toggleSpectatorMode() {
     spectatorMode = document.getElementById('spectatorToggle').checked;
-    fetch('/api/game/new', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ spectator: spectatorMode })
-    })
-    .then(r => r.json())
-    .then(data => {
-        gameState = data;
-        renderGame();
-    });
+    try {
+        const res = await fetch('/api/game/spectator', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ spectator: spectatorMode })
+        });
+        const data = await res.json();
+        if (data) {
+            gameState = data;
+            renderGame();
+        }
+    } catch (e) {
+        console.error("Failed to toggle spectator mode:", e);
+    }
 }
 
 function toggleShowAiCards() {

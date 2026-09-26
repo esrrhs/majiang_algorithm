@@ -499,7 +499,10 @@ public class MahjongGame {
         }
 
         if (phase == Phase.WAITING_USER) {
-            // 等待真人操作，不能步进跳过
+            if (spectatorMode || players.get(0).isAi()) {
+                handleAiResponseForPlayer0();
+                return true;
+            }
             return false;
         }
 
@@ -840,6 +843,36 @@ public class MahjongGame {
         }
 
         return view;
+    }
+
+    private void handleAiResponseForPlayer0() {
+        Player p0 = players.get(0);
+        if (userPendingActions.isCanHu()) {
+            userAction("hu", lastDiscard, 0, 0);
+        } else if (userPendingActions.isCanGang() && !userPendingActions.getGangCards().isEmpty()) {
+            userAction("gang", userPendingActions.getGangCards().get(0), 0, 0);
+        } else if (userPendingActions.isCanPeng() && AIUtil.pengAI(p0.getHand(), guiCards, lastDiscard, 0.0d)) {
+            userAction("peng", lastDiscard, 0, 0);
+        } else if (userPendingActions.isCanChi()) {
+            ArrayList<Integer> chiPair = AIUtil.chiAI(p0.getHand(), guiCards, lastDiscard);
+            if (chiPair != null && chiPair.size() == 2) {
+                userAction("chi", lastDiscard, chiPair.get(0), chiPair.get(1));
+            } else {
+                userAction("pass", 0, 0, 0);
+            }
+        } else {
+            userAction("pass", 0, 0, 0);
+        }
+    }
+
+    public synchronized void setSpectatorMode(boolean spectator) {
+        this.spectatorMode = spectator;
+        Player p0 = players.get(0);
+        p0.setAi(spectator);
+        p0.setName(spectator ? "AI-南 (托管)" : "玩家 (南)");
+        if (spectator && phase == Phase.WAITING_USER) {
+            handleAiResponseForPlayer0();
+        }
     }
 
     public int getGameId() { return gameId; }
