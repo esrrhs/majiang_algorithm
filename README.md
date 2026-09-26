@@ -29,7 +29,7 @@
 <dependency>
     <groupId>com.github.esrrhs</groupId>
     <artifactId>majiang_algorithm</artifactId>
-    <version>1.0.17</version>
+    <version>1.0.18</version>
 </dependency>
 ```
 
@@ -67,6 +67,8 @@ boolean isGang = AIUtil.gangAI(cards, gui, gangCard, 0.0d);
 ---
 
 ## Interactive Web Platform & Algorithm Playground
+
+> 🌐 **Live Demo Online**: 👉 **[http://majiang.esrrhs.xyz](http://majiang.esrrhs.xyz)**
 
 An interactive web platform and algorithm laboratory modeled after Tencent Mahjong:
 
