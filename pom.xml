@@ -7,7 +7,7 @@
     <groupId>com.github.esrrhs</groupId>
     <artifactId>majiang_algorithm</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.16</version>
+    <version>1.0.17</version>
 
     <name>majiang_algorithm</name>
     <description>High-performance Mahjong winning-hand detection &amp; AI discard algorithm based on lookup tables.</description>
@@ -43,6 +43,13 @@
     </properties>
 
     <dependencies>
+        <!-- JSON Serialization -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10.1</version>
+        </dependency>
+
         <!-- Optional runtime for offline table generation script only -->
         <dependency>
             <groupId>org.xerial</groupId>
@@ -65,7 +72,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.13.0</version>
+                <version>3.8.1</version>
                 <configuration>
                     <source>${maven.compiler.source}</source>
                     <target>${maven.compiler.target}</target>
@@ -76,6 +83,14 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.1</version>
+                <configuration>
+                    <mainClass>com.github.esrrhs.majiang_algorithm.web.Main</mainClass>
+                </configuration>
             </plugin>
         </plugins>
     </build>

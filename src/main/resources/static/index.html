@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>麻将算法 & AI 网页对战平台</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <header class="app-header">
+        <div class="header-left">
+            <span class="logo-icon">🀄</span>
+            <div class="logo-text">
+                <h1>麻将算法 & AI 对战平台</h1>
+                <span class="sub-text">基于 esrrhs/majiang_algorithm 高性能查表引擎与智能决策</span>
+            </div>
+        </div>
+        <div class="header-center">
+            <div class="tab-nav">
+                <button id="tabBtnArena" class="tab-btn active" onclick="switchTab('arena')">🎮 4人麻将对战台</button>
+                <button id="tabBtnLab" class="tab-btn" onclick="switchTab('lab')">🧪 算法实验室 (胡牌/听牌/AI测试)</button>
+            </div>
+        </div>
+        <div class="header-right">
+            <button id="btnSound" class="tool-btn" onclick="toggleSound()" title="音效开关">🔊 音效: 开</button>
+            <a href="https://github.com/esrrhs/majiang_algorithm" target="_blank" class="tool-btn github-link" title="查看 GitHub 仓库">
+                <svg height="16" width="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
+                GitHub
+            </a>
+        </div>
+    </header>
+
+    <!-- 主界面内容区 -->
+    <main class="main-container">
+        <!-- 视图 1: 4人麻将对战台 -->
+        <section id="viewArena" class="view-section active">
+            <!-- 桌面顶部控制栏 -->
+            <div class="arena-toolbar">
+                <div class="toolbar-left">
+                    <button class="btn btn-primary" onclick="openNewGameModal()">🎲 开新局</button>
+                    <div class="mode-toggle">
+                        <label class="switch-label" title="一键显示或隐藏所有 AI 的手牌">
+                            <input type="checkbox" id="showAiCardsToggle" onchange="toggleShowAiCards()">
+                            <span class="switch-slider"></span>
+                            <span class="label-text">👁️ 显示AI手牌</span>
+                        </label>
+                    </div>
+                    <div class="mode-toggle">
+                        <label class="switch-label" title="4个AI全自动打麻将观战">
+                            <input type="checkbox" id="spectatorToggle" onchange="toggleSpectatorMode()">
+                            <span class="switch-slider"></span>
+                            <span class="label-text">4 AI 观战</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="toolbar-center">
+                    <div class="gui-display-card" id="guiCardDisplay">
+                        <span class="gui-title">👑 鬼牌 (癞子):</span>
+                        <div id="guiTilePreview" class="gui-tile-slot"></div>
+                    </div>
+                </div>
+
+                <div class="toolbar-right">
+                    <div class="speed-control" id="speedControlGroup">
+                        <span class="speed-label">速度:</span>
+                        <button class="speed-btn" data-speed="1500" onclick="setPlaySpeed(1500)">慢速</button>
+                        <button class="speed-btn active" data-speed="800" onclick="setPlaySpeed(800)">正常</button>
+                        <button class="speed-btn" data-speed="300" onclick="setPlaySpeed(300)">快速</button>
+                        <button class="speed-btn" data-speed="80" onclick="setPlaySpeed(80)">极速</button>
+                    </div>
+                    <button class="btn btn-secondary" onclick="toggleSidePanel()">📊 记牌器 & 日志</button>
+                    <button id="btnFullscreen" class="btn btn-secondary" onclick="toggleFullScreen()" title="全屏沉浸体验">⛶ 全屏</button>
+                </div>
+            </div>
+
+            <!-- 仿真绿色麻将桌 (自适应铺满视口) -->
+            <div class="mahjong-table-wrapper" id="mahjongTableWrapper">
+                <div class="mahjong-table" id="mahjongTable">
+                    <!-- 对家 (北 AI) -->
+                    <div class="seat-zone seat-north" id="seatNorth">
+                        <div class="player-info-tag">
+                            <span class="player-avatar">🤖</span>
+                            <span class="player-name" id="nameNorth">AI-北 (对家)</span>
+                            <span class="player-score" id="scoreNorth">1000</span>
+                            <span class="ting-badge" id="tingNorth">听</span>
+                        </div>
+                        <div class="melds-container" id="meldsNorth"></div>
+                        <div class="hand-container" id="handNorth"></div>
+                    </div>
+
+                    <!-- 上家 (西 AI) -->
+                    <div class="seat-zone seat-west" id="seatWest">
+                        <div class="player-info-tag">
+                            <span class="player-avatar">🤖</span>
+                            <span class="player-name" id="nameWest">AI-西 (上家)</span>
+                            <span class="player-score" id="scoreWest">1000</span>
+                            <span class="ting-badge" id="tingWest">听</span>
+                        </div>
+                        <div class="melds-container" id="meldsWest"></div>
+                        <div class="hand-container" id="handWest"></div>
+                    </div>
+
+                    <!-- 下家 (东 AI) -->
+                    <div class="seat-zone seat-east" id="seatEast">
+                        <div class="player-info-tag">
+                            <span class="player-avatar">🤖</span>
+                            <span class="player-name" id="nameEast">AI-东 (下家)</span>
+                            <span class="player-score" id="scoreEast">1000</span>
+                            <span class="ting-badge" id="tingEast">听</span>
+                        </div>
+                        <div class="melds-container" id="meldsEast"></div>
+                        <div class="hand-container" id="handEast"></div>
+                    </div>
+
+                    <!-- 桌心区 (中心轮盘罗盘与四方弃牌河) -->
+                    <div class="table-center">
+                        <!-- 北家弃牌堆 -->
+                        <div class="river-zone river-north" id="riverNorth"></div>
+                        <!-- 西家弃牌堆 -->
+                        <div class="river-zone river-west" id="riverWest"></div>
+                        <!-- 东家弃牌堆 -->
+                        <div class="river-zone river-east" id="riverEast"></div>
+                        <!-- 南家 (玩家) 弃牌堆 -->
+                        <div class="river-zone river-south" id="riverSouth"></div>
+
+                        <!-- 中心罗盘指示器 -->
+                        <div class="center-compass">
+                            <div class="compass-wind wind-north" id="dirNorth">北</div>
+                            <div class="compass-wind wind-east" id="dirEast">东</div>
+                            <div class="compass-wind wind-south" id="dirSouth">南</div>
+                            <div class="compass-wind wind-west" id="dirWest">西</div>
+                            <div class="compass-core">
+                                <div class="wall-remain-box">
+                                    <span class="wall-title">余牌</span>
+                                    <span class="wall-num" id="wallCount">84</span>
+                                </div>
+                                <div class="turn-timer" id="turnTimer">15</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 玩家 (南) 手牌区与副牌区 -->
+                    <div class="seat-zone seat-south" id="seatSouth">
+                        <!-- 顶部行：玩家信息与听牌提示面板 -->
+                        <div class="player-south-row">
+                            <div class="player-info-tag player-south-tag">
+                                <span class="player-avatar">👤</span>
+                                <span class="player-name" id="nameSouth">玩家 (南)</span>
+                                <span class="player-score" id="scoreSouth">1000</span>
+                                <span class="ting-badge" id="tingSouth">听</span>
+                            </div>
+
+                            <!-- 听牌提示面板 (当手牌已听牌时展示) -->
+                            <div class="ting-hint-board" id="tingHintBoard">
+                                <div class="ting-board-header">
+                                    <span class="ting-icon-fire">🔥</span>
+                                    <span class="ting-board-title">听牌：</span>
+                                </div>
+                                <div class="ting-board-tiles" id="tingBoardTiles"></div>
+                            </div>
+                        </div>
+
+                        <!-- 玩家手牌主区 -->
+                        <div class="south-hand-wrapper">
+                            <div class="melds-container" id="meldsSouth"></div>
+                            <div class="user-hand-container" id="handSouth"></div>
+                            <!-- 最新摸牌单独区 -->
+                            <div class="drawn-card-slot" id="drawnCardSlot"></div>
+                        </div>
+
+                        <!-- 互动操作面板 (打牌/吃/碰/杠/胡/过) -->
+                        <div class="action-panel" id="actionPanel">
+                            <button id="btnActionDiscard" class="act-btn btn-discard" onclick="onUserActionClick('discard')">打牌</button>
+                            <button id="btnActionChi" class="act-btn btn-chi" onclick="onUserActionClick('chi')">吃</button>
+                            <button id="btnActionPeng" class="act-btn btn-peng" onclick="onUserActionClick('peng')">碰</button>
+                            <button id="btnActionGang" class="act-btn btn-gang" onclick="onUserActionClick('gang')">杠</button>
+                            <button id="btnActionHu" class="act-btn btn-hu" onclick="onUserActionClick('hu')">胡</button>
+                            <button id="btnActionPass" class="act-btn btn-pass" onclick="onUserActionClick('pass')">过</button>
+                        </div>
+
+                        <!-- 吃牌多顺子选择弹窗 -->
+                        <div class="chi-selection-modal" id="chiSelectionModal">
+                            <div class="chi-modal-title">请选择吃牌顺子组合：</div>
+                            <div class="chi-options-list" id="chiOptionsList"></div>
+                            <button class="btn btn-secondary btn-sm" onclick="closeChiModal()">取消</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右侧抽屉面板 (记牌器 & 对局事件日志) -->
+            <aside class="side-drawer" id="sideDrawer">
+                <div class="drawer-header">
+                    <h3>📊 对局监控台</h3>
+                    <button class="btn-close" onclick="toggleSidePanel()">×</button>
+                </div>
+                
+                <!-- AI 推荐雷达 -->
+                <div class="drawer-section ai-radar-section" id="aiRadarBox">
+                    <div class="section-title">💡 AI 思考分析</div>
+                    <div class="radar-content" id="aiRadarContent">暂无评估</div>
+                </div>
+
+                <!-- 记牌器 -->
+                <div class="drawer-section card-counter-section">
+                    <div class="section-title">🧮 记牌器 (全场剩余牌张)</div>
+                    <div class="counter-groups" id="cardCounterGrid"></div>
+                </div>
+
+                <!-- 日志流水 -->
+                <div class="drawer-section logs-section">
+                    <div class="section-title">📜 对局事件日志</div>
+                    <div class="logs-container" id="gameLogsList"></div>
+                </div>
+            </aside>
+        </section>
+
+        <!-- 视图 2: 算法实验室 (胡牌/听牌/AI决策测试) -->
+        <section id="viewLab" class="view-section">
+            <div class="lab-container">
+                <div class="lab-intro-banner">
+                    <h2>🧪 麻将算法在线测试台</h2>
+                    <p>直观体验带多张鬼牌（癞子）的毫秒级查表胡牌算法与听牌分析，测试任意手牌与鬼牌组合！</p>
+                </div>
+
+                <!-- 预设牌型快速测试 -->
+                <div class="lab-card">
+                    <div class="lab-card-title">✨ 经典预设牌型 (点击一键载入测试)</div>
+                    <div class="presets-row">
+                        <button class="preset-btn" onclick="loadPreset('standard_hu')">🏆 标准胡牌 (14张)</button>
+                        <button class="preset-btn" onclick="loadPreset('liang_mian_ting')">🎯 两面听牌 (听2门)</button>
+                        <button class="preset-btn" onclick="loadPreset('dan_diao_ting')">🎣 单钓将听牌</button>
+                        <button class="preset-btn" onclick="loadPreset('gui_hu')">👑 带2张鬼牌胡牌</button>
+                        <button class="preset-btn" onclick="loadPreset('gui_ting_multi')">🌟 带鬼牌听5张牌</button>
+                        <button class="preset-btn" onclick="loadPreset('qi_dui')">👯 七对胡牌</button>
+                        <button class="preset-btn" onclick="loadPreset('qing_yi_se')">🌊 清一色听牌</button>
+                    </div>
+                </div>
+
+                <!-- 手牌编辑区 -->
+                <div class="lab-card">
+                    <div class="lab-card-title">
+                        <span>🀄 当前测试手牌 (上限 14 张)</span>
+                        <div class="card-count-indicator">
+                            已选: <strong id="labHandCount">0</strong> / 14 张
+                            <button class="btn btn-secondary btn-sm" onclick="clearLabHand()">清空手牌</button>
+                        </div>
+                    </div>
+                    <div class="lab-hand-rack" id="labHandDisplay"></div>
+                </div>
+
+                <!-- 鬼牌指定区 -->
+                <div class="lab-card">
+                    <div class="lab-card-title">
+                        <span>👑 鬼牌 (癞子) 设置</span>
+                        <span class="lab-tip">点击选中的牌将作为百搭鬼牌</span>
+                    </div>
+                    <div class="lab-gui-selector" id="labGuiSelector"></div>
+                </div>
+
+                <!-- 麻将牌库选牌器 -->
+                <div class="lab-card">
+                    <div class="lab-card-title">👇 点击下方牌面添加至手牌</div>
+                    <div class="tile-picker-grid" id="tilePickerGrid"></div>
+                </div>
+
+                <!-- 算法执行按钮与结果面板 -->
+                <div class="lab-card lab-result-card">
+                    <div class="lab-actions-row">
+                        <button class="btn btn-success btn-lg" onclick="runAlgoTest()">⚡ 执行算法测试 (isHu / isTing / outAI)</button>
+                    </div>
+
+                    <div class="algo-results-dashboard" id="algoResultsDashboard">
+                        <div class="result-box">
+                            <div class="res-label">胡牌检测 (HuUtil.isHu)</div>
+                            <div class="res-status" id="resHuStatus">-</div>
+                            <div class="res-time" id="resHuTime">耗时: - µs</div>
+                        </div>
+
+                        <div class="result-box">
+                            <div class="res-label">听牌分析 (HuUtil.isTing)</div>
+                            <div class="res-status" id="resTingStatus">-</div>
+                            <div class="res-ting-list" id="resTingList"></div>
+                            <div class="res-time" id="resTingTime">耗时: - µs</div>
+                        </div>
+
+                        <div class="result-box">
+                            <div class="res-label">AI 出牌推荐 (AIUtil.outAI)</div>
+                            <div class="res-status" id="resAiStatus">-</div>
+                            <div class="res-ai-tile" id="resAiTile"></div>
+                            <div class="res-time" id="resAiTime">耗时: - µs</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 弹窗：开新局设置 -->
+    <div class="modal-backdrop" id="newGameModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>🎲 开启新对局</h3>
+                <button class="modal-close" onclick="closeNewGameModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>鬼牌 (癞子) 规则设定：</label>
+                    <div class="radio-options">
+                        <label class="radio-card">
+                            <input type="radio" name="guiRule" value="random_flip" checked>
+                            <span class="radio-text">
+                                <strong>翻牌定鬼 (腾讯麻将经典)</strong>
+                                <small>从牌墙翻一张，它的下一张牌作为鬼牌</small>
+                            </span>
+                        </label>
+                        <label class="radio-card">
+                            <input type="radio" name="guiRule" value="bai">
+                            <span class="radio-text">
+                                <strong>白板做鬼</strong>
+                                <small>4张白板作为全能通配鬼牌</small>
+                            </span>
+                        </label>
+                        <label class="radio-card">
+                            <input type="radio" name="guiRule" value="zhong">
+                            <span class="radio-text">
+                                <strong>红中做鬼</strong>
+                                <small>4张红中作为全能通配鬼牌</small>
+                            </span>
+                        </label>
+                        <label class="radio-card">
+                            <input type="radio" name="guiRule" value="none">
+                            <span class="radio-text">
+                                <strong>纯手牌 (无鬼牌)</strong>
+                                <small>经典国标/大众麻将，纯手打无通配</small>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeNewGameModal()">取消</button>
+                <button class="btn btn-primary" onclick="confirmNewGame()">立即开局</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 弹窗：胡牌结算大吉 -->
+    <div class="modal-backdrop" id="winModal">
+        <div class="modal-box win-modal-box">
+            <div class="win-banner">
+                <div class="win-icon" id="winIcon">🎉</div>
+                <h2 id="winTitle">恭喜胡牌！</h2>
+            </div>
+            <div class="win-content">
+                <div class="win-details-row">
+                    <div class="win-item">
+                        <span class="label">获胜者:</span>
+                        <strong id="winPlayerName">玩家</strong>
+                    </div>
+                    <div class="win-item">
+                        <span class="label">胡牌张:</span>
+                        <div id="winCardTile" class="win-tile-slot"></div>
+                    </div>
+                    <div class="win-item">
+                        <span class="label">总番数 / 得分:</span>
+                        <strong id="winScoreText" class="gold-text">8 番 (80分)</strong>
+                    </div>
+                </div>
+
+                <div class="win-patterns-box">
+                    <div class="pattern-title">番型清单：</div>
+                    <div class="pattern-tags" id="winPatternTags"></div>
+                </div>
+
+                <div class="win-hands-reveal" id="winHandsReveal"></div>
+            </div>
+            <div class="modal-footer win-footer">
+                <button class="btn btn-primary btn-lg" onclick="closeWinModal(); openNewGameModal();">再来一局</button>
+                <button class="btn btn-secondary btn-lg" onclick="closeWinModal()">查看牌局</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 全局打牌听牌悬浮气泡 -->
+    <div class="tile-ting-tooltip" id="tileTingTooltip"></div>
+
+    <!-- 依赖脚本 -->
+    <script src="mahjong-tiles.js"></script>
+    <script src="audio.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
