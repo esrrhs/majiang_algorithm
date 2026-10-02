@@ -470,9 +470,29 @@ public class HuCommon
 		return ret;
 	}
 
+	public static File findDataFile(String name)
+	{
+		File file = new File(name);
+		if (file.exists())
+		{
+			return file;
+		}
+		file = new File("data", name);
+		if (file.exists())
+		{
+			return file;
+		}
+		file = new File("../data", name);
+		if (file.exists())
+		{
+			return file;
+		}
+		return new File(name);
+	}
+
 	public static void load()
 	{
-		File file = new File("majiang_clien_" + NAME + ".txt");
+		File file = findDataFile("majiang_clien_" + NAME + ".txt");
 		if (!file.exists())
 		{
 			return;
