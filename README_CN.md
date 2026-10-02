@@ -3,7 +3,8 @@
 [<img src="https://img.shields.io/github/license/esrrhs/majiang_algorithm">](https://github.com/esrrhs/majiang_algorithm)
 [<img src="https://img.shields.io/github/languages/top/esrrhs/majiang_algorithm">](https://github.com/esrrhs/majiang_algorithm)
 [<img src="https://img.shields.io/maven-central/v/com.github.esrrhs/majiang_algorithm">](https://central.sonatype.com/artifact/com.github.esrrhs/majiang_algorithm)
-[<img src="https://img.shields.io/github/actions/workflow/status/esrrhs/majiang_algorithm/maven.yml?branch=master">](https://github.com/esrrhs/majiang_algorithm/actions)
+[<img src="https://img.shields.io/github/actions/workflow/status/esrrhs/majiang_algorithm/maven.yml?branch=master&label=java%20ci">](https://github.com/esrrhs/majiang_algorithm/actions)
+[<img src="https://img.shields.io/github/actions/workflow/status/esrrhs/majiang_algorithm/go.yml?branch=master&label=go%20ci">](https://github.com/esrrhs/majiang_algorithm/actions)
 
 > 高性能麻将胡牌 & AI 出牌算法，基于**查表法**实现，支持多张鬼牌（癞子）。
 
@@ -18,6 +19,21 @@
 - **AI 出牌**：评分模型驱动，自动决策出牌、碰牌、杠牌
 - **查表法**：离线预计算，运行时仅做哈希查找，性能极高
 - **覆盖全牌型**：万、筒、条、风牌（東南西北）、箭牌（中發白）
+
+---
+
+## 目录结构
+
+```
+java/    Java 实现(Maven 工程,发布到 Maven Central)
+go/      Go 实现(Go module,与 Java 版行为对齐)
+data/    预计算查表文件,两个实现共用
+```
+
+两个实现加载同一份 `data/` 下的查表文件,并通过测试保证行为一致:
+算法单测在 JUnit 与 `go test` 间一一对应移植;[go/testdata/parity_cases.txt](./go/testdata/parity_cases.txt)
+中保存了 2000+ 局固定种子发牌的胡牌/听牌/AI 决策结果,由
+`java/.../ParityFixtureTest.java` 与 `go/parity_test.go` 双语回放校验。
 
 ---
 
@@ -64,6 +80,54 @@ boolean isPeng = AIUtil.pengAI(cards, gui, pengCard, 0.0d);
 boolean isGang = AIUtil.gangAI(cards, gui, gangCard, 0.0d);
 ```
 
+### Go
+
+```bash
+go get github.com/esrrhs/majiang_algorithm/go
+```
+
+```go
+package main
+
+import (
+	majiang "github.com/esrrhs/majiang_algorithm/go"
+)
+
+func main() {
+	// 加载预计算表(依次在当前目录、./data、../data 查找)
+	majiang.Load()
+
+	cards := majiang.StringToCards("1万,2万,3万,东,东")
+	gui := majiang.StringToCard("东")
+
+	// 判断胡牌
+	isHu := majiang.IsHu(cards, gui)
+
+	// 查询听牌
+	ting := majiang.IsTing(cards, []int{gui})
+
+	// AI 出牌 / 碰 / 杠
+	out := majiang.OutAI(cards, []int{gui})
+	isPeng := majiang.PengAI(cards, []int{gui}, pengCard, 0)
+	isGang := majiang.GangAI(cards, []int{gui}, gangCard, 0)
+}
+```
+
+运行 Go 测试(在 `go/` 目录下,与 Java 流水线回放同一批样例):
+
+```bash
+cd go && go test ./...
+```
+
+### 重新生成查表文件
+
+两种实现均可离线重新生成查表文件,在输出目录下运行:
+
+```bash
+# Java: gen() 输出 majiang_clien_*.txt / majiang_server_*.txt / majiang.db / majiang_ai_*.txt
+# Go:   HuGen() 输出 majiang_clien_*.txt + majiang_server_*.txt,AiGen() 输出 majiang_ai_*.txt
+```
+
 ---
 
 ## 网页端对战与算法演示平台
@@ -90,6 +154,7 @@ boolean isGang = AIUtil.gangAI(cards, gui, gangCard, 0.0d);
 
 执行以下命令启动本地 Web 服务：
 ```bash
+cd java
 ./mvnw exec:java
 # 或指定端口:
 ./mvnw exec:java -Dexec.args="--port=8080"
@@ -98,7 +163,7 @@ boolean isGang = AIUtil.gangAI(cards, gui, gangCard, 0.0d);
 
 ### 命令行 4 AI 纯自动对局模拟 (Benchmark)
 ```bash
-./mvnw exec:java -Dexec.args="--cli"
+cd java && ./mvnw exec:java -Dexec.args="--cli"
 ```
 
 ## 算法文档

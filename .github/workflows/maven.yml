@@ -25,4 +25,5 @@ jobs:
         cache: maven
 
     - name: Build and Test with Maven
+      working-directory: java
       run: ./mvnw -B verify --file pom.xml

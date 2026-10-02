@@ -367,7 +367,7 @@ public class AICommon
 
 	public static void load()
 	{
-		File file = new File("majiang_ai_" + NAME + ".txt");
+		File file = HuCommon.findDataFile("majiang_ai_" + NAME + ".txt");
 		if (!file.exists())
 		{
 			return;

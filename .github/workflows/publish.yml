@@ -3,7 +3,7 @@ name: Publish to Maven Central
 on:
   push:
     paths:
-      - 'pom.xml'
+      - 'java/pom.xml'
     branches:
       - master
   workflow_dispatch:
@@ -11,6 +11,10 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: java
 
     steps:
     - name: Checkout code
@@ -31,7 +35,7 @@ jobs:
         CUR_VER=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
         echo "Current version: $CUR_VER"
         echo "current_version=$CUR_VER" >> $GITHUB_OUTPUT
-        
+
         # If manually triggered or HEAD^ does not exist, proceed
         if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
           echo "Triggered manually. Proceeding to publish."

@@ -8,3 +8,7 @@ target/
 majiang.db
 dependency-reduced-pom.xml
 *.log
+
+# Go
+*.test
+*.out
