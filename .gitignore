@@ -12,3 +12,6 @@ dependency-reduced-pom.xml
 # Go
 *.test
 *.out
+
+# C++
+cpp/build/

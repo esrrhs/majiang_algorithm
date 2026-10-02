@@ -5,6 +5,7 @@
 [<img src="https://img.shields.io/maven-central/v/com.github.esrrhs/majiang_algorithm">](https://central.sonatype.com/artifact/com.github.esrrhs/majiang_algorithm)
 [<img src="https://img.shields.io/github/actions/workflow/status/esrrhs/majiang_algorithm/maven.yml?branch=master&label=java%20ci">](https://github.com/esrrhs/majiang_algorithm/actions)
 [<img src="https://img.shields.io/github/actions/workflow/status/esrrhs/majiang_algorithm/go.yml?branch=master&label=go%20ci">](https://github.com/esrrhs/majiang_algorithm/actions)
+[<img src="https://img.shields.io/github/actions/workflow/status/esrrhs/majiang_algorithm/cpp.yml?branch=master&label=c%2B%2B%20ci">](https://github.com/esrrhs/majiang_algorithm/actions)
 
 > High-performance Mahjong winning-hand detection & AI discard algorithm based on **lookup tables**, supporting multiple wildcard tiles (jokers/lazi).
 
@@ -27,14 +28,15 @@
 ```
 java/    Java implementation (Maven project, published to Maven Central)
 go/      Go implementation (Go module, behavior-aligned with the Java version)
-data/    Pre-computed lookup tables, shared by both implementations
+cpp/     C++17 implementation (CMake, behavior-aligned with the Java version)
+data/    Pre-computed lookup tables + the cross-language parity fixture, shared by all implementations
 ```
 
 Both implementations load the same table files under `data/` and are kept behaviorally in sync by tests:
-the algorithm unit tests are ported 1:1 between JUnit and `go test`, and
-[go/testdata/parity_cases.txt](./go/testdata/parity_cases.txt) holds 2000+ fixed-seed deals whose
-hu/ting/AI results are replayed and asserted by both languages
-(`java/.../ParityFixtureTest.java` and `go/parity_test.go`).
+the algorithm unit tests are ported 1:1 between JUnit, `go test` and C++ tests, and
+[data/parity_cases.txt](./data/parity_cases.txt) holds 2000+ fixed-seed deals whose
+hu/ting/AI results are replayed and asserted by every language
+(`java/.../ParityFixtureTest.java`, `go/parity_test.go` and `cpp/test/parity_test.cpp`).
 
 ---
 
@@ -118,6 +120,34 @@ Run the Go test suite (from `go/`, replays the same cases as the Java pipeline):
 
 ```bash
 cd go && go test ./...
+```
+
+### C++
+
+```bash
+cd cpp
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build -j
+./build/majiang_tests   # or: ctest --test-dir build --output-on-failure
+```
+
+```cpp
+#include "majiang/api.h"
+#include "majiang/def.h"
+#include "majiang/hu_util.h"
+#include "majiang/ai_util.h"
+
+// Load pre-computed tables (looked up in ., ./data, ../data)
+majiang::Load();
+
+std::vector<int> cards = majiang::StringToCards("1万,2万,3万,东,东");
+int gui = majiang::StringToCard("东");
+
+bool isHu = majiang::IsHu(cards, gui);                 // Check if hand is a winning hand
+std::vector<int> ting = majiang::IsTing(cards, {gui}); // Waiting tiles
+int out = majiang::OutAI(cards, {gui});                // AI discard
+bool isPeng = majiang::PengAI(cards, {gui}, out, 0.0);
+bool isGang = majiang::GangAI(cards, {gui}, out, 0.0);
 ```
 
 ### Table Generation
