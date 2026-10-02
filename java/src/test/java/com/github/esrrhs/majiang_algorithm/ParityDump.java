@@ -12,12 +12,13 @@ import java.util.Random;
 
 /**
  * Dumps deterministic algorithm results (hu/ting/AI decisions) for a fixed-seed deal set.
- * The output file is the cross-language parity contract: java ParityFixtureTest and
- * go parity_test.go replay the same cases and must reproduce every field exactly.
+ * The output file is the cross-language parity contract: java ParityFixtureTest,
+ * go parity_test.go and the C++ tests replay the same cases and must reproduce
+ * every field exactly.
  *
  * Regenerate with:
  *   cd java && mvn -q test-compile exec:java -Dexec.mainClass=com.github.esrrhs.majiang_algorithm.ParityDump \
- *     -Dexec.classpathScope=test -Dexec.args="../go/testdata/parity_cases.txt"
+ *     -Dexec.classpathScope=test -Dexec.args="../data/parity_cases.txt"
  */
 public class ParityDump
 {

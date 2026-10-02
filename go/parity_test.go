@@ -8,13 +8,17 @@ import (
 	"testing"
 )
 
-// 回放 go/testdata/parity_cases.txt:由 Java 侧 ParityDump 以固定种子导出的
+// 回放 data/parity_cases.txt:由 Java 侧 ParityDump 以固定种子导出的
 // 判胡/听牌/AI 决策样例,Go 实现必须逐字段复现(跨语言功能对齐契约)。
 
 func TestParityFixture(t *testing.T) {
-	f, err := os.Open("testdata/parity_cases.txt")
+	path, err := findDataFile("parity_cases.txt")
 	if err != nil {
 		t.Skipf("跳过(找不到 fixture): %v", err)
+	}
+	f, err := os.Open(path)
+	if err != nil {
+		t.Skipf("跳过(读不了 fixture): %v", err)
 	}
 	defer f.Close()
 

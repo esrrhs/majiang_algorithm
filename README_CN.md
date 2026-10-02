@@ -5,6 +5,7 @@
 [<img src="https://img.shields.io/maven-central/v/com.github.esrrhs/majiang_algorithm">](https://central.sonatype.com/artifact/com.github.esrrhs/majiang_algorithm)
 [<img src="https://img.shields.io/github/actions/workflow/status/esrrhs/majiang_algorithm/maven.yml?branch=master&label=java%20ci">](https://github.com/esrrhs/majiang_algorithm/actions)
 [<img src="https://img.shields.io/github/actions/workflow/status/esrrhs/majiang_algorithm/go.yml?branch=master&label=go%20ci">](https://github.com/esrrhs/majiang_algorithm/actions)
+[<img src="https://img.shields.io/github/actions/workflow/status/esrrhs/majiang_algorithm/cpp.yml?branch=master&label=c%2B%2B%20ci">](https://github.com/esrrhs/majiang_algorithm/actions)
 
 > 高性能麻将胡牌 & AI 出牌算法，基于**查表法**实现，支持多张鬼牌（癞子）。
 
@@ -27,13 +28,14 @@
 ```
 java/    Java 实现(Maven 工程,发布到 Maven Central)
 go/      Go 实现(Go module,与 Java 版行为对齐)
-data/    预计算查表文件,两个实现共用
+cpp/     C++17 实现(CMake,与 Java 版行为对齐)
+data/    预计算查表文件 + 跨语言对齐样例,所有实现共用
 ```
 
 两个实现加载同一份 `data/` 下的查表文件,并通过测试保证行为一致:
-算法单测在 JUnit 与 `go test` 间一一对应移植;[go/testdata/parity_cases.txt](./go/testdata/parity_cases.txt)
+算法单测在 JUnit、`go test` 与 C++ 测试间一一对应移植;[data/parity_cases.txt](./data/parity_cases.txt)
 中保存了 2000+ 局固定种子发牌的胡牌/听牌/AI 决策结果,由
-`java/.../ParityFixtureTest.java` 与 `go/parity_test.go` 双语回放校验。
+`java/.../ParityFixtureTest.java`、`go/parity_test.go` 与 `cpp/test/parity_test.cpp` 多语言回放校验。
 
 ---
 
@@ -119,13 +121,42 @@ func main() {
 cd go && go test ./...
 ```
 
+### C++
+
+```bash
+cd cpp
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build -j
+./build/majiang_tests   # 或: ctest --test-dir build --output-on-failure
+```
+
+```cpp
+#include "majiang/api.h"
+#include "majiang/def.h"
+#include "majiang/hu_util.h"
+#include "majiang/ai_util.h"
+
+// 加载预计算表(依次在当前目录、./data、../data 查找)
+majiang::Load();
+
+std::vector<int> cards = majiang::StringToCards("1万,2万,3万,东,东");
+int gui = majiang::StringToCard("东");
+
+bool isHu = majiang::IsHu(cards, gui);                  // 判断胡牌
+std::vector<int> ting = majiang::IsTing(cards, {gui});  // 听牌列表
+int out = majiang::OutAI(cards, {gui});                 // AI 出牌
+bool isPeng = majiang::PengAI(cards, {gui}, out, 0.0);
+bool isGang = majiang::GangAI(cards, {gui}, out, 0.0);
+```
+
 ### 重新生成查表文件
 
-两种实现均可离线重新生成查表文件,在输出目录下运行:
+三种实现均可离线重新生成查表文件,在输出目录下运行:
 
 ```bash
 # Java: gen() 输出 majiang_clien_*.txt / majiang_server_*.txt / majiang.db / majiang_ai_*.txt
 # Go:   HuGen() 输出 majiang_clien_*.txt + majiang_server_*.txt,AiGen() 输出 majiang_ai_*.txt
+# C++:  HuGen() / AiGen() 与 Go 相同
 ```
 
 ---

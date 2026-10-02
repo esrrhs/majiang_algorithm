@@ -39,7 +39,7 @@ cd go && go test ./...
 
 - `def_test.go` / `huutil_test.go` / `aiutil_test.go`:与 Java 侧 JUnit 用例一一对应的移植。
 - `gen_test.go`:内存重新生成 jian/feng 判胡表与 AI 表,与仓库已提交的查表文件逐行比对。
-- `parity_test.go`:回放 `testdata/parity_cases.txt`(Java `ParityDump` 以固定种子导出的
+- `parity_test.go`:回放 `../data/parity_cases.txt`(Java `ParityDump` 以固定种子导出的
   2000+ 局样例),校验 Go 与 Java 的 isHu / isTing / calc / outAI / chiAI / pengAI / gangAI 完全一致。
 
 ## 表生成
