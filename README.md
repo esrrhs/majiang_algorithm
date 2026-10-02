@@ -7,7 +7,7 @@
 [<img src="https://img.shields.io/github/actions/workflow/status/esrrhs/majiang_algorithm/go.yml?branch=master&label=go%20ci">](https://github.com/esrrhs/majiang_algorithm/actions)
 [<img src="https://img.shields.io/github/actions/workflow/status/esrrhs/majiang_algorithm/cpp.yml?branch=master&label=c%2B%2B%20ci">](https://github.com/esrrhs/majiang_algorithm/actions)
 
-> High-performance Mahjong winning-hand detection & AI discard algorithm based on **lookup tables**, supporting multiple wildcard tiles (jokers/lazi).
+> High-performance Mahjong winning-hand detection & AI discard algorithm based on **lookup tables**, supporting multiple wildcard tiles (jokers). One algorithm, three implementations — **Java / Go / C++** — kept behavior-identical by shared cross-language tests.
 
 [中文文档](./README_CN.md)
 
@@ -20,6 +20,7 @@
 - **AI discard**: Score-model-driven auto decision for discarding, ponging, and konging
 - **Lookup table**: Offline pre-computation; runtime does hash lookups only — extremely fast
 - **Full tile coverage**: Characters (Wan), Circles (Tong), Bamboo (Tiao), Wind tiles (East/South/West/North), Arrow tiles (Zhong/Fa/Bai)
+- **Three implementations**: Java, Go and C++17 load the same lookup tables under `data/`; 2000+ fixed-seed deals are replayed by every CI to pin identical behavior (including bit-exact scores)
 
 ---
 

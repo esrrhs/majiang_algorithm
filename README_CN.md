@@ -7,7 +7,7 @@
 [<img src="https://img.shields.io/github/actions/workflow/status/esrrhs/majiang_algorithm/go.yml?branch=master&label=go%20ci">](https://github.com/esrrhs/majiang_algorithm/actions)
 [<img src="https://img.shields.io/github/actions/workflow/status/esrrhs/majiang_algorithm/cpp.yml?branch=master&label=c%2B%2B%20ci">](https://github.com/esrrhs/majiang_algorithm/actions)
 
-> 高性能麻将胡牌 & AI 出牌算法，基于**查表法**实现，支持多张鬼牌（癞子）。
+> 高性能麻将胡牌 & AI 出牌算法,基于**查表法**实现,支持多张鬼牌(癞子)。一套算法,三种实现 —— **Java / Go / C++**,由跨语言测试保证行为完全一致。
 
 [English Documentation](./README.md)
 
@@ -20,6 +20,7 @@
 - **AI 出牌**：评分模型驱动，自动决策出牌、碰牌、杠牌
 - **查表法**：离线预计算，运行时仅做哈希查找，性能极高
 - **覆盖全牌型**：万、筒、条、风牌（東南西北）、箭牌（中發白）
+- **三语言实现**：Java、Go、C++17 加载同一份 `data/` 查表文件，2000+ 局固定种子对局在每条 CI 中回放校验，行为完全一致（浮点评分按位相等）
 
 ---
 
