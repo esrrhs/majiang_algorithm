@@ -1,0 +1,14 @@
+[Unit]
+Description=Majiang Algorithm Web Server (Go)
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/majiang
+ExecStart=/opt/majiang/majiangserver --port=18090
+Restart=on-failure
+RestartSec=3
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

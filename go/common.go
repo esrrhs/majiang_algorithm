@@ -9,10 +9,10 @@ import (
 	"strings"
 )
 
-// findDataFile 依序在当前目录、data/、../data/ 下查找查表文件,
-// 与 Java 侧 HuCommon.findDataFile 的回退顺序保持一致。
+// findDataFile 依序在当前目录、data/、../data/、../../data/ 下查找查表文件,
+// 与 Java 侧 HuCommon.findDataFile 的回退顺序保持一致(第 4 个候选便于子包测试与 build 目录运行)。
 func findDataFile(name string) (string, error) {
-	for _, p := range []string{name, filepath.Join("data", name), filepath.Join("..", "data", name)} {
+	for _, p := range []string{name, filepath.Join("data", name), filepath.Join("..", "data", name), filepath.Join("..", "..", "data", name)} {
 		if st, err := os.Stat(p); err == nil && !st.IsDir() {
 			return p, nil
 		}

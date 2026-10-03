@@ -191,6 +191,14 @@ cd java
 # 或指定端口:
 ./mvnw exec:java -Dexec.args="--port=8080"
 ```
+
+同样的网页平台也提供 Go 版构建(单个静态二进制,前端已内嵌):
+
+```bash
+cd go
+go run ./cmd/majiangserver --port=8080        # Web 服务
+go run ./cmd/majiangserver --cli              # 命令行 4 AI 对局模拟
+```
 启动后在浏览器中访问：👉 **http://localhost:8080**
 
 ### 命令行 4 AI 纯自动对局模拟 (Benchmark)

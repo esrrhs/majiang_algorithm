@@ -15,3 +15,6 @@ dependency-reduced-pom.xml
 
 # C++
 cpp/build/
+
+# 部署构建产物
+deploy/gq/majiangserver-linux-amd64
