@@ -31,6 +31,7 @@ java/    Java 实现(Maven 工程,发布到 Maven Central)
 go/      Go 实现(Go module,与 Java 版行为对齐)
 cpp/     C++17 实现(CMake,与 Java 版行为对齐)
 data/    预计算查表文件 + 跨语言对齐样例,所有实现共用
+deploy/  线上演示服务器的部署物料(systemd 单元 + 脚本)
 ```
 
 两个实现加载同一份 `data/` 下的查表文件,并通过测试保证行为一致:
@@ -164,7 +165,7 @@ bool isGang = majiang::GangAI(cards, {gui}, out, 0.0);
 
 ## 网页端对战与算法演示平台
 
-> 🌐 **在线体验地址**：👉 **[http://majiang.esrrhs.xyz](http://majiang.esrrhs.xyz)**
+> 🌐 **在线体验地址**：👉 **[http://majiang.esrrhs.xyz](http://majiang.esrrhs.xyz)**（现已由 Go 版服务驱动）
 
 仿照经典腾讯麻将规则与仿真绿色麻将桌设计的交互式网页端对战与算法实验室：
 
@@ -192,7 +193,7 @@ cd java
 ./mvnw exec:java -Dexec.args="--port=8080"
 ```
 
-同样的网页平台也提供 Go 版构建(单个静态二进制,前端已内嵌):
+同样的网页平台也提供 Go 版构建(单个静态二进制,前端已内嵌)——线上演示即以此构建通过 systemd 常驻运行(见 `deploy/gq/`):
 
 ```bash
 cd go

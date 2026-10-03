@@ -31,6 +31,7 @@ java/    Java implementation (Maven project, published to Maven Central)
 go/      Go implementation (Go module, behavior-aligned with the Java version)
 cpp/     C++17 implementation (CMake, behavior-aligned with the Java version)
 data/    Pre-computed lookup tables + the cross-language parity fixture, shared by all implementations
+deploy/  Deployment scaffolding for the live demo server (systemd unit + script)
 ```
 
 Both implementations load the same table files under `data/` and are kept behaviorally in sync by tests:
@@ -164,7 +165,7 @@ To regenerate the lookup tables with either implementation, run from the output 
 
 ## Interactive Web Platform & Algorithm Playground
 
-> 🌐 **Live Demo Online**: 👉 **[http://majiang.esrrhs.xyz](http://majiang.esrrhs.xyz)**
+> 🌐 **Live Demo Online**: 👉 **[http://majiang.esrrhs.xyz](http://majiang.esrrhs.xyz)** (now powered by the Go build)
 
 An interactive web platform and algorithm laboratory modeled after Tencent Mahjong:
 
@@ -191,7 +192,7 @@ cd java
 ./mvnw exec:java -Dexec.args="--port=8080"
 ```
 
-The same web platform also ships as the Go build (single static binary, frontend embedded):
+The same web platform also ships as the Go build (single static binary, frontend embedded) — this is what the live demo runs as a systemd service (`deploy/gq/`):
 
 ```bash
 cd go
