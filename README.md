@@ -190,6 +190,14 @@ cd java
 # or with custom port:
 ./mvnw exec:java -Dexec.args="--port=8080"
 ```
+
+The same web platform also ships as the Go build (single static binary, frontend embedded):
+
+```bash
+cd go
+go run ./cmd/majiangserver --port=8080        # web server
+go run ./cmd/majiangserver --cli              # CLI 4-AI simulation benchmark
+```
 Visit in your browser: 👉 **http://localhost:8080**
 
 ### CLI 4-AI Simulation Benchmark
