@@ -32,7 +32,6 @@ go/      Go pure algorithm library (no web server)
 cpp/     C++17 pure algorithm library (CMake, behavior-aligned with the Java version)
 server/  FakeLua web battle server (game + HTTP in Lua; lookup/AI via cpp/, see server/API.md)
 data/    Pre-computed lookup tables + the cross-language parity fixture, shared by all implementations
-deploy/  Deployment scaffolding for the live demo server (systemd unit + script)
 ```
 
 Both implementations load the same table files under `data/` and are kept behaviorally in sync by tests:
@@ -168,7 +167,7 @@ To regenerate the lookup tables with either implementation, run from the output 
 
 > 🌐 **Live Demo Online**: 👉 **[http://majiang.esrrhs.xyz](http://majiang.esrrhs.xyz)**
 
-The web battle / algorithm playground is implemented in **FakeLua** (`server/`): game engine and HTTP in Lua, lookup tables and AI via the same-repo **`cpp/`** library (`RegisterNativeFunction`). Java / Go / C++ ship as pure algorithm libraries. Deploy via `deploy/gq/` as a systemd service.
+The web battle / algorithm playground is implemented in **FakeLua** (`server/`): game engine and HTTP in Lua, lookup tables and AI via the same-repo **`cpp/`** library (`RegisterNativeFunction`). Java / Go / C++ ship as pure algorithm libraries.
 
 HTTP API contract: **[server/API.md](./server/API.md)**.
 
