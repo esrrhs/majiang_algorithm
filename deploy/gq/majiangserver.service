@@ -1,11 +1,13 @@
 [Unit]
-Description=Majiang Algorithm Web Server (Go)
+Description=Majiang Algorithm Web Server (FakeLua)
 After=network.target
 
 [Service]
 Type=simple
 WorkingDirectory=/opt/majiang
-ExecStart=/opt/majiang/majiangserver --port=18090
+Environment=LD_LIBRARY_PATH=/opt/majiang/lib
+Environment=MAJIANG_PORT=18090
+ExecStart=/opt/majiang/majiangserver_fakelua
 Restart=on-failure
 RestartSec=3
 LimitNOFILE=65536

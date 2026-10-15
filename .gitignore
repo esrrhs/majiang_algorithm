@@ -15,6 +15,10 @@ dependency-reduced-pom.xml
 
 # C++
 cpp/build/
+server/build/
+
+# 本地预合并查表缓存(勿提交)
+data/merged/
 
 # 部署构建产物
 deploy/gq/majiangserver-linux-amd64

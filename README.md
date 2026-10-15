@@ -27,9 +27,10 @@
 ## Repository Layout
 
 ```
-java/    Java implementation (Maven project, published to Maven Central)
-go/      Go implementation (Go module, behavior-aligned with the Java version)
-cpp/     C++17 implementation (CMake, behavior-aligned with the Java version)
+java/    Java pure algorithm library (Maven project, published to Maven Central)
+go/      Go pure algorithm library (no web server)
+cpp/     C++17 pure algorithm library (CMake, behavior-aligned with the Java version)
+server/  FakeLua web battle server (game + HTTP in Lua; lookup/AI via cpp/, see server/API.md)
 data/    Pre-computed lookup tables + the cross-language parity fixture, shared by all implementations
 deploy/  Deployment scaffolding for the live demo server (systemd unit + script)
 ```
@@ -165,46 +166,21 @@ To regenerate the lookup tables with either implementation, run from the output 
 
 ## Interactive Web Platform & Algorithm Playground
 
-> 🌐 **Live Demo Online**: 👉 **[http://majiang.esrrhs.xyz](http://majiang.esrrhs.xyz)** (now powered by the Go build)
+> 🌐 **Live Demo Online**: 👉 **[http://majiang.esrrhs.xyz](http://majiang.esrrhs.xyz)**
 
-An interactive web platform and algorithm laboratory modeled after Tencent Mahjong:
+The web battle / algorithm playground is implemented in **FakeLua** (`server/`): game engine and HTTP in Lua, lookup tables and AI via the same-repo **`cpp/`** library (`RegisterNativeFunction`). Java / Go / C++ ship as pure algorithm libraries. Deploy via `deploy/gq/` as a systemd service.
 
-1. **4-Player Mahjong Battle (1 Human vs 3 AI / 4 AI Spectator)**:
-   - Green felt table, 3D tiles, and full tile set (Wan, Tong, Tiao, Winds, Dragons).
-   - Wildcard (gui / laizi) support: Random flip indicator, specified wildcard, or clean hand.
-   - Draw, Discard, Chow (Chi), Pong (Peng), Kong (Gang), and Winning Hand (Hu).
-2. **Real-time Ready-Hand (Ting) Detection**:
-   - Shows winning tiles and remaining count in the game whenever you are in Ting.
-   - Hover over hand tiles during discard to preview winning targets if discarded.
-3. **💡 AI Recommendation**:
-   - One-click best discard recommendation using `AIUtil.outAI` with expected score.
-   - 4-AI auto-play spectator mode with variable speeds (1x ~ 10x).
-4. **🧪 Algorithm Playground**:
-   - Test any hand (1-14 tiles) with wildcards.
-   - Measures `isHu`, `isTing`, and `outAI` execution times in microseconds (µs).
-
-### Start Web Server
+HTTP API contract: **[server/API.md](./server/API.md)**.
 
 ```bash
-cd java
-./mvnw exec:java
-# or with custom port:
-./mvnw exec:java -Dexec.args="--port=8080"
+# Requires a built FakeLua shared library (see ../../fakelua)
+cd server && mkdir -p build && cd build
+cmake .. -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE=Release
+cmake --build . -j
+cd .. && ./build/majiangserver_fakelua smoke   # load tables + algo/spectator self-check
+./build/majiangserver_fakelua                   # HTTP on :8888 (MAJIANG_PORT to override)
 ```
-
-The same web platform also ships as the Go build (single static binary, frontend embedded) — this is what the live demo runs as a systemd service (`deploy/gq/`):
-
-```bash
-cd go
-go run ./cmd/majiangserver --port=8080        # web server
-go run ./cmd/majiangserver --cli              # CLI 4-AI simulation benchmark
-```
-Visit in your browser: 👉 **http://localhost:8080**
-
-### CLI 4-AI Simulation Benchmark
-```bash
-cd java && ./mvnw exec:java -Dexec.args="--cli"
-```
+Visit in your browser: 👉 **http://localhost:8888**
 
 ## Algorithm Documentation
 
