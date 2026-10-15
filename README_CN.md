@@ -27,9 +27,10 @@
 ## 目录结构
 
 ```
-java/    Java 实现(Maven 工程,发布到 Maven Central)
-go/      Go 实现(Go module,与 Java 版行为对齐)
-cpp/     C++17 实现(CMake,与 Java 版行为对齐)
+java/    Java 纯算法库(Maven 工程,发布到 Maven Central)
+go/      Go 纯算法库(不含 web 服务)
+cpp/     C++17 纯算法库(CMake,与 Java 版行为对齐)
+server/  FakeLua 网页对战服务(对局 + HTTP 在 Lua;查表/AI 复用 cpp/,见 server/API.md)
 data/    预计算查表文件 + 跨语言对齐样例,所有实现共用
 deploy/  线上演示服务器的部署物料(systemd 单元 + 脚本)
 ```
@@ -165,47 +166,21 @@ bool isGang = majiang::GangAI(cards, {gui}, out, 0.0);
 
 ## 网页端对战与算法演示平台
 
-> 🌐 **在线体验地址**：👉 **[http://majiang.esrrhs.xyz](http://majiang.esrrhs.xyz)**（现已由 Go 版服务驱动）
+> 🌐 **在线体验地址**：👉 **[http://majiang.esrrhs.xyz](http://majiang.esrrhs.xyz)**
 
-仿照经典腾讯麻将规则与仿真绿色麻将桌设计的交互式网页端对战与算法实验室：
+网页对战与算法演示由 **FakeLua** 实现（`server/`：对局引擎与 HTTP 在 Lua，查表与 AI 经 `RegisterNativeFunction` 复用同仓库 **`cpp/`** 库），线上经 `deploy/gq/` 以 systemd 常驻。Java / Go / C++ 仅提供纯算法库。
 
-1. **4人麻将对局体验 (1 真人 vs 3 AI / 4 AI 自动对战)**：
-   - 沉浸式绿色丝绒麻将桌与精细 3D 质感麻将牌。
-   - 完整支持万、筒、条、风、箭全牌型，开局翻牌定鬼（或指定白板/红中做鬼/无鬼）。
-   - 完整实现摸牌、打牌、吃、碰、杠（明杠/暗杠/补杠）、胡（点炮胡/自摸胡/杠上开花）规则。
-2. **实时听牌智能提示**：
-   - 当手牌听牌时，界面常驻高亮显示“听牌提示面板”，罗列可胡的所有牌面及全场剩余张数。
-   - 轮到出牌时，鼠标悬停或选中手牌，实时浮动提示“打出此牌听：[三筒(剩2张), 六筒(剩3张)]”。
-3. **💡 AI 智能决策与推荐**：
-   - 轮到出牌时一键获取 AIUtil 推荐的最优出牌与期望评分。
-   - 支持一键切换全自动 4 AI 观战模式，自由调节 1x ~ 10x 对局速度。
-4. **🧪 算法实验室 (Playground)**：
-   - 任意点选 1~14 张手牌和鬼牌，一键执行 `HuUtil.isHu`、`HuUtil.isTing` 与 `AIUtil.outAI`，微秒级（µs）展示计算耗时与牌型结果。
-   - 内置经典预设：两面听牌、单钓将听牌、七对、多鬼牌大胡、清一色等。
-
-### 启动网页端平台
-
-执行以下命令启动本地 Web 服务：
-```bash
-cd java
-./mvnw exec:java
-# 或指定端口:
-./mvnw exec:java -Dexec.args="--port=8080"
-```
-
-同样的网页平台也提供 Go 版构建(单个静态二进制,前端已内嵌)——线上演示即以此构建通过 systemd 常驻运行(见 `deploy/gq/`):
+HTTP 接口契约见 **[server/API.md](./server/API.md)**。
 
 ```bash
-cd go
-go run ./cmd/majiangserver --port=8080        # Web 服务
-go run ./cmd/majiangserver --cli              # 命令行 4 AI 对局模拟
+# 需已编译 FakeLua 动态库（见 ../../fakelua）
+cd server && mkdir -p build && cd build
+cmake .. -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE=Release
+cmake --build . -j
+cd .. && ./build/majiangserver_fakelua smoke   # 加载查表 + 算法/观战自检
+./build/majiangserver_fakelua                   # HTTP 默认 :8888（可用 MAJIANG_PORT 覆盖）
 ```
-启动后在浏览器中访问：👉 **http://localhost:8080**
-
-### 命令行 4 AI 纯自动对局模拟 (Benchmark)
-```bash
-cd java && ./mvnw exec:java -Dexec.args="--cli"
-```
+启动后在浏览器中访问：👉 **http://localhost:8888**
 
 ## 算法文档
 
