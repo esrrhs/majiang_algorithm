@@ -20,7 +20,7 @@ cd ..
 MAJIANG_PORT=8888 ./build/majiangserver_fakelua
 ```
 
-Go 旧实现参考树在 `ref_go_web/`（不参与构建）。部署见仓库 `deploy/gq/`。
+Go 旧实现参考树在 `ref_go_web/`（不参与构建）。
 
 ## 包结构（`lua/`）
 

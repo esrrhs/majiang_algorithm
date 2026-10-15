@@ -32,7 +32,6 @@ go/      Go 纯算法库(不含 web 服务)
 cpp/     C++17 纯算法库(CMake,与 Java 版行为对齐)
 server/  FakeLua 网页对战服务(对局 + HTTP 在 Lua;查表/AI 复用 cpp/,见 server/API.md)
 data/    预计算查表文件 + 跨语言对齐样例,所有实现共用
-deploy/  线上演示服务器的部署物料(systemd 单元 + 脚本)
 ```
 
 两个实现加载同一份 `data/` 下的查表文件,并通过测试保证行为一致:
@@ -168,7 +167,7 @@ bool isGang = majiang::GangAI(cards, {gui}, out, 0.0);
 
 > 🌐 **在线体验地址**：👉 **[http://majiang.esrrhs.xyz](http://majiang.esrrhs.xyz)**
 
-网页对战与算法演示由 **FakeLua** 实现（`server/`：对局引擎与 HTTP 在 Lua，查表与 AI 经 `RegisterNativeFunction` 复用同仓库 **`cpp/`** 库），线上经 `deploy/gq/` 以 systemd 常驻。Java / Go / C++ 仅提供纯算法库。
+网页对战与算法演示由 **FakeLua** 实现（`server/`：对局引擎与 HTTP 在 Lua，查表与 AI 经 `RegisterNativeFunction` 复用同仓库 **`cpp/`** 库）。Java / Go / C++ 仅提供纯算法库。
 
 HTTP 接口契约见 **[server/API.md](./server/API.md)**。
 
