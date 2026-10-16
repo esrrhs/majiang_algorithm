@@ -33,9 +33,13 @@ MAJIANG_PORT=8888 flua lua
 ```
 
 `update` 每帧只做一帧的活（`runtime.tick()` 泵 IO/定时器并分发请求），节奏由 Lua 侧
-`os.sleep(TICK_INTERVAL_MS)` 自己控制——宿主不加任何节流。帧 arena 在每次 Call 入口回收，
+`os.sleep()` 自己控制——宿主不加任何节流。帧 arena 在每次 Call 入口回收，
 所以不要在 Lua 里写 `while true` 把主循环包进一个 Call。
 退出方式：`update` 返回非 0 / Lua 侧 `flua.set_exit(code)` / SIGTERM（都会先跑 `fini`）。
+
+**节拍与延迟**：Boost.Beast 的一个 HTTP 请求要跨三拍才走完（收请求 → 派发 → 把响应泵出去），
+所以 `main.lua` 用自适应节拍——请求活跃期 1ms 一拍，空闲期退避到 20ms（空闲 CPU ≈ 0%）。
+固定 1000ms 一拍的话，一个请求就要 3s。
 
 Go 旧实现参考树在 `ref_go_web/`（不参与构建）。C++ 算法参考实现与 parity 测试在 `../cpp/`（不参与服务端运行）。
 
@@ -53,3 +57,19 @@ Go 旧实现参考树在 `ref_go_web/`（不参与构建）。C++ 算法参考�
 | `main.lua` | main | 生命周期入口 `init` / `update` / `fini`（宿主固定调用）|
 
 服务端没有 C++ 代码：`flua` 负责生命周期，查表经 fakelua 自带的 sqlite 模块读取。
+
+## 测试
+
+```bash
+# 一次性自检：查表库就绪 + 判胡/听牌/AI 出牌 + 观战推进到 GAME_OVER 且四人分数守恒(4×1000)
+cd server && MAJIANG_SMOKE=1 flua lua --once
+
+# HTTP 契约测试：自己拉起服务(随机端口)后打真接口
+python3 server/tests/api_test.py
+python3 server/tests/api_test.py --base-url URL   # 打已经跑着的服务
+```
+
+`api_test.py` 只依赖标准库，覆盖的契约与 Go 参考实现
+`ref_go_web/web_test.go` 一致：起手发牌、听牌提示、AI 观战结算与分数守恒、
+view JSON 键齐全、静态资源（含目录穿越被挡）、算法接口与脏输入容错。
+CI 见 `.github/workflows/server.yml`。

@@ -6,6 +6,7 @@
 [<img src="https://img.shields.io/github/actions/workflow/status/esrrhs/majiang_algorithm/maven.yml?branch=master&label=java%20ci">](https://github.com/esrrhs/majiang_algorithm/actions)
 [<img src="https://img.shields.io/github/actions/workflow/status/esrrhs/majiang_algorithm/go.yml?branch=master&label=go%20ci">](https://github.com/esrrhs/majiang_algorithm/actions)
 [<img src="https://img.shields.io/github/actions/workflow/status/esrrhs/majiang_algorithm/cpp.yml?branch=master&label=c%2B%2B%20ci">](https://github.com/esrrhs/majiang_algorithm/actions)
+[<img src="https://img.shields.io/github/actions/workflow/status/esrrhs/majiang_algorithm/server.yml?branch=master&label=server%20ci">](https://github.com/esrrhs/majiang_algorithm/actions)
 
 > High-performance Mahjong winning-hand detection & AI discard algorithm based on **lookup tables**, supporting multiple wildcard tiles (jokers). One algorithm, three implementations — **Java / Go / C++** — kept behavior-identical by shared cross-language tests.
 
@@ -173,13 +174,25 @@ HTTP API contract: **[server/API.md](./server/API.md)**.
 
 ```bash
 # Requires a built FakeLua (see ../../fakelua); flua is at build/bin/flua
-python3 tools/gen_majiang_db.py            # first run: convert lookup txt to sqlite
+python3 tools/gen_majiang_db.py   # first run: convert lookup txt to sqlite
 cd server
-flua lua --init=MahjongServer.smoke --update= --fini=   # smoke: tables + algo/spectator
-MAJIANG_PORT=8888 flua lua \               # HTTP on :8888 (MAJIANG_PORT to override)
-  --init=MahjongServer.init --update=MahjongServer.update --fini=MahjongServer.fini
+MAJIANG_SMOKE=1 flua lua --once   # self check: tables + hu/ting/AI + spectator to GAME_OVER
+MAJIANG_PORT=8888 flua lua       # HTTP on :8888 (MAJIANG_PORT to override)
 ```
 Visit in your browser: 👉 **http://localhost:8888**
+
+### Server Tests
+
+`flua` calls the fixed lifecycle of package `"main"` (`init` / `update` / `fini`), so the
+one-shot self check needs no flags. The HTTP contract tests spin up the real server on a
+free port and assert the same contract as the Go reference `server/ref_go_web/web_test.go`
+(initial deal, ting hints, AI spectator settlement with score conservation, view JSON keys,
+static assets, algorithm endpoints):
+
+```bash
+python3 server/tests/api_test.py                     # spawns the server itself
+python3 server/tests/api_test.py --base-url URL      # against a running server
+```
 
 ## Algorithm Documentation
 
