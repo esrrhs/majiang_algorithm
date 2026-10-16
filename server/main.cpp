@@ -1,10 +1,12 @@
 // FakeLua 宿主:编译 server/lua,注册 cpp 算法 native,启动 HTTP 或 smoke。
 #include "fakelua.h"
 
+#include <chrono>
 #include <filesystem>
 #include <iostream>
 #include <string>
 #include <string_view>
+#include <thread>
 
 void RegisterMajiangNatives(fakelua::State *s);
 
@@ -70,6 +72,25 @@ int main(int argc, char **argv) {
         }
         int code = 0;
         Call(s, static_cast<JITType>(jit_type), entry, code);
+        if (code != 0) {
+            return code;
+        }
+        // HTTP 服务器模式:主循环必须在 C++ 侧驱动,每个 tick 一次顶层 Call。
+        // fakelua 无 GC,帧 arena 只在顶层 Call 入口(reentrant 计数为 0 时)Reset;
+        // 若在 Lua 的 main() 里 while true 循环,arena 永不 Reset,每个请求的
+        // json/view/serialize 临时表和字符串无限堆积,导致内存泄露。
+        // 每个 tick 的 Call 返回后 reentrant 归零,下一个 Call 入口即回收上一 tick 的内存。
+        if (entry == "MahjongServer.main") {
+            constexpr auto kTickInterval = std::chrono::seconds(1);
+            while (true) {
+                int tick_code = 0;
+                Call(s, static_cast<JITType>(jit_type), "MahjongServer.tick", tick_code);
+                if (tick_code != 0) {
+                    break;// tick 要求退出
+                }
+                std::this_thread::sleep_for(kTickInterval);
+            }
+        }
         return code;
     } catch (const std::exception &e) {
         std::cerr << "majiangserver_fakelua: " << e.what() << "\n";
