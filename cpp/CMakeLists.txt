@@ -7,7 +7,7 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif()
 
-add_library(majiang STATIC
+set(MAJIANG_SRCS
     src/def.cpp
     src/common.cpp
     src/hu_table.cpp
@@ -16,6 +16,8 @@ add_library(majiang STATIC
     src/ai_util.cpp
     src/api.cpp
 )
+
+add_library(majiang STATIC ${MAJIANG_SRCS})
 target_include_directories(majiang PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 if(MSVC)

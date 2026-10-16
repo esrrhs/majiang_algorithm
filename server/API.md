@@ -369,7 +369,7 @@
 3. 单进程单局即可；若改为多会话，需另加 `gameId`/session，前端也要改。  
 4. 对局 / HTTP 在 Lua；胡牌与 AI 经 `native_majiang.cpp` 调用同仓库 `cpp/` 库（与 Go/Java 查表行为一致）。  
 5. 查表数据：`data/majiang_clien_*.txt`、`majiang_ai_*.txt`（及 feng/jian 变体），由 `majiang::Load()` 加载。  
-6. 冒烟：`./build/majiangserver_fakelua smoke`（Load + IsHu/OutAI + 观战步进至 GAME_OVER）。  
+6. 冒烟：`MAJIANG_SMOKE=1 flua lua --once`（校验查表库 + IsHu/OutAI + 观战至 GAME_OVER）。  
 
 ---
 
@@ -382,7 +382,7 @@
 | 胡 / 听 | `server/lua/huutil.lua` |
 | AI | `server/lua/aiutil.lua` |
 | 番型结算 | `server/lua/fan.lua` |
-| 查表加载入口 | `server/lua/tables.lua` → `majiang_load` |
+| 查表加载入口 | `server/lua/tables.lua` 校验 `data/majiang.db`（由 `tools/gen_majiang_db.py` 生成）|
 | C++ 算法桥 | `server/native_majiang.cpp` + `cpp/` |
 | 入口 | `server/lua/main.lua` + `server/main.cpp` |
 | 前端调用 | `server/static/app.js` |

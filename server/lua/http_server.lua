@@ -74,20 +74,35 @@ local function serve_static(path)
     return resp
 end
 
+-- 牌号只接受 1..34:解析不出来的(0)会让下游算术在 nil 上炸,而 fakelua 里
+-- update 抛错等于整个服务退出,所以脏输入必须在 HTTP 边界挡掉
+local function valid_cards(list)
+    local ret = {}
+    local i = 1
+    while i <= #list do
+        local c = list[i]
+        if c >= 1 and c <= 34 then
+            ret[#ret + 1] = c
+        end
+        i = i + 1
+    end
+    return ret
+end
+
 local function parse_cards_field(m, key)
     local v = m[key]
     if v == nil then return {} end
     if type(v) == "string" then
-        return MajiangDef.StringToCards(v)
+        return valid_cards(MajiangDef.StringToCards(v))
     end
     if type(v) == "table" then
-        local ret = {}
+        local nums = {}
         local i = 1
         while i <= #v do
-            ret[i] = math.floor(tonumber(v[i]) or 0)
+            nums[i] = math.floor(tonumber(v[i]) or 0)
             i = i + 1
         end
-        return ret
+        return valid_cards(nums)
     end
     return {}
 end
@@ -177,7 +192,7 @@ function OnRequest(typ, connid, req)
         local guiCards = parse_cards_field(m, "guiCards")
         if #guiCards == 0 then
             local gui = math.floor(tonumber(m["gui"]) or 0)
-            if gui > 0 then guiCards[1] = gui end
+            if gui >= 1 and gui <= 34 then guiCards[1] = gui end
         end
         table.sort(cards)
         local t0 = os.clock()

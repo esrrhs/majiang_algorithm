@@ -167,17 +167,17 @@ To regenerate the lookup tables with either implementation, run from the output 
 
 > 🌐 **Live Demo Online**: 👉 **[http://majiang.esrrhs.xyz](http://majiang.esrrhs.xyz)**
 
-The web battle / algorithm playground is implemented in **FakeLua** (`server/`): game engine and HTTP in Lua, lookup tables and AI via the same-repo **`cpp/`** library (`RegisterNativeFunction`). Java / Go / C++ ship as pure algorithm libraries.
+The web battle / algorithm playground is implemented in **FakeLua** (`server/`): game engine, HTTP, lookup tables and AI are **all pure Lua**, with the tables queried per key from sqlite. Java / Go / C++ ship as pure algorithm libraries (`cpp/` also hosts the parity tests; it is not used at runtime).
 
 HTTP API contract: **[server/API.md](./server/API.md)**.
 
 ```bash
-# Requires a built FakeLua shared library (see ../../fakelua)
-cd server && mkdir -p build && cd build
-cmake .. -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE=Release
-cmake --build . -j
-cd .. && ./build/majiangserver_fakelua smoke   # load tables + algo/spectator self-check
-./build/majiangserver_fakelua                   # HTTP on :8888 (MAJIANG_PORT to override)
+# Requires a built FakeLua (see ../../fakelua); flua is at build/bin/flua
+python3 tools/gen_majiang_db.py            # first run: convert lookup txt to sqlite
+cd server
+flua lua --init=MahjongServer.smoke --update= --fini=   # smoke: tables + algo/spectator
+MAJIANG_PORT=8888 flua lua \               # HTTP on :8888 (MAJIANG_PORT to override)
+  --init=MahjongServer.init --update=MahjongServer.update --fini=MahjongServer.fini
 ```
 Visit in your browser: 👉 **http://localhost:8888**
 
