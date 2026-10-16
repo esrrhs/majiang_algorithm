@@ -26,11 +26,15 @@ function main()
     print("HTTP 监听 :" .. tostring(port))
     print("浏览器打开 http://127.0.0.1:" .. tostring(port))
     print("--------------------------------------------------")
+    return 0
+end
 
-    while true do
-        runtime.tick()
-        os.sleep(1)
-    end
+-- 由 C++ 宿主以独立顶层 Call 周期驱动(见 main.cpp),不要改回 Lua 侧 while true:
+-- fakelua 无 GC,帧 arena 只在顶层 Call 入口(reentrant 计数为 0 时)Reset。
+-- 若把 while true 写在本函数外层的 main() 一个 Call 里,arena 永不 Reset,
+-- 每个请求产生的 json/view/serialize 临时表和字符串会无限堆积,即内存泄露。
+function tick()
+    runtime.tick()
     return 0
 end
 
