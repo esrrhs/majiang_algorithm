@@ -1,0 +1,74 @@
+name: FakeLua Server CI
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+permissions:
+  contents: read
+
+jobs:
+  server:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+
+    steps:
+    - name: Checkout majiang_algorithm
+      uses: actions/checkout@v4
+
+    # server/ 只是 Lua,宿主是 fakelua 的 flua,所以要把它一起拉下来编译。
+    - name: Checkout fakelua
+      uses: actions/checkout@v4
+      with:
+        repository: esrrhs/fakelua
+        path: fakelua
+
+    - name: Setup ccache
+      uses: hendrikmuhs/ccache-action@v1.2
+      with:
+        key: ${{ runner.os }}-fakelua-release
+        max-size: 2G
+
+    - name: Cache CPM dependencies
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/CPM
+        key: cpm-${{ runner.os }}-${{ hashFiles('fakelua/**/CMakeLists.txt', 'fakelua/cmake/*.cmake') }}
+        restore-keys: |
+          cpm-${{ runner.os }}-
+
+    - name: Setup system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y cmake ninja-build libboost-all-dev libevent-dev \
+          libssl-dev libgflags-dev libmysqlclient-dev pkg-config
+
+    - name: Configure fakelua
+      working-directory: fakelua
+      run: |
+        cmake -S . -B build -G Ninja \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DFAKELUA_BUILD_TESTS=OFF \
+          -DFAKELUA_BUILD_BENCHMARKS=OFF
+
+    # 只要 flua,不编 unit_tests / bench_mark
+    - name: Build flua
+      working-directory: fakelua
+      run: cmake --build build --target flua
+
+    # data/majiang.db 不再入库,由查表 txt 现场生成
+    - name: Generate lookup db (txt -> sqlite)
+      run: python3 tools/gen_majiang_db.py
+
+    # 一次性跑 init:校验查表库 + 判胡/听牌/出牌 + 观战到 GAME_OVER 且分数守恒
+    - name: Self check (init only, one shot)
+      working-directory: server
+      env:
+        MAJIANG_SMOKE: "1"
+      run: ${{ github.workspace }}/fakelua/build/bin/flua lua --once
+
+    # 起真服务打 HTTP 接口,契约与 ref_go_web/web_test.go 一致
+    - name: HTTP API tests
+      run: python3 server/tests/api_test.py --flua ${{ github.workspace }}/fakelua/build/bin/flua
