@@ -28,8 +28,8 @@ local stmt = {
 }
 
 -- 注意:文件级 table 是常量,运行时不可修改(fakelua 会在写入时报
--- "attempt to modify a const table"),所以这里不做跨调用的条目缓存。
--- 实际每个 key 在单次操作内只查一次(递归用的是已取回的列表),无需缓存。
+-- "attempt to modify a const table"),所以这里不做"跨帧"的条目缓存。
+-- 单次决策内的复用走下面的 fetch 单槽缓存,生命周期跟着调用走。
 
 -- 把 hupai 折叠整数展开成每位数字的数组(低位在末尾,与 C++ 还原顺序一致)
 local function unfold(v, n)
@@ -46,7 +46,18 @@ end
 
 -- 取某表某 key 的全部条目,返回 {need_gui数组, jiang数组, hupai数字数组(nil=无需进牌), 条目数}
 -- key 不存在返回 nil(与 C++ 查不到键返回空指针的语义一致)
-local function fetch(idx, key)
+--
+-- slot / ck / cv 是可选的单槽缓存:按花色(1..5)记住"上一次查的 key"和它的条目。
+-- 一次决策里常常连续算很多副只差一张牌的手牌(OutAI 试打、discardToTing 试打),
+-- 而打出一张牌只会让那一个花色的 key 变掉,另外四个花色的 key 完全不变。
+-- 记住每花色上一次的结果后,5 次点查里 4 次命中,约省掉 80% 的 sqlite 往返。
+-- 缓存是普通 Lua 表,由调用方建、随调用结束一起回收(落在帧 arena 上),
+-- 不进 container.map:fakelua 没有 GC,挂到 C++ 堆上的东西会永久驻留。
+-- 条目取回后只读(递归只读 e[1..4]),所以跨次复用是安全的。
+local function fetch(idx, key, slot, ck, cv)
+    if ck ~= nil and ck[slot] == key then
+        return cv[slot]
+    end
     local st = stmt[idx]
     st:bind(key)
     local ng, jg, hp = {}, {}, {}
@@ -67,10 +78,15 @@ local function fetch(idx, key)
         end
     end
     st:reset()
-    if n == 0 then
-        return nil
+    local ret = nil
+    if n > 0 then
+        ret = { ng, jg, hp, n }
     end
-    return { ng, jg, hp, n }
+    if ck ~= nil then
+        ck[slot] = key
+        cv[slot] = ret
+    end
+    return ret
 end
 
 -- 手牌列表 -> 计数数组(下标即牌编号 1..42)
@@ -191,7 +207,7 @@ local function is_ting_hu_table_info(tmp_type, tmp, count, index, guiNum, jiang,
 end
 
 -- 判胡牌。cards 为计数数组,guiNum 为已确定的鬼牌张数
-function IsHuCard(cards, guiNum)
+function IsHuCardWithCache(cards, guiNum, ck, cv)
     local keys = suit_keys(cards)
 
     -- 只收非零花色;条目需满足"无需进牌即胡"(hupai 为 nil)且 need_gui <= guiNum
@@ -201,7 +217,7 @@ function IsHuCard(cards, guiNum)
     while i <= 5 do
         local key = keys[i]
         if key ~= 0 then
-            local e = fetch(TABLE_OF[i], key)
+            local e = fetch(TABLE_OF[i], key, i, ck, cv)
             if e == nil or e[4] == 0 then
                 return false
             end
@@ -228,15 +244,19 @@ function IsHuCard(cards, guiNum)
     return is_hu_table_info(lists, count, 1, guiNum, false)
 end
 
+function IsHuCard(cards, guiNum)
+    return IsHuCardWithCache(cards, guiNum, nil, nil)
+end
+
 -- 听牌。cards 为计数数组,guiNum 为已确定的鬼牌张数,返回听牌列表(空表=不听)
-function IsTingCard(cards, guiNum)
+function IsTingCardWithCache(cards, guiNum, ck, cv)
     local keys = suit_keys(cards)
 
     -- 与 C++ 一致:五个 key 全部查表(含 0),任一查不到直接判定不听
     local all = {}
     local i = 1
     while i <= 5 do
-        local e = fetch(TABLE_OF[i], keys[i])
+        local e = fetch(TABLE_OF[i], keys[i], i, ck, cv)
         if e == nil then
             return {}
         end
@@ -295,6 +315,10 @@ function IsTingCard(cards, guiNum)
     return ret
 end
 
+function IsTingCard(cards, guiNum)
+    return IsTingCardWithCache(cards, guiNum, nil, nil)
+end
+
 -- 手牌 + 鬼牌列表 -> 是否已胡牌(extra:额外的第 extra 张牌,0 表示无)
 function IsHuExtra(input, guiCard, extra)
     local cards = count_cards(input)
@@ -313,7 +337,7 @@ function IsHuExtra(input, guiCard, extra)
 end
 
 -- 手牌 + 鬼牌列表 -> 听牌列表
-function IsTingExtra(input, guiCard)
+function IsTingExtraWithCache(input, guiCard, ck, cv)
     local cards = count_cards(input)
     local guiNum = 0
     local i = 1
@@ -323,5 +347,9 @@ function IsTingExtra(input, guiCard)
         cards[c] = 0
         i = i + 1
     end
-    return IsTingCard(cards, guiNum)
+    return IsTingCardWithCache(cards, guiNum, ck, cv)
+end
+
+function IsTingExtra(input, guiCard)
+    return IsTingExtraWithCache(input, guiCard, nil, nil)
 end

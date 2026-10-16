@@ -179,13 +179,15 @@ local function update_ting(G)
         elseif hn % 3 == 2 then
             local can = false
             local seen = {}
+            -- 同一家试打每张牌只差一张,按花色复用上一次的点查结果
+            local ck, cv = {}, {}
             local i = 1
             while i <= hn do
                 local c = p.hand[i]
                 if seen[c] == nil then
                     seen[c] = true
                     local tmp = remove_first(p.hand, c)
-                    local t = MajiangHu.IsTingExtra(tmp, G.guiCards)
+                    local t = MajiangHu.IsTingExtraWithCache(tmp, G.guiCards, ck, cv)
                     if #t > 0 then can = true; break end
                 end
                 i = i + 1
@@ -880,13 +882,15 @@ function CreateView()
         end
         if #user.hand % 3 == 2 then
             local seen = {}
+            -- 与上面同理:试打之间只差一张牌,按花色缓存点查结果
+            local ck, cv = {}, {}
             i = 1
             while i <= #user.hand do
                 local c = user.hand[i]
                 if seen[c] == nil then
                     seen[c] = true
                     local sim = remove_first(user.hand, c)
-                    local tings = MajiangHu.IsTingExtra(sim, G.guiCards)
+                    local tings = MajiangHu.IsTingExtraWithCache(sim, G.guiCards, ck, cv)
                     if #tings > 0 then
                         local targets = {}
                         local ti = 1
