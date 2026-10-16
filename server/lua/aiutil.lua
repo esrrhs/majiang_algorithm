@@ -26,11 +26,15 @@ local stmt = {
 }
 
 -- 注意:文件级 table 是常量,运行时不可修改(fakelua 会在写入时报
--- "attempt to modify a const table"),所以这里不做跨调用的条目缓存。
--- 实际每个 key 在单次操作内只查一次,无需缓存。
+-- "attempt to modify a const table"),所以这里不做"跨帧"的条目缓存。
+-- 单次决策内的复用走下面的单槽缓存,生命周期跟着调用走,详见 OutAI。
 
 -- 取某表某 key 的全部条目,返回 {jiang数组, P数组, 条目数};key 不存在返回 nil
-local function fetch(idx, key)
+-- slot / ck / cv 是可选的按花色单槽缓存,语义同 huutil.fetch
+local function fetch(idx, key, slot, ck, cv)
+    if ck ~= nil and ck[slot] == key then
+        return cv[slot]
+    end
     local st = stmt[idx]
     st:bind(key)
     local jg, ps = {}, {}
@@ -45,10 +49,15 @@ local function fetch(idx, key)
         ps[n] = row.val
     end
     st:reset()
-    if n == 0 then
-        return nil
+    local ret = nil
+    if n > 0 then
+        ret = { jg, ps, n }
     end
-    return { jg, ps, n }
+    if ck ~= nil then
+        ck[slot] = key
+        cv[slot] = ret
+    end
+    return ret
 end
 
 local function count_cards(input)
@@ -172,7 +181,10 @@ local function calc_ai_table_info(ret, lists, index, jiang, cur)
 end
 
 -- 手牌评分:能听牌直接给"听牌张数 × 10",否则取各花色概率组合的最大值
-function Calc(input, guiCard)
+--
+-- cache 可选,形如 {ck_hu, cv_hu, ck_ai, cv_ai},由调用方在一次决策内持有:
+-- 试打每张牌时手牌只差一张,五个花色里只有一个 key 变,其余四个直接命中缓存。
+function CalcWithCache(input, guiCard, cache)
     local cards = count_cards(input)
     local guiNum = 0
     local i = 1
@@ -183,7 +195,12 @@ function Calc(input, guiCard)
         i = i + 1
     end
 
-    local ting = MajiangHu.IsTingCard(cards, guiNum)
+    local ck_hu, cv_hu, ck_ai, cv_ai
+    if cache ~= nil then
+        ck_hu, cv_hu, ck_ai, cv_ai = cache[1], cache[2], cache[3], cache[4]
+    end
+
+    local ting = MajiangHu.IsTingCardWithCache(cards, guiNum, ck_hu, cv_hu)
     if #ting > 0 then
         return #ting * 10
     end
@@ -193,7 +210,7 @@ function Calc(input, guiCard)
     i = 1
     while i <= 5 do
         -- 与 C++ 一致:查不到的键以 nil 进入列表,递归里直接跳过
-        lists[i] = fetch(TABLE_OF[i], keys[i])
+        lists[i] = fetch(TABLE_OF[i], keys[i], i, ck_ai, cv_ai)
         i = i + 1
     end
 
@@ -213,8 +230,16 @@ function Calc(input, guiCard)
     return d
 end
 
+function Calc(input, guiCard)
+    return CalcWithCache(input, guiCard, nil)
+end
+
 -- 推荐出牌:对每张非鬼牌尝试打出,取评分最高的
 function OutAI(input, guiCard)
+    -- 试打 c 时手牌 = 原手牌去掉一张 c,只有 c 所在花色的 key 变了。
+    -- 缓存按花色各留一个槽,相邻两次试打有 4 个花色可复用,点查量降到约 1/5。
+    -- 缓存是普通 Lua 表,本次调用结束即随帧 arena 回收,不会常驻内存。
+    local cache = { {}, {}, {}, {} }
     local ret = 0
     local max = nil
     local seen = {}
@@ -224,7 +249,7 @@ function OutAI(input, guiCard)
         if seen[c] == nil then
             seen[c] = true
             if not contains(guiCard, c) then
-                local score = Calc(remove_first(input, c), guiCard)
+                local score = CalcWithCache(remove_first(input, c), guiCard, cache)
                 if max == nil or score > max then
                     max = score
                     ret = c
