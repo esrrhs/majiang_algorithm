@@ -6,6 +6,7 @@
 [<img src="https://img.shields.io/github/actions/workflow/status/esrrhs/majiang_algorithm/maven.yml?branch=master&label=java%20ci">](https://github.com/esrrhs/majiang_algorithm/actions)
 [<img src="https://img.shields.io/github/actions/workflow/status/esrrhs/majiang_algorithm/go.yml?branch=master&label=go%20ci">](https://github.com/esrrhs/majiang_algorithm/actions)
 [<img src="https://img.shields.io/github/actions/workflow/status/esrrhs/majiang_algorithm/cpp.yml?branch=master&label=c%2B%2B%20ci">](https://github.com/esrrhs/majiang_algorithm/actions)
+[<img src="https://img.shields.io/github/actions/workflow/status/esrrhs/majiang_algorithm/server.yml?branch=master&label=server%20ci">](https://github.com/esrrhs/majiang_algorithm/actions)
 
 > 高性能麻将胡牌 & AI 出牌算法,基于**查表法**实现,支持多张鬼牌(癞子)。一套算法,三种实现 —— **Java / Go / C++**,由跨语言测试保证行为完全一致。
 
@@ -178,13 +179,26 @@ init / update / fini 生命周期；查表数据走 sqlite 按 key 点查，常�
 # 需已编译 fakelua（见 ../../fakelua），flua 在 build/bin/flua
 python3 tools/gen_majiang_db.py            # 首次：txt 查表转 sqlite(data/majiang.db)
 cd server
-MAJIANG_SMOKE=1 flua lua --once            # 自检：查表 + 算法/观战
+MAJIANG_SMOKE=1 flua lua --once             # 自检：查表 + 判胡/听牌/AI + 观战到 GAME_OVER
 MAJIANG_PORT=8888 flua lua                 # HTTP 默认 :8888（可用 MAJIANG_PORT 覆盖）
 ```
 
 宿主固定调用 `package "main"` 下的 `init`/`update`/`fini`，无需任何参数；
-节拍由 Lua 侧 `os.sleep` 自行控制。
+节拍由 Lua 侧 `os.sleep` 自行控制（有请求 1ms，空闲退避 20ms）。
 启动后在浏览器中访问：👉 **http://localhost:8888**
+
+### 服务端测试
+
+一次性自检（`MAJIANG_SMOKE=1 flua lua --once`）校验查表库就绪、判胡/听牌/AI 出牌，
+以及观战推进到 `GAME_OVER` 且四人分数守恒（4×1000）。
+HTTP 契约测试会自己拉起服务（随机端口），断言与 Go 参考实现
+`server/ref_go_web/web_test.go` 相同的契约：起手发牌、听牌提示、AI 观战结算与分数守恒、
+view JSON 键齐全、静态资源（含目录穿越被挡）、算法接口。
+
+```bash
+python3 server/tests/api_test.py                     # 自己拉起服务
+python3 server/tests/api_test.py --base-url URL      # 打已经跑着的服务
+```
 
 ## 算法文档
 
