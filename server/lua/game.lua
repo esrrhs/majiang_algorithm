@@ -768,7 +768,7 @@ function CreateView()
     local G = loadG()
     if G == nil or not G.ready then
         return { gameId = 0, phase = "GAME_OVER", players = {}, availableActions = new_actions(),
-            currentTingTargets = {}, discardToTing = { _ = true }, logs = {}, cardRemainCounts = { _ = true },
+            currentTingTargets = {}, discardToTing = {}, logs = {}, cardRemainCounts = {},
             guiCards = {}, spectatorMode = false, wallCount = 0, guiIndicator = 0, dealerSeat = 0,
             currentSeat = 0, lastDiscard = 0, lastDiscardSeat = -1 }
     end
@@ -865,8 +865,10 @@ function CreateView()
         end
     end
     local currentTingTargets = {}
-    local discardToTing = { _placeholder = true }
-    discardToTing._placeholder = nil
+    -- discardToTing 是 map[string][]TingTarget(键是牌号字符串)。非空时 json.encode
+    -- 会因为键不是整数而编码成对象;空表在 fakelua 里一律编码成 [] (Go 版是 {})。
+    -- 前端只用 discardTingMap[card] 取值,[] 与 {} 在 JS 上等价,所以不再为它做手脚。
+    local discardToTing = {}
     if not user.isAi or G.spectatorMode then
         if #user.hand % 3 == 1 then
             local tings = MajiangHu.IsTingExtra(user.hand, G.guiCards)
@@ -898,16 +900,6 @@ function CreateView()
                 i = i + 1
             end
         end
-    end
-    -- ensure discardToTing is object not empty array for json
-    local hasKey = false
-    for k, v in pairs(discardToTing) do
-        hasKey = true
-        break
-    end
-    if not hasKey then
-        discardToTing["__empty"] = true
-        discardToTing["__empty"] = nil
     end
     local guiCards = {}
     i = 1
