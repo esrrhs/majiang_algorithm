@@ -30,7 +30,7 @@
 java/    Java 纯算法库(Maven 工程,发布到 Maven Central)
 go/      Go 纯算法库(不含 web 服务)
 cpp/     C++17 纯算法库(CMake,与 Java 版行为对齐)
-server/  FakeLua 网页对战服务(对局 + HTTP 在 Lua;查表/AI 复用 cpp/,见 server/API.md)
+server/  FakeLua 网页对战服务(纯 Lua:对局/HTTP/查表/AI 全在 Lua,查表走 sqlite,见 server/API.md)
 data/    预计算查表文件 + 跨语言对齐样例,所有实现共用
 ```
 
@@ -167,18 +167,23 @@ bool isGang = majiang::GangAI(cards, {gui}, out, 0.0);
 
 > 🌐 **在线体验地址**：👉 **[http://majiang.esrrhs.xyz](http://majiang.esrrhs.xyz)**
 
-网页对战与算法演示由 **FakeLua** 实现（`server/`：对局引擎与 HTTP 在 Lua，查表与 AI 经 `RegisterNativeFunction` 复用同仓库 **`cpp/`** 库）。Java / Go / C++ 仅提供纯算法库。
+网页对战与算法演示由 **FakeLua** 实现（`server/`：对局引擎、HTTP、查表与 AI **全部为纯 Lua**，查表数据走 sqlite 按 key 点查）。Java / Go / C++ 仅提供纯算法库（`cpp/` 含 parity 测试，不参与服务端运行）。
 
 HTTP 接口契约见 **[server/API.md](./server/API.md)**。
 
+服务端为**纯 Lua 实现**（`server/` 下无 C++ 代码），由 fakelua 自带的 `flua` 宿主驱动
+init / update / fini 生命周期；查表数据走 sqlite 按 key 点查，常驻内存约 23MB。
+
 ```bash
-# 需已编译 FakeLua 动态库（见 ../../fakelua）
-cd server && mkdir -p build && cd build
-cmake .. -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE=Release
-cmake --build . -j
-cd .. && ./build/majiangserver_fakelua smoke   # 加载查表 + 算法/观战自检
-./build/majiangserver_fakelua                   # HTTP 默认 :8888（可用 MAJIANG_PORT 覆盖）
+# 需已编译 fakelua（见 ../../fakelua），flua 在 build/bin/flua
+python3 tools/gen_majiang_db.py            # 首次：txt 查表转 sqlite(data/majiang.db)
+cd server
+MAJIANG_SMOKE=1 flua lua --once            # 自检：查表 + 算法/观战
+MAJIANG_PORT=8888 flua lua                 # HTTP 默认 :8888（可用 MAJIANG_PORT 覆盖）
 ```
+
+宿主固定调用 `package "main"` 下的 `init`/`update`/`fini`，无需任何参数；
+节拍由 Lua 侧 `os.sleep` 自行控制。
 启动后在浏览器中访问：👉 **http://localhost:8888**
 
 ## 算法文档
