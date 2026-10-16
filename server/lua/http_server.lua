@@ -2,6 +2,16 @@ package "MajiangHttp"
 
 local static_root = "static"
 
+-- 已派发的请求数。文件级 local 落在常量区不可写,计数放 container.map(C++ 堆)。
+-- main.lua 的 update 靠它判断"现在忙不忙",从而在 1ms / 20ms 两档节拍间切换。
+local served = container.map()
+
+-- 注意:静态资源也计数。页面加载会连着拉十几个 css/js/svg,
+-- 把它们算进来才不会在加载中途掉回慢节拍。
+function ServedCount()
+    return served:get("n") or 0
+end
+
 local function cors_headers()
     local h = {}
     h["Access-Control-Allow-Origin"] = "*"
@@ -109,6 +119,7 @@ end
 
 function OnRequest(typ, connid, req)
     if typ ~= "request" then return nil end
+    served:set("n", ServedCount() + 1)
     local method = req.method
     local path = req.path
     if method == "OPTIONS" then
