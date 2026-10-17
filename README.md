@@ -31,11 +31,11 @@
 java/    Java pure algorithm library (Maven project, published to Maven Central)
 go/      Go pure algorithm library (no web server)
 cpp/     C++17 pure algorithm library (CMake, behavior-aligned with the Java version)
-server/  FakeLua web battle server (game + HTTP in Lua; lookup/AI via cpp/, see server/API.md)
+server/  FakeLua web battle server (game + HTTP + lookup + AI all in Lua, tables queried per key from sqlite; see server/API.md)
 data/    Pre-computed lookup tables + the cross-language parity fixture, shared by all implementations
 ```
 
-Both implementations load the same table files under `data/` and are kept behaviorally in sync by tests:
+All three implementations load the same table files under `data/` and are kept behaviorally in sync by tests:
 the algorithm unit tests are ported 1:1 between JUnit, `go test` and C++ tests, and
 [data/parity_cases.txt](./data/parity_cases.txt) holds 2000+ fixed-seed deals whose
 hu/ting/AI results are replayed and asserted by every language
@@ -170,7 +170,7 @@ To regenerate the lookup tables with either implementation, run from the output 
 
 The web battle / algorithm playground is implemented in **FakeLua** (`server/`): game engine, HTTP, lookup tables and AI are **all pure Lua**, with the tables queried per key from sqlite. Java / Go / C++ ship as pure algorithm libraries (`cpp/` also hosts the parity tests; it is not used at runtime).
 
-HTTP API contract: **[server/API.md](./server/API.md)**.
+HTTP API contract: **[server/API.md](./server/API.md)**. Server details: **[server/README.md](./server/README.md)**.
 
 ```bash
 # Requires a built FakeLua (see ../../fakelua); flua is at build/bin/flua
@@ -180,6 +180,25 @@ MAJIANG_SMOKE=1 flua lua --once   # self check: tables + hu/ting/AI + spectator 
 MAJIANG_PORT=8888 flua lua       # HTTP on :8888 (MAJIANG_PORT to override)
 ```
 Visit in your browser: 👉 **http://localhost:8888**
+
+### Server Resource Footprint
+
+Measured on macOS arm64 (Release build of `flua`), 4-player games, HTTP over loopback:
+
+| Metric | Value |
+|--------|-------|
+| Resident memory right after boot | **~24 MB** |
+| Resident memory in steady state | **~29 MB** (flat — 50 games 29.0 MB, 200 games 29.3 MB) |
+| Idle CPU | **~0.1 %** (tick backs off to 20 ms when no request arrives) |
+| Lookup table storage | `data/majiang.db` **32 MB** on disk, queried per key — never fully loaded into RAM |
+| Concurrency model | Single-threaded event loop; saturates at one core |
+| Latency, concurrency 1 (p50) | **4.3 – 6.7 ms** across all endpoints |
+| Throughput, concurrency 8 | `/api/game/step` ≈ 1100 QPS, `/api/game/state` ≈ 1020 QPS, `/api/algo/test` ≈ 490 QPS |
+
+Notes:
+
+- Memory does **not** grow with the number of games: fakelua has no GC, but the frame arena is reset at the entry of every top-level call, so all request-scoped temporaries are recycled. The process climbs to a high-water mark during the first games and then pins.
+- Beyond concurrency ~8 the bottleneck is the single-threaded event loop tick plus view serialization, not the mahjong algorithm itself.
 
 ### Server Tests
 

@@ -4,7 +4,31 @@
 宿主生命周期（init / update / fini）与优雅退出由 fakelua 自带的 `flua` 工具负责。
 
 查表数据（`majiang_clien_*.txt` / `majiang_ai_*.txt`，合计 1.7M 行）已转成 sqlite 库
-`data/majiang.db`，按 key 点查，常驻内存只有 page cache（**约 23MB**；全量载入内存时约 145MB）。
+`data/majiang.db`（32MB），按 key 点查，不全量载入内存。
+
+## 资源占用
+
+实测环境：macOS arm64 + `flua` Release 构建，四人对局，HTTP 走 loopback。
+
+| 指标 | 数值 |
+|------|------|
+| 启动后常驻内存（RSS） | 约 24 MB |
+| 稳态常驻内存 | 约 29 MB（不再增长：50 局 29.0 MB，200 局 29.3 MB） |
+| 空闲 CPU | 约 0.1%（无请求时节拍退避到 20ms） |
+| 查表库 | `data/majiang.db` 磁盘 32 MB，按 key 点查 |
+| 并发模型 | 单线程事件循环，最多吃满 1 核 |
+| 并发 1 延迟（p50） | 4.3 – 6.7 ms（各接口） |
+| 并发 8 吞吐 | `game/step` ≈ 1100 QPS，`game/state` ≈ 1020 QPS，`algo/test` ≈ 490 QPS |
+
+两点值得留意：
+
+- **内存不随对局数增长**。fakelua 没有 GC，但帧 arena 在每次顶层 Call 入口 Reset，
+  请求级临时对象随调用结束回收；进程只在前若干局爬到高水位，之后封顶。
+  因此不要在 Lua 里写 `while true` 把主循环包进一个 Call（arena 永不 Reset 即泄漏），
+  也不要把缓存之类的可变状态挂到 `container.map()`（那是 C++ 堆，没有 GC，会永久驻留）。
+- **并发超过约 8 之后瓶颈不在算法**：是单线程事件循环的节拍与 view 序列化。
+  单次决策内的重复 sqlite 点查已按花色做单槽复用（打出一张牌只让一个花色的 key 变化），
+  详见 `lua/aiutil.lua` 与 `lua/huutil.lua` 里 `fetch` 的 `slot / ck / cv` 参数。
 
 ## 依赖
 
@@ -25,7 +49,7 @@ python3 tools/gen_majiang_db.py server/data  # server 用的那份（也可把 s
 ```bash
 cd server
 
-# 自检：校验查表库 + 判胡/出牌 + 观战至 GAME_OVER（等价旧版的 smoke 入口）
+# 自检：校验查表库 + 判胡/出牌 + 观战至 GAME_OVER
 MAJIANG_SMOKE=1 flua lua --once
 
 # HTTP 服务（默认 :8888，可用 MAJIANG_PORT 覆盖）
@@ -33,15 +57,13 @@ MAJIANG_PORT=8888 flua lua
 ```
 
 `update` 每帧只做一帧的活（`runtime.tick()` 泵 IO/定时器并分发请求），节奏由 Lua 侧
-`os.sleep()` 自己控制——宿主不加任何节流。帧 arena 在每次 Call 入口回收，
-所以不要在 Lua 里写 `while true` 把主循环包进一个 Call。
+`os.sleep()` 自己控制——宿主不加任何节流。
 退出方式：`update` 返回非 0 / Lua 侧 `flua.set_exit(code)` / SIGTERM（都会先跑 `fini`）。
 
-**节拍与延迟**：Boost.Beast 的一个 HTTP 请求要跨三拍才走完（收请求 → 派发 → 把响应泵出去），
-所以 `main.lua` 用自适应节拍——请求活跃期 1ms 一拍，空闲期退避到 20ms（空闲 CPU ≈ 0%）。
-固定 1000ms 一拍的话，一个请求就要 3s。
+**节拍决定延迟**：Boost.Beast 的一个 HTTP 请求要跨三拍才走完（收请求 → 派发 → 把响应泵出去），
+所以 `main.lua` 用自适应节拍——请求活跃期 1ms 一拍，空闲期退避到 20ms（空闲 CPU ≈ 0.1%）。
 
-Go 旧实现参考树在 `ref_go_web/`（不参与构建）。C++ 算法参考实现与 parity 测试在 `../cpp/`（不参与服务端运行）。
+Go 参考实现在 `ref_go_web/`（不参与构建）。C++ 算法参考实现与 parity 测试在 `../cpp/`（不参与服务端运行）。
 
 ## 包结构（`lua/`）
 
