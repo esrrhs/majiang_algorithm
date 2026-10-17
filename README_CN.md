@@ -35,7 +35,7 @@ server/  FakeLua 网页对战服务(纯 Lua:对局/HTTP/查表/AI 全在 Lua,查
 data/    预计算查表文件 + 跨语言对齐样例,所有实现共用
 ```
 
-两个实现加载同一份 `data/` 下的查表文件,并通过测试保证行为一致:
+三个实现加载同一份 `data/` 下的查表文件,并通过测试保证行为一致:
 算法单测在 JUnit、`go test` 与 C++ 测试间一一对应移植;[data/parity_cases.txt](./data/parity_cases.txt)
 中保存了 2000+ 局固定种子发牌的胡牌/听牌/AI 决策结果,由
 `java/.../ParityFixtureTest.java`、`go/parity_test.go` 与 `cpp/test/parity_test.cpp` 多语言回放校验。
@@ -170,10 +170,10 @@ bool isGang = majiang::GangAI(cards, {gui}, out, 0.0);
 
 网页对战与算法演示由 **FakeLua** 实现（`server/`：对局引擎、HTTP、查表与 AI **全部为纯 Lua**，查表数据走 sqlite 按 key 点查）。Java / Go / C++ 仅提供纯算法库（`cpp/` 含 parity 测试，不参与服务端运行）。
 
-HTTP 接口契约见 **[server/API.md](./server/API.md)**。
+HTTP 接口契约见 **[server/API.md](./server/API.md)**，服务端细节见 **[server/README.md](./server/README.md)**。
 
 服务端为**纯 Lua 实现**（`server/` 下无 C++ 代码），由 fakelua 自带的 `flua` 宿主驱动
-init / update / fini 生命周期；查表数据走 sqlite 按 key 点查，常驻内存约 23MB。
+init / update / fini 生命周期；查表数据走 sqlite 按 key 点查，不全量载入内存。
 
 ```bash
 # 需已编译 fakelua（见 ../../fakelua），flua 在 build/bin/flua
@@ -186,6 +186,26 @@ MAJIANG_PORT=8888 flua lua                 # HTTP 默认 :8888（可用 MAJIANG_
 宿主固定调用 `package "main"` 下的 `init`/`update`/`fini`，无需任何参数；
 节拍由 Lua 侧 `os.sleep` 自行控制（有请求 1ms，空闲退避 20ms）。
 启动后在浏览器中访问：👉 **http://localhost:8888**
+
+### 服务端资源占用
+
+实测环境：macOS arm64 + `flua` Release 构建，四人对局，HTTP 走 loopback。
+
+| 指标 | 数值 |
+|------|------|
+| 启动后常驻内存（RSS） | **约 24 MB** |
+| 稳态常驻内存 | **约 29 MB**（不再增长：50 局 29.0 MB，200 局 29.3 MB） |
+| 空闲 CPU | **约 0.1%**（无请求时节拍退避到 20ms） |
+| 查表库 | `data/majiang.db` 磁盘 **32 MB**，按 key 点查，不全量载入内存 |
+| 并发模型 | 单线程事件循环，最多吃满 1 核 |
+| 并发 1 延迟（p50） | **4.3 – 6.7 ms**（各接口） |
+| 并发 8 吞吐 | `/api/game/step` ≈ 1100 QPS，`/api/game/state` ≈ 1020 QPS，`/api/algo/test` ≈ 490 QPS |
+
+说明：
+
+- 内存**不随对局数增长**：fakelua 没有 GC，但帧 arena 在每次顶层 Call 入口 Reset，
+  请求级临时对象都会回收；进程只会在前若干局爬到高水位，之后封顶。
+- 并发超过约 8 之后，瓶颈是单线程事件循环的节拍与 view 序列化，不是麻将算法本身。
 
 ### 服务端测试
 
