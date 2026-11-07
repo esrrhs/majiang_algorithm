@@ -1,4 +1,4 @@
-package majiang
+package mahjong
 
 import (
 	"bufio"
@@ -60,7 +60,7 @@ func loadHuTable(m map[int64][]HuTableInfo, cfg huConfig) error {
 	for k := range m {
 		delete(m, k)
 	}
-	path, err := findDataFile("majiang_clien_" + cfg.name + ".txt")
+	path, err := findDataFile("mahjong_clien_" + cfg.name + ".txt")
 	if err != nil {
 		return err
 	}
@@ -251,8 +251,8 @@ func huDigitFold(hupai []int8) int64 {
 	return hu
 }
 
-// genHu 重新生成全部判胡查表文件(majiang_clien_*.txt 与 majiang_server_*.txt),
-// 写入当前目录,等价 Java HuUtil.gen()(不含 sqlite 的 majiang.db 输出)。
+// genHu 重新生成全部判胡查表文件(mahjong_clien_*.txt 与 mahjong_server_*.txt),
+// 写入当前目录,等价 Java HuUtil.gen()(不含 sqlite 的 mahjong.db 输出)。
 // 与 Java 不同,Go 输出按键与条目排序,内容与 Java 生成的一致。
 func genHu() error {
 	type huTable struct {
@@ -283,7 +283,7 @@ func sortedHuKeys(m map[int64][]HuTableInfo) []int64 {
 
 func writeHuClientFile(cfg huConfig, m map[int64][]HuTableInfo) error {
 	lines := buildHuClientLines(cfg, m)
-	name := "majiang_clien_" + cfg.name + ".txt"
+	name := "mahjong_clien_" + cfg.name + ".txt"
 	return writeLines(name, lines)
 }
 
@@ -342,7 +342,7 @@ func buildHuServerLines(cfg huConfig, m map[int64][]HuTableInfo) []string {
 }
 
 func writeHuServerFile(cfg huConfig, m map[int64][]HuTableInfo) error {
-	name := "majiang_server_" + cfg.name + ".txt"
+	name := "mahjong_server_" + cfg.name + ".txt"
 	return writeLines(name, buildHuServerLines(cfg, m))
 }
 

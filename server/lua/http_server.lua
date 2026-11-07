@@ -1,4 +1,4 @@
-package "MajiangHttp"
+package "MahjongHttp"
 
 local static_root = "static"
 
@@ -103,7 +103,7 @@ local function parse_cards_field(m, key)
     local v = m[key]
     if v == nil then return {} end
     if type(v) == "string" then
-        return valid_cards(MajiangDef.StringToCards(v))
+        return valid_cards(MahjongDef.StringToCards(v))
     end
     if type(v) == "table" then
         local nums = {}
@@ -140,25 +140,25 @@ function OnRequest(typ, connid, req)
         if guiMode == nil then guiMode = "random_flip" end
         local customGuiCard = math.floor(tonumber(m["customGuiCard"]) or 0)
         local spectator = m["spectator"] == true
-        MajiangGame.NewGame(guiMode, customGuiCard, spectator)
-        return json_ok(MajiangGame.CreateView())
+        MahjongGame.NewGame(guiMode, customGuiCard, spectator)
+        return json_ok(MahjongGame.CreateView())
     end
 
     if path == "/api/game/state" then
-        return json_ok(MajiangGame.CreateView())
+        return json_ok(MahjongGame.CreateView())
     end
 
     if path == "/api/game/spectator" then
         local m = parse_body(req.body)
-        MajiangGame.SetSpectatorMode(m["spectator"] == true)
-        return json_ok(MajiangGame.CreateView())
+        MahjongGame.SetSpectatorMode(m["spectator"] == true)
+        return json_ok(MahjongGame.CreateView())
     end
 
     if path == "/api/game/discard" then
         local m = parse_body(req.body)
         local card = math.floor(tonumber(m["card"]) or 0)
-        local success = MajiangGame.Discard(0, card)
-        return json_ok({ success = success, view = MajiangGame.CreateView() })
+        local success = MahjongGame.Discard(0, card)
+        return json_ok({ success = success, view = MahjongGame.CreateView() })
     end
 
     if path == "/api/game/action" then
@@ -167,21 +167,21 @@ function OnRequest(typ, connid, req)
         local card = math.floor(tonumber(m["card"]) or 0)
         local chi1 = math.floor(tonumber(m["chi1"]) or 0)
         local chi2 = math.floor(tonumber(m["chi2"]) or 0)
-        local success = MajiangGame.UserAction(action, card, chi1, chi2)
-        return json_ok({ success = success, view = MajiangGame.CreateView() })
+        local success = MahjongGame.UserAction(action, card, chi1, chi2)
+        return json_ok({ success = success, view = MahjongGame.CreateView() })
     end
 
     if path == "/api/game/self_action" then
         local m = parse_body(req.body)
         local action = tostring(m["action"] or "")
         local card = math.floor(tonumber(m["card"]) or 0)
-        local success = MajiangGame.UserSelfAction(action, card)
-        return json_ok({ success = success, view = MajiangGame.CreateView() })
+        local success = MahjongGame.UserSelfAction(action, card)
+        return json_ok({ success = success, view = MahjongGame.CreateView() })
     end
 
     if path == "/api/game/step" then
-        local stepped = MajiangGame.Step()
-        return json_ok({ stepped = stepped, view = MajiangGame.CreateView() })
+        local stepped = MahjongGame.Step()
+        return json_ok({ stepped = stepped, view = MahjongGame.CreateView() })
     end
 
     if path == "/api/game/auto_run" then
@@ -190,11 +190,11 @@ function OnRequest(typ, connid, req)
         local executed = 0
         local i = 1
         while i <= maxSteps do
-            if not MajiangGame.Step() then break end
+            if not MahjongGame.Step() then break end
             executed = executed + 1
             i = i + 1
         end
-        return json_ok({ executedSteps = executed, view = MajiangGame.CreateView() })
+        return json_ok({ executedSteps = executed, view = MahjongGame.CreateView() })
     end
 
     if path == "/api/algo/test" then
@@ -209,14 +209,14 @@ function OnRequest(typ, connid, req)
         local t0 = os.clock()
         local isHu = false
         if #cards > 0 and #cards % 3 == 2 then
-            isHu = MajiangHu.IsHuExtra(cards, guiCards, 0)
+            isHu = MahjongHu.IsHuExtra(cards, guiCards, 0)
         end
         local huMicros = (os.clock() - t0) * 1000000
 
         t0 = os.clock()
         local tingCards = {}
         if #cards > 0 then
-            tingCards = MajiangHu.IsTingExtra(cards, guiCards)
+            tingCards = MahjongHu.IsTingExtra(cards, guiCards)
         end
         local tingMicros = (os.clock() - t0) * 1000000
 
@@ -225,7 +225,7 @@ function OnRequest(typ, connid, req)
         local aiMicros = 0
         if #cards > 0 and #cards % 3 == 2 then
             t0 = os.clock()
-            recommendedOut = MajiangAi.OutAI(cards, guiCards)
+            recommendedOut = MahjongAi.OutAI(cards, guiCards)
             if recommendedOut > 0 then
                 local rem = {}
                 local removed = false
@@ -238,23 +238,23 @@ function OnRequest(typ, connid, req)
                     end
                     i = i + 1
                 end
-                aiScore = MajiangAi.Calc(rem, guiCards)
+                aiScore = MahjongAi.Calc(rem, guiCards)
             end
             aiMicros = (os.clock() - t0) * 1000000
         end
 
         local recommendedOutStr = ""
         if recommendedOut > 0 then
-            recommendedOutStr = MajiangDef.CardToString(recommendedOut)
+            recommendedOutStr = MahjongDef.CardToString(recommendedOut)
         end
         return json_ok({
             cards = cards,
-            cardsStr = MajiangDef.CardsToString(cards),
+            cardsStr = MahjongDef.CardsToString(cards),
             guiCards = guiCards,
             isHu = isHu,
             huTimeMicros = huMicros,
             tingCards = tingCards,
-            tingCardsStr = MajiangDef.CardsToString(tingCards),
+            tingCardsStr = MahjongDef.CardsToString(tingCards),
             tingTimeMicros = tingMicros,
             recommendedOut = recommendedOut,
             recommendedOutStr = recommendedOutStr,

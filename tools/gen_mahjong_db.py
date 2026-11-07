@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""把查表 txt 转成 sqlite 库 majiang.db。
+"""把查表 txt 转成 sqlite 库 mahjong.db。
 
-查表数据(majiang_clien_*.txt / majiang_ai_*.txt)合计 1.7M 行、全量载入内存约 120MB。
+查表数据(mahjong_clien_*.txt / mahjong_ai_*.txt)合计 1.7M 行、全量载入内存约 120MB。
 转成 sqlite 后服务端按 key 点查,常驻内存只剩 page cache。
 
 表结构统一为 (key, seq, ...) + WITHOUT ROWID:
@@ -9,8 +9,8 @@
   WITHOUT ROWID 让同一 key 的条目在 B 树里连续存放,`WHERE key=?` 是一次范围扫描。
 
 用法:
-    python3 tools/gen_majiang_db.py [数据目录] [输出 db]
-默认数据目录 data/,输出 data/majiang.db。
+    python3 tools/gen_mahjong_db.py [数据目录] [输出 db]
+默认数据目录 data/,输出 data/mahjong.db。
 """
 import os
 import sqlite3
@@ -18,8 +18,8 @@ import sys
 
 # (txt 前缀, 表名后缀, 是否胡牌表)
 TABLES = [
-    ("majiang_clien", "hu", True),
-    ("majiang_ai", "ai", False),
+    ("mahjong_clien", "hu", True),
+    ("mahjong_ai", "ai", False),
 ]
 SUITS = ["normal", "feng", "jian"]
 
@@ -77,7 +77,7 @@ def build(data_dir: str, out_path: str) -> None:
 def main() -> None:
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     data_dir = sys.argv[1] if len(sys.argv) > 1 else os.path.join(root, "data")
-    out = sys.argv[2] if len(sys.argv) > 2 else os.path.join(data_dir, "majiang.db")
+    out = sys.argv[2] if len(sys.argv) > 2 else os.path.join(data_dir, "mahjong.db")
     build(data_dir, out)
 
 

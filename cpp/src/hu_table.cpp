@@ -10,7 +10,7 @@
 #include <sstream>
 #include <string>
 
-namespace majiang
+namespace mahjong
 {
 
 std::unordered_map<int64_t, std::vector<HuTableInfo>> HuTable;
@@ -214,10 +214,10 @@ std::vector<int64_t> sortedHuKeys(const std::unordered_map<int64_t, std::vector<
 bool loadHuTable(std::unordered_map<int64_t, std::vector<HuTableInfo>> &m, const HuConfig &cfg)
 {
     m.clear();
-    auto path = findDataFile(std::string("majiang_clien_") + cfg.name + ".txt");
+    auto path = findDataFile(std::string("mahjong_clien_") + cfg.name + ".txt");
     if (!path)
     {
-        std::fprintf(stderr, "找不到查表文件 majiang_clien_%s.txt(已尝试当前目录、data/、../data/)\n", cfg.name);
+        std::fprintf(stderr, "找不到查表文件 mahjong_clien_%s.txt(已尝试当前目录、data/、../data/)\n", cfg.name);
         return false;
     }
     std::ifstream f(*path);
@@ -345,12 +345,12 @@ bool genHu()
     for (const HuTableEntry &t : tables)
     {
         genHuInto(*t.m, *t.cfg);
-        if (!writeLines("majiang_clien_" + std::string(t.cfg->name) + ".txt",
+        if (!writeLines("mahjong_clien_" + std::string(t.cfg->name) + ".txt",
                         buildHuClientLines(*t.m)))
         {
             return false;
         }
-        if (!writeLines("majiang_server_" + std::string(t.cfg->name) + ".txt",
+        if (!writeLines("mahjong_server_" + std::string(t.cfg->name) + ".txt",
                         buildHuServerLines(*t.cfg, *t.m)))
         {
             return false;
@@ -360,4 +360,4 @@ bool genHu()
 }
 
 } // namespace detail
-} // namespace majiang
+} // namespace mahjong

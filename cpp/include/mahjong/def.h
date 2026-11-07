@@ -1,10 +1,10 @@
-// 牌的编号定义与字符串转换,与 Java MaJiangDef / Go def.go 一一对应。
+// 牌的编号定义与字符串转换,与 Java MahjongDef / Go def.go 一一对应。
 #pragma once
 
 #include <string>
 #include <vector>
 
-namespace majiang
+namespace mahjong
 {
 
 constexpr int Wan1 = 1;
@@ -64,22 +64,22 @@ constexpr int TypeFeng = 4;
 constexpr int TypeJian = 5;
 constexpr int TypeHua = 6;
 
-// 等价 Java MaJiangDef.toCard。
+// 等价 Java MahjongDef.toCard。
 int ToCard(int type, int index);
 
-// 等价 Java MaJiangDef.type(Java 的 type 是关键字,Go/C++ 侧统一更名 CardType)。
+// 等价 Java MahjongDef.type(Java 的 type 是关键字,Go/C++ 侧统一更名 CardType)。
 int CardType(int card);
 
-// 等价 Java MaJiangDef.cardToString。
+// 等价 Java MahjongDef.cardToString。
 std::string CardToString(int card);
 
-// 等价 Java MaJiangDef.cardsToString。
+// 等价 Java MahjongDef.cardsToString。
 std::string CardsToString(const std::vector<int> &card);
 
-// 等价 Java MaJiangDef.stringToCard(数牌只取第一个字符作为数字,与 Java 解析一致)。
+// 等价 Java MahjongDef.stringToCard(数牌只取第一个字符作为数字,与 Java 解析一致)。
 int StringToCard(const std::string &str);
 
-// 等价 Java MaJiangDef.stringToCards。
+// 等价 Java MahjongDef.stringToCards。
 std::vector<int> StringToCards(const std::string &str);
 
-} // namespace majiang
+} // namespace mahjong

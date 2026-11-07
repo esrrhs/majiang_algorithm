@@ -1,4 +1,4 @@
-package com.github.esrrhs.majiang_algorithm;
+package com.github.esrrhs.mahjong_ai;
 
 public class HuTableInfo
 {

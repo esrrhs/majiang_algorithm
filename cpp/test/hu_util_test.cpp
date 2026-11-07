@@ -1,10 +1,10 @@
-// 移植自 Java MajiangAlgorithmIntegrationTest / Go huutil_test.go,断言一一对应。
+// 移植自 Java MahjongAiIntegrationTest / Go huutil_test.go,断言一一对应。
 #include <chrono>
 
-#include "majiang/hu_util.h"
+#include "mahjong/hu_util.h"
 #include "test_util.h"
 
-using namespace majiang;
+using namespace mahjong;
 
 MAJ_TEST(TestHuDetectionBasic)
 {

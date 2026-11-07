@@ -7,7 +7,7 @@
 #include <filesystem>
 #include <fstream>
 
-namespace majiang
+namespace mahjong
 {
 namespace detail
 {
@@ -265,4 +265,4 @@ bool writeLines(const std::string &name, const std::vector<std::string> &lines)
 }
 
 } // namespace detail
-} // namespace majiang
+} // namespace mahjong

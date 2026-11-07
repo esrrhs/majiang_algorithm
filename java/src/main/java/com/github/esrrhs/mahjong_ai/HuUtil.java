@@ -1,4 +1,4 @@
-package com.github.esrrhs.majiang_algorithm;
+package com.github.esrrhs.mahjong_ai;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +11,7 @@ public class HuUtil
 	public static boolean isHu(List<Integer> input, int guiCard)
 	{
 		List<Integer> cards = new ArrayList<>();
-		for (int i = 0; i < MaJiangDef.MAX_NUM; i++)
+		for (int i = 0; i < MahjongDef.MAX_NUM; i++)
 		{
 			cards.add(0);
 		}
@@ -28,7 +28,7 @@ public class HuUtil
 	public static boolean isHuExtra(List<Integer> input, List<Integer> guiCard, int extra)
 	{
 		List<Integer> cards = new ArrayList<>();
-		for (int i = 0; i < MaJiangDef.MAX_NUM; i++)
+		for (int i = 0; i < MahjongDef.MAX_NUM; i++)
 		{
 			cards.add(0);
 		}
@@ -60,27 +60,27 @@ public class HuUtil
 		long feng_key = 0;
 		long jian_key = 0;
 
-		for (int i = MaJiangDef.WAN1; i <= MaJiangDef.WAN9; i++)
+		for (int i = MahjongDef.WAN1; i <= MahjongDef.WAN9; i++)
 		{
 			int num = cards.get(i - 1);
 			wan_key = wan_key * 10 + num;
 		}
-		for (int i = MaJiangDef.TONG1; i <= MaJiangDef.TONG9; i++)
+		for (int i = MahjongDef.TONG1; i <= MahjongDef.TONG9; i++)
 		{
 			int num = cards.get(i - 1);
 			tong_key = tong_key * 10 + num;
 		}
-		for (int i = MaJiangDef.TIAO1; i <= MaJiangDef.TIAO9; i++)
+		for (int i = MahjongDef.TIAO1; i <= MahjongDef.TIAO9; i++)
 		{
 			int num = cards.get(i - 1);
 			tiao_key = tiao_key * 10 + num;
 		}
-		for (int i = MaJiangDef.FENG_DONG; i <= MaJiangDef.FENG_BEI; i++)
+		for (int i = MahjongDef.FENG_DONG; i <= MahjongDef.FENG_BEI; i++)
 		{
 			int num = cards.get(i - 1);
 			feng_key = feng_key * 10 + num;
 		}
-		for (int i = MaJiangDef.JIAN_ZHONG; i <= MaJiangDef.JIAN_BAI; i++)
+		for (int i = MahjongDef.JIAN_ZHONG; i <= MahjongDef.JIAN_BAI; i++)
 		{
 			int num = cards.get(i - 1);
 			jian_key = jian_key * 10 + num;
@@ -174,7 +174,7 @@ public class HuUtil
 	public static List<Integer> isTing(List<Integer> input, int guiCard)
 	{
 		List<Integer> cards = new ArrayList<>();
-		for (int i = 0; i < MaJiangDef.MAX_NUM; i++)
+		for (int i = 0; i < MahjongDef.MAX_NUM; i++)
 		{
 			cards.add(0);
 		}
@@ -191,7 +191,7 @@ public class HuUtil
 	public static List<Integer> isTingExtra(List<Integer> input, List<Integer> guiCard)
 	{
 		List<Integer> cards = new ArrayList<>();
-		for (int i = 0; i < MaJiangDef.MAX_NUM; i++)
+		for (int i = 0; i < MahjongDef.MAX_NUM; i++)
 		{
 			cards.add(0);
 		}
@@ -218,27 +218,27 @@ public class HuUtil
 		long feng_key = 0;
 		long jian_key = 0;
 
-		for (int i = MaJiangDef.WAN1; i <= MaJiangDef.WAN9; i++)
+		for (int i = MahjongDef.WAN1; i <= MahjongDef.WAN9; i++)
 		{
 			int num = cards.get(i - 1);
 			wan_key = wan_key * 10 + num;
 		}
-		for (int i = MaJiangDef.TONG1; i <= MaJiangDef.TONG9; i++)
+		for (int i = MahjongDef.TONG1; i <= MahjongDef.TONG9; i++)
 		{
 			int num = cards.get(i - 1);
 			tong_key = tong_key * 10 + num;
 		}
-		for (int i = MaJiangDef.TIAO1; i <= MaJiangDef.TIAO9; i++)
+		for (int i = MahjongDef.TIAO1; i <= MahjongDef.TIAO9; i++)
 		{
 			int num = cards.get(i - 1);
 			tiao_key = tiao_key * 10 + num;
 		}
-		for (int i = MaJiangDef.FENG_DONG; i <= MaJiangDef.FENG_BEI; i++)
+		for (int i = MahjongDef.FENG_DONG; i <= MahjongDef.FENG_BEI; i++)
 		{
 			int num = cards.get(i - 1);
 			feng_key = feng_key * 10 + num;
 		}
-		for (int i = MaJiangDef.JIAN_ZHONG; i <= MaJiangDef.JIAN_BAI; i++)
+		for (int i = MahjongDef.JIAN_ZHONG; i <= MahjongDef.JIAN_BAI; i++)
 		{
 			int num = cards.get(i - 1);
 			jian_key = jian_key * 10 + num;
@@ -256,7 +256,7 @@ public class HuUtil
 		tmpTing.add(wanHuTableInfo);
 		if (wan_key != 0)
 		{
-			tmpType.add(MaJiangDef.TYPE_WAN);
+			tmpType.add(MahjongDef.TYPE_WAN);
 			tmp.add(wanHuTableInfo);
 		}
 		List<HuTableInfo> tongHuTableInfo = HuTable.table.get(tong_key);
@@ -267,7 +267,7 @@ public class HuUtil
 		tmpTing.add(tongHuTableInfo);
 		if (tong_key != 0)
 		{
-			tmpType.add(MaJiangDef.TYPE_TONG);
+			tmpType.add(MahjongDef.TYPE_TONG);
 			tmp.add(tongHuTableInfo);
 		}
 		List<HuTableInfo> tiaoHuTableInfo = HuTable.table.get(tiao_key);
@@ -278,7 +278,7 @@ public class HuUtil
 		tmpTing.add(tiaoHuTableInfo);
 		if (tiao_key != 0)
 		{
-			tmpType.add(MaJiangDef.TYPE_TIAO);
+			tmpType.add(MahjongDef.TYPE_TIAO);
 			tmp.add(tiaoHuTableInfo);
 		}
 		List<HuTableInfo> fengHuTableInfo = HuTableFeng.table.get(feng_key);
@@ -289,7 +289,7 @@ public class HuUtil
 		tmpTing.add(fengHuTableInfo);
 		if (feng_key != 0)
 		{
-			tmpType.add(MaJiangDef.TYPE_FENG);
+			tmpType.add(MahjongDef.TYPE_FENG);
 			tmp.add(fengHuTableInfo);
 		}
 		List<HuTableInfo> jianHuTableInfo = HuTableJian.table.get(jian_key);
@@ -300,12 +300,12 @@ public class HuUtil
 		tmpTing.add(jianHuTableInfo);
 		if (jian_key != 0)
 		{
-			tmpType.add(MaJiangDef.TYPE_JIAN);
+			tmpType.add(MahjongDef.TYPE_JIAN);
 			tmp.add(jianHuTableInfo);
 		}
 
 		List<Integer> ret = new ArrayList<>();
-		for (int type = MaJiangDef.TYPE_WAN; type <= MaJiangDef.TYPE_JIAN; type++)
+		for (int type = MahjongDef.TYPE_WAN; type <= MahjongDef.TYPE_JIAN; type++)
 		{
 			List<HuTableInfo> huTableInfos = tmpTing.get(type - 1);
 			int[] cache = new int[9];
@@ -332,7 +332,7 @@ public class HuUtil
 							{
 								if (cache[j] == 0)
 								{
-									ret.add(MaJiangDef.toCard(type, j));
+									ret.add(MahjongDef.toCard(type, j));
 								}
 								cache[j]++;
 							}
@@ -401,17 +401,17 @@ public class HuUtil
 	{
 		String init = "1万,1万";
 		String gui = "1万";
-		List<Integer> cards = MaJiangDef.stringToCards(init);
-		System.out.println(HuUtil.isHu(cards, MaJiangDef.stringToCard(gui)));
+		List<Integer> cards = MahjongDef.stringToCards(init);
+		System.out.println(HuUtil.isHu(cards, MahjongDef.stringToCard(gui)));
 	}
 
 	public static void testTing()
 	{
 		String init = "1万,1万,1筒,3筒,2筒,2条,3条,4条,东,东";
 		String gui = "1筒";
-		List<Integer> cards = MaJiangDef.stringToCards(init);
-		System.out.println(MaJiangDef.cardsToString(HuUtil.isTing(cards, MaJiangDef.stringToCard(gui))));
-		System.out.println(MaJiangDef.cardsToString(HuUtil.isTingExtra(cards, MaJiangDef.stringToCards(gui))));
+		List<Integer> cards = MahjongDef.stringToCards(init);
+		System.out.println(MahjongDef.cardsToString(HuUtil.isTing(cards, MahjongDef.stringToCard(gui))));
+		System.out.println(MahjongDef.cardsToString(HuUtil.isTingExtra(cards, MahjongDef.stringToCards(gui))));
 	}
 
 	public static void main(String[] args)

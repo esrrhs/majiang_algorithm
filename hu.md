@@ -1,6 +1,6 @@
 # 胡牌算法
 
-[English Version](./hu_en.md) | [GitHub](https://github.com/esrrhs/majiang_algorithm)
+[English Version](./hu_en.md) | [GitHub](https://github.com/esrrhs/mahjong_ai)
 
 # 简述
 麻将作为国粹，为大众所喜爱，每个地区的玩法都不太一样，但是大部分都会有鬼牌，或者叫癞子，本文主要讲的是带多张鬼牌的胡牌算法。首先，简单说下麻将的基本概念。
@@ -10,7 +10,7 @@
 ``` xml
 <dependency>
     <groupId>com.github.esrrhs</groupId>
-    <artifactId>majiang_algorithm</artifactId>
+    <artifactId>mahjong_ai</artifactId>
     <version>1.0.15</version>
 </dependency>
 ```
@@ -26,36 +26,36 @@ List<Integer> tingCards = HuUtil.isTing(cards, gui);
 
 # 花色分类
 - 普通牌：万筒条，每门有序数从一至九的牌各四张<br />
-![image](https://github.com/esrrhs/majiang_algorithm/raw/master/img/wan.png)
+![image](https://github.com/esrrhs/mahjong_ai/raw/master/img/wan.png)
 - 风牌：東、南、西、北<br />
-![image](https://github.com/esrrhs/majiang_algorithm/raw/master/img/feng.png)
+![image](https://github.com/esrrhs/mahjong_ai/raw/master/img/feng.png)
 - 箭牌：中、發、白<br />
-![image](https://github.com/esrrhs/majiang_algorithm/raw/master/img/jian.png)
+![image](https://github.com/esrrhs/mahjong_ai/raw/master/img/jian.png)
 
 
 # 牌型术语
 - 连子：一万二万三万<br />
-![image](https://github.com/esrrhs/majiang_algorithm/raw/master/img/lianzi.png)
+![image](https://github.com/esrrhs/mahjong_ai/raw/master/img/lianzi.png)
 - 刻子：一筒一筒一筒<br />
-![image](https://github.com/esrrhs/majiang_algorithm/raw/master/img/kezi.png)
+![image](https://github.com/esrrhs/mahjong_ai/raw/master/img/kezi.png)
 - 将：一条一条<br />
-![image](https://github.com/esrrhs/majiang_algorithm/raw/master/img/jiang.png)
+![image](https://github.com/esrrhs/mahjong_ai/raw/master/img/jiang.png)
 
 
 # 胡牌公式
 - N×连子 + M×刻子 + 1×将
 - N>=0, M>=0<br />
-![image](https://github.com/esrrhs/majiang_algorithm/raw/master/img/hu.png)
+![image](https://github.com/esrrhs/mahjong_ai/raw/master/img/hu.png)
 
 # 鬼牌
 鬼牌的定义就是能够变成任意牌的牌，通常是提前指定或者每次随机决定，比如白板做鬼，如下图：<br />
-![image](https://github.com/esrrhs/majiang_algorithm/raw/master/img/gui.png)<br />
+![image](https://github.com/esrrhs/mahjong_ai/raw/master/img/gui.png)<br />
 此时白板可以变成**3万**，这手牌已经胡了。
 
 # 遇到的问题
 玩过麻将的人会知道，当鬼牌数目比较少时，看胡牌听牌还比较快，如果有多张鬼牌了，别人打一张牌，可能并不会很快的判断是否能胡，比如下图，当别人打了个**6条**，这手牌胡了吗？<br />
-![image](https://github.com/esrrhs/majiang_algorithm/raw/master/img/ting.png)<br />实际上能胡的牌有<br />
-![image](https://github.com/esrrhs/majiang_algorithm/raw/master/img/tingde.png)<br />
+![image](https://github.com/esrrhs/mahjong_ai/raw/master/img/ting.png)<br />实际上能胡的牌有<br />
+![image](https://github.com/esrrhs/mahjong_ai/raw/master/img/tingde.png)<br />
 程序的计算也是同理，所以如果我们只是简单穷举鬼牌的变化可能性，再去计算是否胡牌，那么性能将会很低。本文的目的旨在优化此胡牌算法。
 
 # 解决思路
@@ -64,8 +64,8 @@ List<Integer> tingCards = HuUtil.isTing(cards, gui);
 ## 牌型编码
 查表的第一步，要对手牌进行编码做key。
 - 首先按照花色分成几组，如下图<br />
-![image](https://github.com/esrrhs/majiang_algorithm/raw/master/img/bianmada.png)<br />分出来万的牌<br />
-![image](https://github.com/esrrhs/majiang_algorithm/raw/master/img/bianma.png)
+![image](https://github.com/esrrhs/mahjong_ai/raw/master/img/bianmada.png)<br />分出来万的牌<br />
+![image](https://github.com/esrrhs/mahjong_ai/raw/master/img/bianma.png)
 - 然后把1万2万5万5万转变成110020000的9位数字，左数第M位是N，说明M万有N张
 - 这样万筒条风箭，就有5个数字key。
 
@@ -76,7 +76,7 @@ List<Integer> tingCards = HuUtil.isTing(cards, gui);
 - 对于每个key，生成这个key在不同鬼的情况下的胡牌信息列表
 - 胡牌信息列表的内容是，在N张鬼的情况下，这个key胡什么牌，并且是否有将
 - 例如1万2万5万5万：110020000<br />
-![image](https://github.com/esrrhs/majiang_algorithm/raw/master/img/bianma.png)<br />
+![image](https://github.com/esrrhs/mahjong_ai/raw/master/img/bianma.png)<br />
 生成的胡牌信息有
 <br />1万2万5万5万：鬼0 有将 胡3万（0个鬼的时候，这个牌胡3万，此时有将）
 <br />1万2万5万5万：鬼1 无将 胡3万胡5万（1个鬼的时候，这个牌胡3万5万，此时无将）
@@ -86,7 +86,7 @@ List<Integer> tingCards = HuUtil.isTing(cards, gui);
 ## 胡牌算法
 有了前面辛苦生成的表格，那么判断胡牌算法就很简单了。
 - 对玩家手上的牌进行编码，变成多个key和鬼牌总数N，例如手牌如下<br />
-![image](https://github.com/esrrhs/majiang_algorithm/raw/master/img/bianmada.png)<br />
+![image](https://github.com/esrrhs/mahjong_ai/raw/master/img/bianmada.png)<br />
 得到key：110020000、020000000和鬼牌总数2
 - 对每个key查询表，得到对应的胡牌信息列表
 - 针对每组列表，过滤掉鬼牌总数>N的项以及没有胡的项，上面的例子就会有<br />

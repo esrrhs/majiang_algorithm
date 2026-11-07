@@ -5,13 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.esrrhs</groupId>
-    <artifactId>majiang_algorithm</artifactId>
+    <artifactId>mahjong_ai</artifactId>
     <packaging>jar</packaging>
     <version>1.0.18</version>
 
-    <name>majiang_algorithm</name>
+    <name>mahjong_ai</name>
     <description>High-performance Mahjong winning-hand detection &amp; AI discard algorithm based on lookup tables.</description>
-    <url>https://github.com/esrrhs/majiang_algorithm</url>
+    <url>https://github.com/esrrhs/mahjong_ai</url>
 
     <licenses>
         <license>
@@ -25,14 +25,14 @@
         <developer>
             <name>esrrhs</name>
             <email>esrrhs@163.com</email>
-            <url>https://github.com/esrrhs/majiang_algorithm</url>
+            <url>https://github.com/esrrhs/mahjong_ai</url>
         </developer>
     </developers>
 
     <scm>
-        <connection>scm:git:git@github.com:esrrhs/majiang_algorithm.git</connection>
-        <developerConnection>scm:git:git@github.com:esrrhs/majiang_algorithm.git</developerConnection>
-        <url>https://github.com/esrrhs/majiang_algorithm</url>
+        <connection>scm:git:git@github.com:esrrhs/mahjong_ai.git</connection>
+        <developerConnection>scm:git:git@github.com:esrrhs/mahjong_ai.git</developerConnection>
+        <url>https://github.com/esrrhs/mahjong_ai</url>
     </scm>
 
     <properties>

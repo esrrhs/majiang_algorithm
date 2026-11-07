@@ -14,7 +14,7 @@ import (
 	"sync"
 	"time"
 
-	majiang "github.com/esrrhs/majiang_algorithm/go"
+	mahjong "github.com/esrrhs/mahjong_ai/go"
 
 	"embed"
 )
@@ -323,14 +323,14 @@ func (s *Server) algoTestHandler(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
 		isHu := false
 		if len(cards) > 0 && len(cards)%3 == 2 {
-			isHu = majiang.IsHuExtra(cards, guiCards, 0)
+			isHu = mahjong.IsHuExtra(cards, guiCards, 0)
 		}
 		huMicros := float64(time.Since(start).Nanoseconds()) / 1000.0
 
 		start = time.Now()
 		tingCards := []int{}
 		if len(cards) > 0 {
-			tingCards = majiang.IsTingExtra(cards, guiCards)
+			tingCards = mahjong.IsTingExtra(cards, guiCards)
 			if tingCards == nil {
 				tingCards = []int{}
 			}
@@ -342,25 +342,25 @@ func (s *Server) algoTestHandler(w http.ResponseWriter, r *http.Request) {
 		aiMicros := 0.0
 		if len(cards) > 0 && len(cards)%3 == 2 {
 			start = time.Now()
-			recommendedOut = majiang.OutAI(cards, guiCards)
+			recommendedOut = mahjong.OutAI(cards, guiCards)
 			if recommendedOut > 0 {
 				rem := removeFirstInt(cards, recommendedOut)
-				aiScore = majiang.Calc(rem, guiCards)
+				aiScore = mahjong.Calc(rem, guiCards)
 			}
 			aiMicros = float64(time.Since(start).Nanoseconds()) / 1000.0
 		}
 
 		resp := map[string]interface{}{
 			"cards":             cards,
-			"cardsStr":          majiang.CardsToString(cards),
+			"cardsStr":          mahjong.CardsToString(cards),
 			"guiCards":          guiCards,
 			"isHu":              isHu,
 			"huTimeMicros":      huMicros,
 			"tingCards":         tingCards,
-			"tingCardsStr":      majiang.CardsToString(tingCards),
+			"tingCardsStr":      mahjong.CardsToString(tingCards),
 			"tingTimeMicros":    tingMicros,
 			"recommendedOut":    recommendedOut,
-			"recommendedOutStr": boolStr(recommendedOut > 0, majiang.CardToString(recommendedOut), ""),
+			"recommendedOutStr": boolStr(recommendedOut > 0, mahjong.CardToString(recommendedOut), ""),
 			"aiScore":           aiScore,
 			"aiTimeMicros":      aiMicros,
 		}
@@ -383,7 +383,7 @@ func parseCardsField(m map[string]interface{}, key string) []int {
 			}
 		}
 	case string:
-		ret = append(ret, majiang.StringToCards(t)...)
+		ret = append(ret, mahjong.StringToCards(t)...)
 	}
 	return ret
 }
@@ -459,7 +459,7 @@ func RunCliSimulation() {
 		} else {
 			fmt.Printf("获胜座位: %d 号位, 胡牌: %s, 番型: %s, 得分: %d\n",
 				view.Settlement.WinnerSeat,
-				majiang.CardToString(view.Settlement.WinCard),
+				mahjong.CardToString(view.Settlement.WinCard),
 				strings.Join(view.Settlement.Patterns, ", "),
 				view.Settlement.Points)
 		}

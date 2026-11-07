@@ -1,4 +1,4 @@
-package majiang
+package mahjong
 
 import (
 	"os"
@@ -49,27 +49,27 @@ func assertSameLines(t *testing.T, name string, got []string) {
 func TestGenHuJianParity(t *testing.T) {
 	m := make(map[int64][]HuTableInfo)
 	genHuInto(m, huJianCfg)
-	assertSameLines(t, "majiang_clien_jian.txt", buildHuClientLines(huJianCfg, m))
-	assertSameLines(t, "majiang_server_jian.txt", buildHuServerLines(huJianCfg, m))
+	assertSameLines(t, "mahjong_clien_jian.txt", buildHuClientLines(huJianCfg, m))
+	assertSameLines(t, "mahjong_server_jian.txt", buildHuServerLines(huJianCfg, m))
 }
 
 func TestGenHuFengParity(t *testing.T) {
 	m := make(map[int64][]HuTableInfo)
 	genHuInto(m, huFengCfg)
-	assertSameLines(t, "majiang_clien_feng.txt", buildHuClientLines(huFengCfg, m))
-	assertSameLines(t, "majiang_server_feng.txt", buildHuServerLines(huFengCfg, m))
+	assertSameLines(t, "mahjong_clien_feng.txt", buildHuClientLines(huFengCfg, m))
+	assertSameLines(t, "mahjong_server_feng.txt", buildHuServerLines(huFengCfg, m))
 }
 
 func TestGenAiJianParity(t *testing.T) {
 	m := make(map[int64][]AITableInfo)
 	genAiInto(m, aiJianCfg)
-	assertSameLines(t, "majiang_ai_jian.txt", buildAiLines(aiJianCfg, m))
+	assertSameLines(t, "mahjong_ai_jian.txt", buildAiLines(aiJianCfg, m))
 }
 
 func TestGenAiFengParity(t *testing.T) {
 	m := make(map[int64][]AITableInfo)
 	genAiInto(m, aiFengCfg)
-	assertSameLines(t, "majiang_ai_feng.txt", buildAiLines(aiFengCfg, m))
+	assertSameLines(t, "mahjong_ai_feng.txt", buildAiLines(aiFengCfg, m))
 }
 
 func TestJavaDoubleToString(t *testing.T) {

@@ -1,10 +1,10 @@
-# Majiang FakeLua Server
+# Mahjong FakeLua Server
 
 四人对局引擎、HTTP 服务、查表胡牌 / AI **全部用 FakeLua（Lua）实现，`server/` 下没有任何 C++ 代码**。
 宿主生命周期（init / update / fini）与优雅退出由 fakelua 自带的 `flua` 工具负责。
 
-查表数据（`majiang_clien_*.txt` / `majiang_ai_*.txt`，合计 1.7M 行）已转成 sqlite 库
-`data/majiang.db`（32MB），按 key 点查，不全量载入内存。
+查表数据（`mahjong_clien_*.txt` / `mahjong_ai_*.txt`，合计 1.7M 行）已转成 sqlite 库
+`data/mahjong.db`（32MB），按 key 点查，不全量载入内存。
 
 ## 资源占用
 
@@ -15,7 +15,7 @@
 | 启动后常驻内存（RSS） | 约 24 MB |
 | 稳态常驻内存 | 约 29 MB（不再增长：50 局 29.0 MB，200 局 29.3 MB） |
 | 空闲 CPU | 约 0.1%（无请求时节拍退避到 20ms） |
-| 查表库 | `data/majiang.db` 磁盘 32 MB，按 key 点查 |
+| 查表库 | `data/mahjong.db` 磁盘 32 MB，按 key 点查 |
 | 并发模型 | 单线程事件循环，最多吃满 1 核 |
 | 并发 1 延迟（p50） | 4.3 – 6.7 ms（各接口） |
 | 并发 8 吞吐 | `game/step` ≈ 1100 QPS，`game/state` ≈ 1020 QPS，`algo/test` ≈ 490 QPS |
@@ -38,8 +38,8 @@
 ## 生成查表库（txt → sqlite）
 
 ```bash
-python3 tools/gen_majiang_db.py              # 生成 data/majiang.db（约 32MB）
-python3 tools/gen_majiang_db.py server/data  # server 用的那份（也可把 server/data 软链到 ../data）
+python3 tools/gen_mahjong_db.py              # 生成 data/mahjong.db（约 32MB）
+python3 tools/gen_mahjong_db.py server/data  # server 用的那份（也可把 server/data 软链到 ../data）
 ```
 
 ## 运行（无构建步骤）
@@ -50,10 +50,10 @@ python3 tools/gen_majiang_db.py server/data  # server 用的那份（也可把 s
 cd server
 
 # 自检：校验查表库 + 判胡/出牌 + 观战至 GAME_OVER
-MAJIANG_SMOKE=1 flua lua --once
+MAHJONG_SMOKE=1 flua lua --once
 
-# HTTP 服务（默认 :8888，可用 MAJIANG_PORT 覆盖）
-MAJIANG_PORT=8888 flua lua
+# HTTP 服务（默认 :8888，可用 MAHJONG_PORT 覆盖）
+MAHJONG_PORT=8888 flua lua
 ```
 
 `update` 每帧只做一帧的活（`runtime.tick()` 泵 IO/定时器并分发请求），节奏由 Lua 侧
@@ -69,13 +69,13 @@ Go 参考实现在 `ref_go_web/`（不参与构建）。C++ 算法参考实现�
 
 | 文件 | 包名 | 职责 |
 |------|------|------|
-| `def.lua` | MajiangDef | 牌编号与字符串互转 |
-| `tables.lua` | MajiangTables | 校验 sqlite 查表库就绪 |
-| `huutil.lua` | MajiangHu | 胡 / 听（查 sqlite 判胡表） |
-| `aiutil.lua` | MajiangAi | 出牌 / 碰 / 杠 / 吃 AI（查 sqlite AI 表） |
-| `fan.lua` | MajiangFan | 番型结算 |
-| `game.lua` | MajiangGame | 四人对局（状态 serialize 进 map） |
-| `http_server.lua` | MajiangHttp | HTTP 路由 |
+| `def.lua` | MahjongDef | 牌编号与字符串互转 |
+| `tables.lua` | MahjongTables | 校验 sqlite 查表库就绪 |
+| `huutil.lua` | MahjongHu | 胡 / 听（查 sqlite 判胡表） |
+| `aiutil.lua` | MahjongAi | 出牌 / 碰 / 杠 / 吃 AI（查 sqlite AI 表） |
+| `fan.lua` | MahjongFan | 番型结算 |
+| `game.lua` | MahjongGame | 四人对局（状态 serialize 进 map） |
+| `http_server.lua` | MahjongHttp | HTTP 路由 |
 | `main.lua` | main | 生命周期入口 `init` / `update` / `fini`（宿主固定调用）|
 
 服务端没有 C++ 代码：`flua` 负责生命周期，查表经 fakelua 自带的 sqlite 模块读取。
@@ -84,7 +84,7 @@ Go 参考实现在 `ref_go_web/`（不参与构建）。C++ 算法参考实现�
 
 ```bash
 # 一次性自检：查表库就绪 + 判胡/听牌/AI 出牌 + 观战推进到 GAME_OVER 且四人分数守恒(4×1000)
-cd server && MAJIANG_SMOKE=1 flua lua --once
+cd server && MAHJONG_SMOKE=1 flua lua --once
 
 # HTTP 契约测试：自己拉起服务(随机端口)后打真接口
 python3 server/tests/api_test.py

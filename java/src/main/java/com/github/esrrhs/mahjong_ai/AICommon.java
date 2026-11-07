@@ -1,4 +1,4 @@
-package com.github.esrrhs.majiang_algorithm;
+package com.github.esrrhs.mahjong_ai;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ public class AICommon
 		check_ai(key, tmpcards);
 		try
 		{
-			File file = new File("majiang_ai_" + NAME + ".txt");
+			File file = new File("mahjong_ai_" + NAME + ".txt");
 			if (file.exists())
 			{
 				file.delete();
@@ -81,7 +81,7 @@ public class AICommon
 
 		try
 		{
-			File file = new File("majiang_ai_" + NAME + ".txt");
+			File file = new File("mahjong_ai_" + NAME + ".txt");
 			if (file.exists())
 			{
 				file.delete();
@@ -367,7 +367,7 @@ public class AICommon
 
 	public static void load()
 	{
-		File file = HuCommon.findDataFile("majiang_ai_" + NAME + ".txt");
+		File file = HuCommon.findDataFile("mahjong_ai_" + NAME + ".txt");
 		if (!file.exists())
 		{
 			return;

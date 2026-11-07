@@ -12,11 +12,11 @@ import (
 	"strings"
 	"testing"
 
-	majiang "github.com/esrrhs/majiang_algorithm/go"
+	mahjong "github.com/esrrhs/mahjong_ai/go"
 )
 
 func TestMain(m *testing.M) {
-	if err := majiang.Load(); err != nil {
+	if err := mahjong.Load(); err != nil {
 		fmt.Fprintln(os.Stderr, "加载查表文件失败:", err)
 		os.Exit(1)
 	}
@@ -51,7 +51,7 @@ func TestGameInitialization(t *testing.T) {
 }
 
 func TestTingDetectionInGame(t *testing.T) {
-	game := NewMahjongGame("card", majiang.JianBai, false)
+	game := NewMahjongGame("card", mahjong.JianBai, false)
 	view := game.CreateView(0)
 	if view.DiscardToTing == nil {
 		t.Fatal("discardToTing should not be nil")

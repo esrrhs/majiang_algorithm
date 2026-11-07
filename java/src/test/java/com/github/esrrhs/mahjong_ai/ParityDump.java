@@ -1,4 +1,4 @@
-package com.github.esrrhs.majiang_algorithm;
+package com.github.esrrhs.mahjong_ai;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -17,7 +17,7 @@ import java.util.Random;
  * every field exactly.
  *
  * Regenerate with:
- *   cd java && mvn -q test-compile exec:java -Dexec.mainClass=com.github.esrrhs.majiang_algorithm.ParityDump \
+ *   cd java && mvn -q test-compile exec:java -Dexec.mainClass=com.github.esrrhs.mahjong_ai.ParityDump \
  *     -Dexec.classpathScope=test -Dexec.args="../data/parity_cases.txt"
  */
 public class ParityDump
@@ -37,12 +37,12 @@ public class ParityDump
 
 			for (String[] fixed : fixedCases())
 			{
-				dump(w, fixed[0], MaJiangDef.stringToCard(fixed[1]), MaJiangDef.stringToCard(fixed[2]));
+				dump(w, fixed[0], MahjongDef.stringToCard(fixed[1]), MahjongDef.stringToCard(fixed[2]));
 			}
 
 			Random r = new Random(SEED);
 			List<Integer> deck = new ArrayList<>();
-			for (int c = MaJiangDef.WAN1; c <= MaJiangDef.JIAN_BAI; c++)
+			for (int c = MahjongDef.WAN1; c <= MahjongDef.JIAN_BAI; c++)
 			{
 				for (int i = 0; i < 4; i++)
 				{
@@ -55,9 +55,9 @@ public class ParityDump
 				Collections.shuffle(shuffled, r);
 				List<Integer> hand = new ArrayList<>(shuffled.subList(0, 13));
 				Collections.sort(hand);
-				int gui = r.nextInt(MaJiangDef.JIAN_BAI) + 1;
-				int chiCard = r.nextInt(MaJiangDef.JIAN_BAI) + 1;
-				dump(w, MaJiangDef.cardsToString(hand), gui, chiCard);
+				int gui = r.nextInt(MahjongDef.JIAN_BAI) + 1;
+				int chiCard = r.nextInt(MahjongDef.JIAN_BAI) + 1;
+				dump(w, MahjongDef.cardsToString(hand), gui, chiCard);
 			}
 		}
 		System.out.println("parity cases written to " + out);
@@ -89,7 +89,7 @@ public class ParityDump
 
 	private static void dump(BufferedWriter w, String handStr, int gui, int chiCard) throws IOException
 	{
-		List<Integer> hand = MaJiangDef.stringToCards(handStr);
+		List<Integer> hand = MahjongDef.stringToCards(handStr);
 		List<Integer> guiList = new ArrayList<>();
 		guiList.add(gui);
 
@@ -103,12 +103,12 @@ public class ParityDump
 		sb.append(gui).append("|");
 		sb.append(HuUtil.isHu(hand, gui) ? 1 : 0).append("|");
 		sb.append(HuUtil.isHuExtra(hand, guiList, 0) ? 1 : 0).append("|");
-		sb.append(MaJiangDef.cardsToString(HuUtil.isTing(hand, gui))).append("|");
-		sb.append(MaJiangDef.cardsToString(HuUtil.isTingExtra(hand, guiList))).append("|");
+		sb.append(MahjongDef.cardsToString(HuUtil.isTing(hand, gui))).append("|");
+		sb.append(MahjongDef.cardsToString(HuUtil.isTingExtra(hand, guiList))).append("|");
 		sb.append(AIUtil.calc(hand, guiList)).append("|");
 		sb.append(AIUtil.outAI(hand, guiList)).append("|");
 		sb.append(chiCard).append("|");
-		sb.append(MaJiangDef.cardsToString(chiChoices)).append("|");
+		sb.append(MahjongDef.cardsToString(chiChoices)).append("|");
 		sb.append(chiBool).append("|");
 		sb.append(peng).append("|");
 		sb.append(gang);

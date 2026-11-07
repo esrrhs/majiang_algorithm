@@ -1,6 +1,6 @@
-package "MajiangAi"
+package "MahjongAi"
 
--- AI 评分与出牌决策。查表数据放在 sqlite(data/majiang.db),按 key 点查。
+-- AI 评分与出牌决策。查表数据放在 sqlite(data/mahjong.db),按 key 点查。
 --
 -- 表结构 ai_{normal,feng,jian}(key, seq, jiang, val):
 --   key   该花色计数串展开成的十进制整数,万/筒/条共用 normal 表;
@@ -18,7 +18,7 @@ local MAX_NUM = 42
 local TABLE_OF = { 1, 1, 1, 2, 3 }
 
 -- 文件级语句在编译期执行,db 与语句句柄落在常量堆,可跨帧存活
-local db = sqlite.open("data/majiang.db")
+local db = sqlite.open("data/mahjong.db")
 local stmt = {
     db:prepare("SELECT jiang, val FROM ai_normal WHERE key=? ORDER BY seq"),
     db:prepare("SELECT jiang, val FROM ai_feng WHERE key=? ORDER BY seq"),
@@ -200,7 +200,7 @@ function CalcWithCache(input, guiCard, cache)
         ck_hu, cv_hu, ck_ai, cv_ai = cache[1], cache[2], cache[3], cache[4]
     end
 
-    local ting = MajiangHu.IsTingCardWithCache(cards, guiNum, ck_hu, cv_hu)
+    local ting = MahjongHu.IsTingCardWithCache(cards, guiNum, ck_hu, cv_hu)
     if #ting > 0 then
         return #ting * 10
     end
@@ -311,8 +311,8 @@ function ChiAIChoices(input, guiCard, card)
     local card1, card2 = 0, 0
 
     if frequency(input, card - 2) > 0 and frequency(input, card - 1) > 0 and
-            MajiangDef.CardType(card) == MajiangDef.CardType(card - 2) and
-            MajiangDef.CardType(card) == MajiangDef.CardType(card - 1) then
+            MahjongDef.CardType(card) == MahjongDef.CardType(card - 2) and
+            MahjongDef.CardType(card) == MahjongDef.CardType(card - 1) then
         local tmp = remove_first(remove_first(input, card - 2), card - 1)
         local score_new = Calc(tmp, guiCard)
         if score_new > score_new_max then
@@ -323,8 +323,8 @@ function ChiAIChoices(input, guiCard, card)
     end
 
     if frequency(input, card - 1) > 0 and frequency(input, card + 1) > 0 and
-            MajiangDef.CardType(card) == MajiangDef.CardType(card - 1) and
-            MajiangDef.CardType(card) == MajiangDef.CardType(card + 1) then
+            MahjongDef.CardType(card) == MahjongDef.CardType(card - 1) and
+            MahjongDef.CardType(card) == MahjongDef.CardType(card + 1) then
         local tmp = remove_first(remove_first(input, card - 1), card + 1)
         local score_new = Calc(tmp, guiCard)
         if score_new > score_new_max then
@@ -335,8 +335,8 @@ function ChiAIChoices(input, guiCard, card)
     end
 
     if frequency(input, card + 1) > 0 and frequency(input, card + 2) > 0 and
-            MajiangDef.CardType(card) == MajiangDef.CardType(card + 1) and
-            MajiangDef.CardType(card) == MajiangDef.CardType(card + 2) then
+            MahjongDef.CardType(card) == MahjongDef.CardType(card + 1) and
+            MahjongDef.CardType(card) == MahjongDef.CardType(card + 2) then
         local tmp = remove_first(remove_first(input, card + 1), card + 2)
         local score_new = Calc(tmp, guiCard)
         if score_new > score_new_max then

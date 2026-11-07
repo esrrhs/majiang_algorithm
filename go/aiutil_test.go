@@ -1,4 +1,4 @@
-package majiang
+package mahjong
 
 import (
 	"testing"
@@ -13,7 +13,7 @@ func benchN(n int, f func()) float64 {
 	return float64(time.Since(start).Nanoseconds())
 }
 
-// 以下测试移植自 Java MajiangAlgorithmIntegrationTest,断言一一对应。
+// 以下测试移植自 Java MahjongAiIntegrationTest,断言一一对应。
 
 func TestAIOutDecision(t *testing.T) {
 	cards := StringToCards("1万,2万,2万,1条,1条,东")

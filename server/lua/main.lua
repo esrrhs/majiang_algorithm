@@ -13,7 +13,7 @@ package "main"
 -- 节拍直接决定 HTTP 延迟:Boost.Beast 的一个请求要跨三拍才走完
 -- (收请求 -> 派发 -> 把响应泵出去),1000ms 一拍就是 3s 一个请求。
 -- 平时心跳也不该把 CPU 跑满,所以空闲时退避到 IDLE_TICK_INTERVAL_MS,
--- 有请求来的那几拍再回到 1ms —— 由 MajiangHttp 的活跃计数器驱动。
+-- 有请求来的那几拍再回到 1ms —— 由 MahjongHttp 的活跃计数器驱动。
 local BUSY_TICK_INTERVAL_MS = 1
 local IDLE_TICK_INTERVAL_MS = 20
 -- 收到请求后保持多少拍的"忙碌"节拍(够把一次请求的三拍走完)
@@ -23,41 +23,41 @@ local BUSY_TICKS = 16
 local pace = container.map()
 
 -- 自检:加载查表 + 判胡/出牌 + 观战步进到 GAME_OVER 且分数守恒。
--- 用 MAJIANG_SMOKE=1 flua lua --once 触发,init 返回非 0 即失败(flua 会把退出码透出去)。
+-- 用 MAHJONG_SMOKE=1 flua lua --once 触发,init 返回非 0 即失败(flua 会把退出码透出去)。
 local function self_check()
-    MajiangTables.Load()
+    MahjongTables.Load()
 
     -- 1) 判胡:111万 234万 567万 789万 东东东
-    local cards = MajiangDef.StringToCards("1万,1万,1万,2万,3万,4万,5万,6万,7万,8万,9万,东,东,东")
+    local cards = MahjongDef.StringToCards("1万,1万,1万,2万,3万,4万,5万,6万,7万,8万,9万,东,东,东")
     local gui = {}
-    local isHu = MajiangHu.IsHuExtra(cards, gui, 0)
+    local isHu = MahjongHu.IsHuExtra(cards, gui, 0)
     print("smoke isHu=", tostring(isHu))
     if not isHu then return 1 end
 
     -- 2) 听牌:13 张听东 / 听 1、4、7 万
-    local ting13 = MajiangHu.IsTingExtra({1,2,3,4,5,6,7,8,9,10,11,12,28}, {})
+    local ting13 = MahjongHu.IsTingExtra({1,2,3,4,5,6,7,8,9,10,11,12,28}, {})
     if #ting13 ~= 1 or ting13[1] ~= 28 then
         print("smoke ting13 size=", tostring(#ting13))
         return 1
     end
 
     -- 3) AI 出牌:14 张手牌必须给出合法建议
-    local out = MajiangAi.OutAI(cards, gui)
-    print("smoke OutAI=", MajiangDef.CardToString(out))
+    local out = MahjongAi.OutAI(cards, gui)
+    print("smoke OutAI=", MahjongDef.CardToString(out))
     if out < 1 or out > 34 then return 1 end
 
     -- 4) 观战跑完整局,结算分数守恒(4 * 1000)
-    MajiangGame.NewGame("none", 0, true)
+    MahjongGame.NewGame("none", 0, true)
     local steps = 0
-    while MajiangGame.GetPhase() ~= "GAME_OVER" and steps < 2000 do
-        if not MajiangGame.Step() then break end
+    while MahjongGame.GetPhase() ~= "GAME_OVER" and steps < 2000 do
+        if not MahjongGame.Step() then break end
         steps = steps + 1
     end
-    local phase = MajiangGame.GetPhase()
+    local phase = MahjongGame.GetPhase()
     print("smoke spectator steps=", tostring(steps), " phase=", phase)
     if steps <= 0 or phase ~= "GAME_OVER" then return 1 end
 
-    local view = MajiangGame.CreateView()
+    local view = MahjongGame.CreateView()
     if view.settlement == nil then
         print("smoke settlement missing")
         return 1
@@ -83,7 +83,7 @@ local function self_check()
 end
 
 function init()
-    local smoke = os.getenv("MAJIANG_SMOKE")
+    local smoke = os.getenv("MAHJONG_SMOKE")
     if smoke ~= nil and #smoke > 0 then
         return self_check()
     end
@@ -93,14 +93,14 @@ function init()
     print("=================================================")
     print("正在预加载查表数据...")
     local t0 = os.clock()
-    MajiangTables.Load()
+    MahjongTables.Load()
     print("查表加载完成, 耗时 " .. tostring(os.clock() - t0) .. " s")
 
     -- 默认开一局,避免 state 时空指针
-    MajiangGame.NewGame("random_flip", 0, false)
+    MahjongGame.NewGame("random_flip", 0, false)
 
     local port = 8888
-    local env_port = os.getenv("MAJIANG_PORT")
+    local env_port = os.getenv("MAHJONG_PORT")
     if env_port ~= nil and #env_port > 0 then
         port = math.floor(tonumber(env_port) or 8888)
     end
@@ -109,7 +109,7 @@ function init()
     cfg["ip"] = "0.0.0.0"
     cfg["port"] = port
     local srv = http.server(cfg)
-    srv:dispatch("MajiangHttp.OnRequest")
+    srv:dispatch("MahjongHttp.OnRequest")
     print("HTTP 监听 :" .. tostring(port))
     print("浏览器打开 http://127.0.0.1:" .. tostring(port))
     print("--------------------------------------------------")
@@ -122,7 +122,7 @@ end
 function update()
     runtime.tick()
 
-    local seen = MajiangHttp.ServedCount()
+    local seen = MahjongHttp.ServedCount()
     if seen ~= pace:get("last_seen") then
         pace:set("last_seen", seen)
         pace:set("busy_left", BUSY_TICKS)
@@ -144,4 +144,4 @@ function fini()
 end
 
 -- 自检逻辑见文件头的 self_check();入口固定为 main.init,
--- 用 MAJIANG_SMOKE=1 flua lua --once 触发。
+-- 用 MAHJONG_SMOKE=1 flua lua --once 触发。

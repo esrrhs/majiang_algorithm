@@ -1,4 +1,4 @@
-package com.github.esrrhs.majiang_algorithm;
+package com.github.esrrhs.mahjong_ai;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;

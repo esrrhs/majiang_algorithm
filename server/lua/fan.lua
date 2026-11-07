@@ -1,4 +1,4 @@
-package "MajiangFan"
+package "MahjongFan"
 
 -- 番型计算,对齐 Go ref_go_web/fan.go / Java FanCalculator
 
@@ -42,8 +42,8 @@ local function check_qing_yi_se(tiles, guiCards)
     while i <= #tiles do
         local c = tiles[i]
         if not contains(guiCards, c) then
-            local t = MajiangDef.CardType(c)
-            if t == MajiangDef.TypeFeng() or t == MajiangDef.TypeJian() then
+            local t = MahjongDef.CardType(c)
+            if t == MahjongDef.TypeFeng() or t == MahjongDef.TypeJian() then
                 return false
             end
             if colorType == 0 then
@@ -64,8 +64,8 @@ local function check_hun_yi_se(tiles, guiCards)
     while i <= #tiles do
         local c = tiles[i]
         if not contains(guiCards, c) then
-            local t = MajiangDef.CardType(c)
-            if t == MajiangDef.TypeFeng() or t == MajiangDef.TypeJian() then
+            local t = MahjongDef.CardType(c)
+            if t == MahjongDef.TypeFeng() or t == MahjongDef.TypeJian() then
                 hasZi = true
             else
                 if colorType == 0 then
@@ -85,8 +85,8 @@ local function check_duan_yao_jiu(tiles, guiCards)
     while i <= #tiles do
         local c = tiles[i]
         if not contains(guiCards, c) then
-            local t = MajiangDef.CardType(c)
-            if t == MajiangDef.TypeFeng() or t == MajiangDef.TypeJian() then
+            local t = MahjongDef.CardType(c)
+            if t == MahjongDef.TypeFeng() or t == MahjongDef.TypeJian() then
                 return false
             end
             if c == 1 or c == 9 or c == 10 or c == 18 or c == 19 or c == 27 then

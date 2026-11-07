@@ -1,9 +1,9 @@
 // 判胡 / 听牌核心逻辑,对应 Go huutil.go / Java HuUtil。
-#include "majiang/hu_util.h"
+#include "mahjong/hu_util.h"
 
 #include "detail.h"
 
-namespace majiang
+namespace mahjong
 {
 
 using namespace detail;
@@ -342,4 +342,4 @@ std::vector<int> IsTingCard(const std::vector<int> &cards, int guiNum)
     return ret;
 }
 
-} // namespace majiang
+} // namespace mahjong

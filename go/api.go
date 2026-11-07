@@ -1,4 +1,4 @@
-package majiang
+package mahjong
 
 import "sync"
 
@@ -15,15 +15,15 @@ func Load() error {
 	return AILoad()
 }
 
-// HuGen 重新生成判胡查表文件(majiang_clien_*.txt、majiang_server_*.txt),
-// 写入当前目录。等价 Java HuUtil.gen(),但不含 sqlite 的 majiang.db 输出。
+// HuGen 重新生成判胡查表文件(mahjong_clien_*.txt、mahjong_server_*.txt),
+// 写入当前目录。等价 Java HuUtil.gen(),但不含 sqlite 的 mahjong.db 输出。
 func HuGen() error {
 	loadMu.Lock()
 	defer loadMu.Unlock()
 	return genHu()
 }
 
-// AiGen 重新生成 AI 查表文件(majiang_ai_*.txt),写入当前目录。等价 Java AIUtil.gen()。
+// AiGen 重新生成 AI 查表文件(mahjong_ai_*.txt),写入当前目录。等价 Java AIUtil.gen()。
 func AiGen() error {
 	loadMu.Lock()
 	defer loadMu.Unlock()

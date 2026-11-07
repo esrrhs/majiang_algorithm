@@ -1,6 +1,6 @@
-package "MajiangDef"
+package "MahjongDef"
 
--- 牌编号,与 Go def.go / Java MaJiangDef 一致
+-- 牌编号,与 Go def.go / Java MahjongDef 一致
 
 function Wan1() return 1 end
 function Tong1() return 10 end

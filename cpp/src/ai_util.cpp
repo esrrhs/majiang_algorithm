@@ -1,12 +1,12 @@
 // AI 决策逻辑,对应 Go aiutil.go / Java AIUtil。
-#include "majiang/ai_util.h"
+#include "mahjong/ai_util.h"
 
 #include <cfloat>
 #include <limits>
 
 #include "detail.h"
 
-namespace majiang
+namespace mahjong
 {
 
 using namespace detail;
@@ -267,4 +267,4 @@ bool GangAI(const std::vector<int> &input, const std::vector<int> &guiCard, int 
     return scoreNew + award >= score;
 }
 
-} // namespace majiang
+} // namespace mahjong

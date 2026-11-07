@@ -1,11 +1,11 @@
-# Majiang Server HTTP API（Go 版契约）
+# Mahjong Server HTTP API（Go 版契约）
 
 本文档为 FakeLua 服务（`server/`）对齐用的 HTTP 接口契约（源自原 Go `go/web` 实现）。
 
 - **实现**：`server/lua/`（`http_server.lua`、`game.lua`、`huutil.lua`、`aiutil.lua` 等）
 - **前端**：`server/static/`（`app.js` 直接调用下列路径）
 - **参考**：旧 Go 源码副本在 `server/ref_go_web/`
-- **线上**：`http://majiang.esrrhs.xyz`（nginx → `:8888`）
+- **线上**：`http://mahjong.esrrhs.xyz`（nginx → `:8888`）
 - **会话模型**：进程内**单局** `current`；真人固定 **座位 0**，1/2/3 为 AI（观战模式下四人皆 AI）
 - **协议**：HTTP + JSON；CORS 允许 `*`；多数写接口支持 `OPTIONS` → `204`
 - **错误**：panic/异常 → `500 {"error":"..."}`；业务失败通常仍 `200`，用 `success:false` 等字段表示
@@ -14,7 +14,7 @@
 
 ## 1. 牌编码
 
-与 `go/def.go` / Java `MaJiangDef` 一致（对局用 1–34，花牌 35–42 本服未入墙）：
+与 `go/def.go` / Java `MahjongDef` 一致（对局用 1–34，花牌 35–42 本服未入墙）：
 
 | ID | 牌 |
 |----|----|
@@ -367,9 +367,9 @@
 1. **路径与 JSON 字段名保持不变**，现有 `static/app.js` 可直接复用。  
 2. 必须实现同一套牌 ID、阶段名、动作字符串。  
 3. 单进程单局即可；若改为多会话，需另加 `gameId`/session，前端也要改。  
-4. 对局 / HTTP 在 Lua；胡牌与 AI 经 `native_majiang.cpp` 调用同仓库 `cpp/` 库（与 Go/Java 查表行为一致）。  
-5. 查表数据：`data/majiang_clien_*.txt`、`majiang_ai_*.txt`（及 feng/jian 变体），由 `majiang::Load()` 加载。  
-6. 冒烟：`MAJIANG_SMOKE=1 flua lua --once`（校验查表库 + IsHu/OutAI + 观战至 GAME_OVER）。  
+4. 对局 / HTTP 在 Lua；胡牌与 AI 经 `native_mahjong.cpp` 调用同仓库 `cpp/` 库（与 Go/Java 查表行为一致）。  
+5. 查表数据：`data/mahjong_clien_*.txt`、`mahjong_ai_*.txt`（及 feng/jian 变体），由 `mahjong::Load()` 加载。  
+6. 冒烟：`MAHJONG_SMOKE=1 flua lua --once`（校验查表库 + IsHu/OutAI + 观战至 GAME_OVER）。  
 
 ---
 
@@ -382,8 +382,8 @@
 | 胡 / 听 | `server/lua/huutil.lua` |
 | AI | `server/lua/aiutil.lua` |
 | 番型结算 | `server/lua/fan.lua` |
-| 查表加载入口 | `server/lua/tables.lua` 校验 `data/majiang.db`（由 `tools/gen_majiang_db.py` 生成）|
-| C++ 算法桥 | `server/native_majiang.cpp` + `cpp/` |
+| 查表加载入口 | `server/lua/tables.lua` 校验 `data/mahjong.db`（由 `tools/gen_mahjong_db.py` 生成）|
+| C++ 算法桥 | `server/native_mahjong.cpp` + `cpp/` |
 | 入口 | `server/lua/main.lua` + `server/main.cpp` |
 | 前端调用 | `server/static/app.js` |
 | 旧 Go 参考 | `server/ref_go_web/` |

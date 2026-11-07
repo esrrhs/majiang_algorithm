@@ -1,4 +1,4 @@
-package com.github.esrrhs.majiang_algorithm;
+package com.github.esrrhs.mahjong_ai;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -8,7 +8,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class MajiangAlgorithmIntegrationTest
+public class MahjongAiIntegrationTest
 {
 	@BeforeAll
 	public static void setUp()
@@ -23,8 +23,8 @@ public class MajiangAlgorithmIntegrationTest
 		// 1万, 1万 (pair with gui = 1万)
 		String init = "1万,1万";
 		String gui = "1万";
-		List<Integer> cards = MaJiangDef.stringToCards(init);
-		assertTrue(HuUtil.isHu(cards, MaJiangDef.stringToCard(gui)));
+		List<Integer> cards = MahjongDef.stringToCards(init);
+		assertTrue(HuUtil.isHu(cards, MahjongDef.stringToCard(gui)));
 	}
 
 	@Test
@@ -32,16 +32,16 @@ public class MajiangAlgorithmIntegrationTest
 	{
 		// 111万 234万 123筒 789条 东东 (standard 14-card winning hand, 0 gui)
 		String hand = "1万,1万,1万,2万,3万,4万,1筒,2筒,3筒,7条,8条,9条,东,东";
-		List<Integer> cards = MaJiangDef.stringToCards(hand);
+		List<Integer> cards = MahjongDef.stringToCards(hand);
 		assertTrue(HuUtil.isHuExtra(cards, Arrays.asList(), 0));
 
 		// Not a winning hand (missing pair or meld)
 		String notHu = "1万,1万,1万,2万,3万,4万,1筒,2筒,3筒,7条,8条,9条,东,南";
-		List<Integer> notHuCards = MaJiangDef.stringToCards(notHu);
+		List<Integer> notHuCards = MahjongDef.stringToCards(notHu);
 		assertFalse(HuUtil.isHuExtra(notHuCards, Arrays.asList(), 0));
 
 		// With gui wildcard
-		List<Integer> guiCards = Arrays.asList(MaJiangDef.FENG_NAN);
+		List<Integer> guiCards = Arrays.asList(MahjongDef.FENG_NAN);
 		assertTrue(HuUtil.isHuExtra(notHuCards, guiCards, 0));
 	}
 
@@ -50,13 +50,13 @@ public class MajiangAlgorithmIntegrationTest
 	{
 		String init = "1万,1万,1筒,3筒,2筒,2条,3条,4条,东,东";
 		String gui = "1筒";
-		List<Integer> cards = MaJiangDef.stringToCards(init);
+		List<Integer> cards = MahjongDef.stringToCards(init);
 
-		List<Integer> tingCards = HuUtil.isTing(cards, MaJiangDef.stringToCard(gui));
+		List<Integer> tingCards = HuUtil.isTing(cards, MahjongDef.stringToCard(gui));
 		assertNotNull(tingCards);
 		assertFalse(tingCards.isEmpty());
 
-		List<Integer> tingExtraCards = HuUtil.isTingExtra(cards, MaJiangDef.stringToCards(gui));
+		List<Integer> tingExtraCards = HuUtil.isTingExtra(cards, MahjongDef.stringToCards(gui));
 		assertNotNull(tingExtraCards);
 		assertFalse(tingExtraCards.isEmpty());
 	}
@@ -66,13 +66,13 @@ public class MajiangAlgorithmIntegrationTest
 	{
 		String init = "1万,2万,2万,1条,1条,东";
 		String guiStr = "1万";
-		List<Integer> cards = MaJiangDef.stringToCards(init);
-		List<Integer> gui = MaJiangDef.stringToCards(guiStr);
+		List<Integer> cards = MahjongDef.stringToCards(init);
+		List<Integer> gui = MahjongDef.stringToCards(guiStr);
 
 		int out = AIUtil.outAI(cards, gui);
 		assertTrue(cards.contains(out));
 		// Single wind tile '东' should typically be preferred to discard
-		assertEquals(MaJiangDef.FENG_DONG, out);
+		assertEquals(MahjongDef.FENG_DONG, out);
 	}
 
 	@Test
@@ -80,15 +80,15 @@ public class MajiangAlgorithmIntegrationTest
 	{
 		String initPeng = "1万,2万,2万,1条,1条,2筒,4筒,4筒";
 		String guiStr = "1万";
-		List<Integer> cardsPeng = MaJiangDef.stringToCards(initPeng);
-		List<Integer> gui = MaJiangDef.stringToCards(guiStr);
+		List<Integer> cardsPeng = MahjongDef.stringToCards(initPeng);
+		List<Integer> gui = MahjongDef.stringToCards(guiStr);
 
-		boolean peng = AIUtil.pengAI(cardsPeng, gui, MaJiangDef.stringToCard("2万"), 0.0d);
+		boolean peng = AIUtil.pengAI(cardsPeng, gui, MahjongDef.stringToCard("2万"), 0.0d);
 		assertNotNull(peng);
 
 		String initGang = "1万,2万,2万,2万,3万,4万,4筒,4筒";
-		List<Integer> cardsGang = MaJiangDef.stringToCards(initGang);
-		boolean gang = AIUtil.gangAI(cardsGang, gui, MaJiangDef.stringToCard("2万"), 1.0d);
+		List<Integer> cardsGang = MahjongDef.stringToCards(initGang);
+		boolean gang = AIUtil.gangAI(cardsGang, gui, MahjongDef.stringToCard("2万"), 1.0d);
 		assertNotNull(gang);
 	}
 
@@ -97,10 +97,10 @@ public class MajiangAlgorithmIntegrationTest
 	{
 		String init = "1万,2万,2万,1条,1条,1筒,2筒,4筒,4筒,5筒";
 		String guiStr = "1万";
-		List<Integer> cards = MaJiangDef.stringToCards(init);
-		List<Integer> gui = MaJiangDef.stringToCards(guiStr);
+		List<Integer> cards = MahjongDef.stringToCards(init);
+		List<Integer> gui = MahjongDef.stringToCards(guiStr);
 
-		List<Integer> chiChoices = AIUtil.chiAI(cards, gui, MaJiangDef.stringToCard("3筒"));
+		List<Integer> chiChoices = AIUtil.chiAI(cards, gui, MahjongDef.stringToCard("3筒"));
 		assertNotNull(chiChoices);
 	}
 
@@ -108,7 +108,7 @@ public class MajiangAlgorithmIntegrationTest
 	public void testBenchmarkHuDetection()
 	{
 		String hand = "1万,1万,1万,2万,3万,4万,1筒,2筒,3筒,7条,8条,9条,东,东";
-		List<Integer> cards = MaJiangDef.stringToCards(hand);
+		List<Integer> cards = MahjongDef.stringToCards(hand);
 		List<Integer> emptyGui = Arrays.asList();
 
 		// Warmup

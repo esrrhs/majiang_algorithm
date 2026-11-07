@@ -1,4 +1,4 @@
-package majiang
+package mahjong
 
 import (
 	"bufio"
@@ -54,7 +54,7 @@ func loadAiTable(m map[int64][]AITableInfo, cfg aiConfig) error {
 	for k := range m {
 		delete(m, k)
 	}
-	path, err := findDataFile("majiang_ai_" + cfg.name + ".txt")
+	path, err := findDataFile("mahjong_ai_" + cfg.name + ".txt")
 	if err != nil {
 		return err
 	}
@@ -196,7 +196,7 @@ func checkAiRec(cfg aiConfig, aiInfos map[aiInfoKey]struct{}, num []int, jiang i
 	aiInfos[aiInfoKey{inputNum: inputNum, jiang: jiang}] = struct{}{}
 }
 
-// genAi 重新生成全部 AI 查表文件(majiang_ai_*.txt),写入当前目录,
+// genAi 重新生成全部 AI 查表文件(mahjong_ai_*.txt),写入当前目录,
 // 等价 Java AIUtil.gen()。浮点数按 Java Double.toString 规则输出,与 Java 生成的一致。
 func genAi() error {
 	type aiTable struct {
@@ -214,7 +214,7 @@ func genAi() error {
 }
 
 func writeAiFile(cfg aiConfig, m map[int64][]AITableInfo) error {
-	name := "majiang_ai_" + cfg.name + ".txt"
+	name := "mahjong_ai_" + cfg.name + ".txt"
 	return writeLines(name, buildAiLines(cfg, m))
 }
 

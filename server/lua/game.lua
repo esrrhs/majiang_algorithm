@@ -1,4 +1,4 @@
-package "MajiangGame"
+package "MahjongGame"
 
 -- 4人麻将对局引擎 (FakeLua 移植自 go/web/game.go)
 -- 状态保存在 package upvalue 中;主循环单 Call 不 Reset,可持续使用。
@@ -174,7 +174,7 @@ local function update_ting(G)
         local p = G.players[pi]
         local hn = #p.hand
         if hn % 3 == 1 then
-            local ting = MajiangHu.IsTingExtra(p.hand, G.guiCards)
+            local ting = MahjongHu.IsTingExtra(p.hand, G.guiCards)
             p.isTing = #ting > 0
         elseif hn % 3 == 2 then
             local can = false
@@ -187,7 +187,7 @@ local function update_ting(G)
                 if seen[c] == nil then
                     seen[c] = true
                     local tmp = remove_first(p.hand, c)
-                    local t = MajiangHu.IsTingExtraWithCache(tmp, G.guiCards, ck, cv)
+                    local t = MahjongHu.IsTingExtraWithCache(tmp, G.guiCards, ck, cv)
                     if #t > 0 then can = true; break end
                 end
                 i = i + 1
@@ -200,16 +200,16 @@ end
 
 local function find_chi_options(hand, card)
     local options = {}
-    local t = MajiangDef.CardType(card)
+    local t = MahjongDef.CardType(card)
     if t ~= 1 and t ~= 2 and t ~= 3 then return options end
-    if contains(hand, card - 2) and contains(hand, card - 1) and MajiangDef.CardType(card - 2) == t then
+    if contains(hand, card - 2) and contains(hand, card - 1) and MahjongDef.CardType(card - 2) == t then
         options[#options + 1] = { card - 2, card - 1 }
     end
     if contains(hand, card - 1) and contains(hand, card + 1)
-        and MajiangDef.CardType(card - 1) == t and MajiangDef.CardType(card + 1) == t then
+        and MahjongDef.CardType(card - 1) == t and MahjongDef.CardType(card + 1) == t then
         options[#options + 1] = { card - 1, card + 1 }
     end
-    if contains(hand, card + 1) and contains(hand, card + 2) and MajiangDef.CardType(card + 2) == t then
+    if contains(hand, card + 1) and contains(hand, card + 2) and MahjongDef.CardType(card + 2) == t then
         options[#options + 1] = { card + 1, card + 2 }
     end
     return options
@@ -227,7 +227,7 @@ function trigger_win(G, winnerSeat, providerSeat, winCard, isZimo, isGangShangHu
     G.phase = "GAME_OVER"
     local winner = G.players[winnerSeat + 1]
     winner.isHu = true
-    local fan = MajiangFan.Calculate(winner.hand, winner.melds, winCard, isZimo, isGangShangHua, isHaiDi, isTianHu, isDiHu, G.guiCards)
+    local fan = MahjongFan.Calculate(winner.hand, winner.melds, winCard, isZimo, isGangShangHua, isHaiDi, isTianHu, isDiHu, G.guiCards)
     local settlement = {
         isDraw = false, winnerSeat = winnerSeat, providerSeat = providerSeat, isZimo = isZimo,
         winCard = winCard, patterns = fan.patterns, totalFan = fan.totalFan, points = fan.points, scoreDeltas = {}
@@ -269,7 +269,7 @@ function execute_peng(G, seat, fromSeat, card)
     player_remove(p, card)
     local meld = { type = "PENG", triggerCard = card, fromSeat = fromSeat, cards = { card, card, card } }
     p.melds[#p.melds + 1] = meld
-    glog(G, p.name .. " 【碰】了 " .. G.players[fromSeat + 1].name .. " 的 " .. MajiangDef.CardToString(card))
+    glog(G, p.name .. " 【碰】了 " .. G.players[fromSeat + 1].name .. " 的 " .. MahjongDef.CardToString(card))
     G.currentSeat = seat
     G.phase = "DISCARD"
     G.lastDrawFromGang = false
@@ -285,7 +285,7 @@ function execute_gang(G, seat, fromSeat, card, meldType)
         player_remove(p, card)
         local meld = { type = "MING_GANG", triggerCard = card, fromSeat = fromSeat, cards = { card, card, card, card } }
         p.melds[#p.melds + 1] = meld
-        glog(G, p.name .. " 【明杠】了 " .. G.players[fromSeat + 1].name .. " 的 " .. MajiangDef.CardToString(card))
+        glog(G, p.name .. " 【明杠】了 " .. G.players[fromSeat + 1].name .. " 的 " .. MahjongDef.CardToString(card))
     end
     draw_next(G, seat, true)
 end
@@ -297,7 +297,7 @@ function execute_chi(G, seat, fromSeat, card, c1, c2)
     local meld = { type = "CHI", triggerCard = card, fromSeat = fromSeat, cards = { card, c1, c2 } }
     sort_ints(meld.cards)
     p.melds[#p.melds + 1] = meld
-    glog(G, p.name .. " 【吃】了 " .. G.players[fromSeat + 1].name .. " 的 " .. MajiangDef.CardToString(card))
+    glog(G, p.name .. " 【吃】了 " .. G.players[fromSeat + 1].name .. " 的 " .. MahjongDef.CardToString(card))
     G.currentSeat = seat
     G.phase = "DISCARD"
     G.lastDrawFromGang = false
@@ -330,15 +330,15 @@ function draw_next(G, seat, isFromGang)
     local player = G.players[seat + 1]
     player_add(player, drawn)
     if isFromGang then
-        glog(G, player.name .. " 杠后补摸一张: 【" .. MajiangDef.CardToString(drawn) .. "】 (剩余 " .. tostring(#G.wall) .. " 张)")
+        glog(G, player.name .. " 杠后补摸一张: 【" .. MahjongDef.CardToString(drawn) .. "】 (剩余 " .. tostring(#G.wall) .. " 张)")
     else
         glog(G, player.name .. " 摸了一张牌 (剩余 " .. tostring(#G.wall) .. " 张)")
     end
-    if MajiangHu.IsHuExtra(player.hand, G.guiCards, 0) then
+    if MahjongHu.IsHuExtra(player.hand, G.guiCards, 0) then
         if player.isAi then
             local tag = " 【自摸胡】"
             if isFromGang then tag = " 【杠上开花】" end
-            glog(G, "🎊 " .. player.name .. tag .. "！胡牌: 【" .. MajiangDef.CardToString(drawn) .. "】")
+            glog(G, "🎊 " .. player.name .. tag .. "！胡牌: 【" .. MahjongDef.CardToString(drawn) .. "】")
             trigger_win(G, seat, -1, drawn, true, isFromGang, wall_empty(G), false, false)
             return
         end
@@ -347,12 +347,12 @@ function draw_next(G, seat, isFromGang)
         local card = 1
         while card <= 34 do
             if not contains(G.guiCards, card) and count_card(player.hand, card) == 4 then
-                if MajiangAi.GangAI(player.hand, G.guiCards, card, 0.5) then
+                if MahjongAi.GangAI(player.hand, G.guiCards, card, 0.5) then
                     local k = 1
                     while k <= 4 do player_remove(player, card); k = k + 1 end
                     local meld = { type = "AN_GANG", triggerCard = card, fromSeat = -1, cards = { card, card, card, card } }
                     player.melds[#player.melds + 1] = meld
-                    glog(G, player.name .. " 【暗杠】: " .. MajiangDef.CardToString(card))
+                    glog(G, player.name .. " 【暗杠】: " .. MahjongDef.CardToString(card))
                     draw_next(G, seat, true)
                     return
                 end
@@ -363,11 +363,11 @@ function draw_next(G, seat, isFromGang)
         while mi <= #player.melds do
             local m = player.melds[mi]
             if m.type == "PENG" and not contains(G.guiCards, m.triggerCard) and contains(player.hand, m.triggerCard) then
-                if MajiangAi.GangAI(player.hand, G.guiCards, m.triggerCard, 0.5) then
+                if MahjongAi.GangAI(player.hand, G.guiCards, m.triggerCard, 0.5) then
                     player_remove(player, m.triggerCard)
                     m.type = "BU_GANG"
                     m.cards[#m.cards + 1] = m.triggerCard
-                    glog(G, player.name .. " 【补杠】: " .. MajiangDef.CardToString(m.triggerCard))
+                    glog(G, player.name .. " 【补杠】: " .. MahjongDef.CardToString(m.triggerCard))
                     draw_next(G, seat, true)
                     return
                 end
@@ -384,8 +384,8 @@ function process_ai_responses(G, card, fromSeat)
     while i <= 3 do
         local seat = (fromSeat + i) % 4
         local p = G.players[seat + 1]
-        if p.isAi and MajiangHu.IsHuExtra(p.hand, G.guiCards, card) then
-            glog(G, "🎊 " .. p.name .. " 胡了 " .. G.players[fromSeat + 1].name .. " 点炮的 【" .. MajiangDef.CardToString(card) .. "】！")
+        if p.isAi and MahjongHu.IsHuExtra(p.hand, G.guiCards, card) then
+            glog(G, "🎊 " .. p.name .. " 胡了 " .. G.players[fromSeat + 1].name .. " 点炮的 【" .. MahjongDef.CardToString(card) .. "】！")
             trigger_win(G, seat, fromSeat, card, false, false, wall_empty(G), false, false)
             return
         end
@@ -396,7 +396,7 @@ function process_ai_responses(G, card, fromSeat)
         local seat = (fromSeat + i) % 4
         local p = G.players[seat + 1]
         if p.isAi and count_card(p.hand, card) == 3 and not contains(G.guiCards, card) then
-            if MajiangAi.GangAI(p.hand, G.guiCards, card, 0.5) then
+            if MahjongAi.GangAI(p.hand, G.guiCards, card, 0.5) then
                 execute_gang(G, seat, fromSeat, card, "MING_GANG")
                 return
             end
@@ -408,7 +408,7 @@ function process_ai_responses(G, card, fromSeat)
         local seat = (fromSeat + i) % 4
         local p = G.players[seat + 1]
         if p.isAi and count_card(p.hand, card) >= 2 and not contains(G.guiCards, card) then
-            if MajiangAi.PengAI(p.hand, G.guiCards, card, 0.0) then
+            if MahjongAi.PengAI(p.hand, G.guiCards, card, 0.0) then
                 execute_peng(G, seat, fromSeat, card)
                 return
             end
@@ -418,7 +418,7 @@ function process_ai_responses(G, card, fromSeat)
     local nextSeat = (fromSeat + 1) % 4
     local nextPlayer = G.players[nextSeat + 1]
     if nextPlayer.isAi and not contains(G.guiCards, card) then
-        local chiPair = MajiangAi.ChiAIChoices(nextPlayer.hand, G.guiCards, card)
+        local chiPair = MahjongAi.ChiAIChoices(nextPlayer.hand, G.guiCards, card)
         if #chiPair == 2 then
             execute_chi(G, nextSeat, fromSeat, card, chiPair[1], chiPair[2])
             return
@@ -433,7 +433,7 @@ local function check_responses(G, card, fromSeat)
     local human = G.players[1]
     if not human.isAi and fromSeat ~= 0 then
         local hasAction = false
-        if MajiangHu.IsHuExtra(human.hand, G.guiCards, card) then
+        if MahjongHu.IsHuExtra(human.hand, G.guiCards, card) then
             G.userPendingActions.canHu = true
             hasAction = true
         end
@@ -467,21 +467,21 @@ local function handle_ai_response_player0(G)
     local card = G.lastDiscard
     local fromSeat = G.lastDiscardSeat
     local p = G.players[1]
-    if MajiangHu.IsHuExtra(p.hand, G.guiCards, card) then
-        glog(G, "🎊 " .. p.name .. " 胡了点炮 【" .. MajiangDef.CardToString(card) .. "】！")
+    if MahjongHu.IsHuExtra(p.hand, G.guiCards, card) then
+        glog(G, "🎊 " .. p.name .. " 胡了点炮 【" .. MahjongDef.CardToString(card) .. "】！")
         trigger_win(G, 0, fromSeat, card, false, false, wall_empty(G), false, false)
         return
     end
-    if count_card(p.hand, card) == 3 and not contains(G.guiCards, card) and MajiangAi.GangAI(p.hand, G.guiCards, card, 0.5) then
+    if count_card(p.hand, card) == 3 and not contains(G.guiCards, card) and MahjongAi.GangAI(p.hand, G.guiCards, card, 0.5) then
         execute_gang(G, 0, fromSeat, card, "MING_GANG")
         return
     end
-    if count_card(p.hand, card) >= 2 and not contains(G.guiCards, card) and MajiangAi.PengAI(p.hand, G.guiCards, card, 0.0) then
+    if count_card(p.hand, card) >= 2 and not contains(G.guiCards, card) and MahjongAi.PengAI(p.hand, G.guiCards, card, 0.0) then
         execute_peng(G, 0, fromSeat, card)
         return
     end
     if (fromSeat + 1) % 4 == 0 then
-        local chiPair = MajiangAi.ChiAIChoices(p.hand, G.guiCards, card)
+        local chiPair = MahjongAi.ChiAIChoices(p.hand, G.guiCards, card)
         if #chiPair == 2 then
             execute_chi(G, 0, fromSeat, card, chiPair[1], chiPair[2])
             return
@@ -530,11 +530,11 @@ local function init_game(G, guiMode, customGuiCard)
         G.wall = nw
         local gui = next_card(G.guiIndicator)
         G.guiCards[1] = gui
-        glog(G, "本局鬼牌(癞子)为: 【" .. MajiangDef.CardToString(gui) .. "】")
+        glog(G, "本局鬼牌(癞子)为: 【" .. MahjongDef.CardToString(gui) .. "】")
     elseif guiMode == "card" and customGuiCard > 0 and customGuiCard <= 34 then
         G.guiIndicator = customGuiCard
         G.guiCards[1] = customGuiCard
-        glog(G, "指定宝牌(鬼牌)为: 【" .. MajiangDef.CardToString(customGuiCard) .. "】")
+        glog(G, "指定宝牌(鬼牌)为: 【" .. MahjongDef.CardToString(customGuiCard) .. "】")
     elseif guiMode == "bai" then
         G.guiIndicator = 34
         G.guiCards[1] = 34
@@ -568,7 +568,7 @@ local function init_game(G, guiMode, customGuiCard)
     player_add(G.players[1], dealerCard)
     G.players[1].lastDrawnCard = dealerCard
     glog(G, G.players[1].name .. " 起手14张牌，作为庄家率先出牌")
-    if MajiangHu.IsHuExtra(G.players[1].hand, G.guiCards, 0) then
+    if MahjongHu.IsHuExtra(G.players[1].hand, G.guiCards, 0) then
         glog(G, "🎉 震撼！" .. G.players[1].name .. " 起手天胡！")
         trigger_win(G, 0, -1, dealerCard, true, false, false, true, false)
         return
@@ -617,7 +617,7 @@ function Discard(seat, card)
     sort_ints(player.hand)
     G.lastDiscard = card
     G.lastDiscardSeat = seat
-    glog(G, player.name .. " 打出了 【" .. MajiangDef.CardToString(card) .. "】")
+    glog(G, player.name .. " 打出了 【" .. MahjongDef.CardToString(card) .. "】")
     G.phase = "RESPONSE"
     check_responses(G, card, seat)
     saveG(G)
@@ -667,7 +667,7 @@ function UserSelfAction(action, card)
     if G == nil or not G.ready or G.phase ~= "DISCARD" or G.currentSeat ~= 0 then return false end
     local human = G.players[1]
     if action == "hu" then
-        if MajiangHu.IsHuExtra(human.hand, G.guiCards, 0) then
+        if MahjongHu.IsHuExtra(human.hand, G.guiCards, 0) then
             local winCard = human.lastDrawnCard
             if winCard <= 0 and #human.hand > 0 then winCard = human.hand[#human.hand] end
             glog(G, "🎉 恭喜你【自摸胡】了！")
@@ -681,7 +681,7 @@ function UserSelfAction(action, card)
             local k = 1
             while k <= 4 do player_remove(human, card); k = k + 1 end
             human.melds[#human.melds + 1] = { type = "AN_GANG", triggerCard = card, fromSeat = -1, cards = { card, card, card, card } }
-            glog(G, human.name .. " 【暗杠】: " .. MajiangDef.CardToString(card))
+            glog(G, human.name .. " 【暗杠】: " .. MahjongDef.CardToString(card))
             draw_next(G, 0, true)
             saveG(G)
             return true
@@ -693,7 +693,7 @@ function UserSelfAction(action, card)
                 player_remove(human, card)
                 m.type = "BU_GANG"
                 m.cards[#m.cards + 1] = card
-                glog(G, human.name .. " 【补杠】: " .. MajiangDef.CardToString(card))
+                glog(G, human.name .. " 【补杠】: " .. MahjongDef.CardToString(card))
                 draw_next(G, 0, true)
                 saveG(G)
                 return true
@@ -725,7 +725,7 @@ function Step()
     if G.phase == "DISCARD" then
         local current = G.players[G.currentSeat + 1]
         if current.isAi then
-            local outCard = MajiangAi.OutAI(current.hand, G.guiCards)
+            local outCard = MahjongAi.OutAI(current.hand, G.guiCards)
             if outCard == 0 or not contains(current.hand, outCard) then
                 outCard = 0
                 local i = 1
@@ -845,7 +845,7 @@ function CreateView()
         availableActions = clone_actions(G.userPendingActions)
     elseif G.phase == "DISCARD" and G.currentSeat == 0 and not user.isAi then
         availableActions.canDiscard = true
-        if MajiangHu.IsHuExtra(user.hand, G.guiCards, 0) then
+        if MahjongHu.IsHuExtra(user.hand, G.guiCards, 0) then
             availableActions.canHu = true
         end
         local card = 1
@@ -873,7 +873,7 @@ function CreateView()
     local discardToTing = {}
     if not user.isAi or G.spectatorMode then
         if #user.hand % 3 == 1 then
-            local tings = MajiangHu.IsTingExtra(user.hand, G.guiCards)
+            local tings = MahjongHu.IsTingExtra(user.hand, G.guiCards)
             i = 1
             while i <= #tings do
                 currentTingTargets[i] = { card = tings[i], remainingCount = remainMap[tostring(tings[i])] or 0 }
@@ -890,7 +890,7 @@ function CreateView()
                 if seen[c] == nil then
                     seen[c] = true
                     local sim = remove_first(user.hand, c)
-                    local tings = MajiangHu.IsTingExtraWithCache(sim, G.guiCards, ck, cv)
+                    local tings = MahjongHu.IsTingExtraWithCache(sim, G.guiCards, ck, cv)
                     if #tings > 0 then
                         local targets = {}
                         local ti = 1
@@ -930,14 +930,14 @@ function CreateView()
                 recommendedCards = {}, score = 999.0, reason = "AI强烈推荐【自摸胡】！"
             }
         else
-            local out = MajiangAi.OutAI(user.hand, G.guiCards)
+            local out = MahjongAi.OutAI(user.hand, G.guiCards)
             if out > 0 then
                 local rem = remove_first(user.hand, out)
-                local sc = MajiangAi.Calc(rem, G.guiCards)
+                local sc = MahjongAi.Calc(rem, G.guiCards)
                 view.aiRecommendation = {
                     recommendedAction = "discard", recommendedDiscard = out, recommendedCard = out,
                     recommendedCards = { out }, score = sc,
-                    reason = "AI推荐打出【" .. MajiangDef.CardToString(out) .. "】"
+                    reason = "AI推荐打出【" .. MahjongDef.CardToString(out) .. "】"
                 }
             end
         end

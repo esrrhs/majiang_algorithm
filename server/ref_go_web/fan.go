@@ -5,7 +5,7 @@ import (
 	"math"
 	"strconv"
 
-	majiang "github.com/esrrhs/majiang_algorithm/go"
+	mahjong "github.com/esrrhs/mahjong_ai/go"
 )
 
 type FanResult struct {
@@ -132,8 +132,8 @@ func checkQingYiSe(tiles []int, guiCards []int) bool {
 		if containsInt(guiCards, c) {
 			continue // 鬼牌可算作同花色
 		}
-		t := majiang.CardType(c)
-		if t == majiang.TypeFeng || t == majiang.TypeJian {
+		t := mahjong.CardType(c)
+		if t == mahjong.TypeFeng || t == mahjong.TypeJian {
 			return false
 		}
 		if colorType == 0 {
@@ -152,8 +152,8 @@ func checkHunYiSe(tiles []int, guiCards []int) bool {
 		if containsInt(guiCards, c) {
 			continue
 		}
-		t := majiang.CardType(c)
-		if t == majiang.TypeFeng || t == majiang.TypeJian {
+		t := mahjong.CardType(c)
+		if t == mahjong.TypeFeng || t == mahjong.TypeJian {
 			hasZi = true
 		} else {
 			if colorType == 0 {
@@ -171,13 +171,13 @@ func checkDuanYaoJiu(tiles []int, guiCards []int) bool {
 		if containsInt(guiCards, c) {
 			continue
 		}
-		t := majiang.CardType(c)
-		if t == majiang.TypeFeng || t == majiang.TypeJian {
+		t := mahjong.CardType(c)
+		if t == mahjong.TypeFeng || t == mahjong.TypeJian {
 			return false
 		}
-		if c == majiang.Wan1 || c == majiang.Wan9 ||
-			c == majiang.Tong1 || c == majiang.Tong9 ||
-			c == majiang.Tiao1 || c == majiang.Tiao9 {
+		if c == mahjong.Wan1 || c == mahjong.Wan9 ||
+			c == mahjong.Tong1 || c == mahjong.Tong9 ||
+			c == mahjong.Tiao1 || c == mahjong.Tiao9 {
 			return false
 		}
 	}

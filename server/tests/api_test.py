@@ -302,7 +302,7 @@ def run(args):
         port = free_port()
         flua = find_flua(args.flua)
         env = dict(os.environ)
-        env["MAJIANG_PORT"] = str(port)
+        env["MAHJONG_PORT"] = str(port)
         proc = subprocess.Popen(
             [flua, "lua", "--jit_type=%d" % args.jit],
             cwd=server_dir, env=env,
@@ -371,7 +371,7 @@ def dump_server_output(proc):
 
 
 def main():
-    ap = argparse.ArgumentParser(description="FakeLua majiang server API tests")
+    ap = argparse.ArgumentParser(description="FakeLua mahjong server API tests")
     ap.add_argument("--base-url", default="", help="打已经跑着的服务,而不是自己拉起")
     ap.add_argument("--flua", default="", help="flua 可执行文件路径")
     ap.add_argument("--jit", type=int, default=0, help="flua jit 类型: 0=tcc 1=gcc 2=interp")
@@ -379,7 +379,7 @@ def main():
     ap.add_argument("--boot-timeout", type=float, default=300.0, help="等待服务就绪的秒数")
     args = ap.parse_args()
 
-    print("FakeLua majiang server API tests")
+    print("FakeLua mahjong server API tests")
     code = run(args)
     print("---- %d passed, %d failed ----" % (PASS, FAIL))
     return code

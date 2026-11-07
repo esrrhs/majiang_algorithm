@@ -1,11 +1,11 @@
 // 顶层入口:加载与重新生成,对应 Go api.go。
-#include "majiang/api.h"
+#include "mahjong/api.h"
 
 #include <mutex>
 
 #include "detail.h"
 
-namespace majiang
+namespace mahjong
 {
 
 namespace
@@ -58,4 +58,4 @@ bool AiGen()
     return detail::genAi();
 }
 
-} // namespace majiang
+} // namespace mahjong

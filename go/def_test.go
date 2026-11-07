@@ -1,11 +1,11 @@
-package majiang
+package mahjong
 
 import (
 	"strings"
 	"testing"
 )
 
-// 以下三个测试移植自 Java MaJiangDefTest,断言一一对应。
+// 以下三个测试移植自 Java MahjongDefTest,断言一一对应。
 
 func TestCardConstantsAndTypes(t *testing.T) {
 	if CardType(Wan1) != TypeWan || CardType(Wan9) != TypeWan {

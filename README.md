@@ -1,12 +1,12 @@
-# Majiang Algorithm
+# Mahjong AI
 
-[<img src="https://img.shields.io/github/license/esrrhs/majiang_algorithm">](https://github.com/esrrhs/majiang_algorithm)
-[<img src="https://img.shields.io/github/languages/top/esrrhs/majiang_algorithm">](https://github.com/esrrhs/majiang_algorithm)
-[<img src="https://img.shields.io/maven-central/v/com.github.esrrhs/majiang_algorithm">](https://central.sonatype.com/artifact/com.github.esrrhs/majiang_algorithm)
-[<img src="https://img.shields.io/github/actions/workflow/status/esrrhs/majiang_algorithm/maven.yml?branch=master&label=java%20ci">](https://github.com/esrrhs/majiang_algorithm/actions)
-[<img src="https://img.shields.io/github/actions/workflow/status/esrrhs/majiang_algorithm/go.yml?branch=master&label=go%20ci">](https://github.com/esrrhs/majiang_algorithm/actions)
-[<img src="https://img.shields.io/github/actions/workflow/status/esrrhs/majiang_algorithm/cpp.yml?branch=master&label=c%2B%2B%20ci">](https://github.com/esrrhs/majiang_algorithm/actions)
-[<img src="https://img.shields.io/github/actions/workflow/status/esrrhs/majiang_algorithm/server.yml?branch=master&label=server%20ci">](https://github.com/esrrhs/majiang_algorithm/actions)
+[<img src="https://img.shields.io/github/license/esrrhs/mahjong_ai">](https://github.com/esrrhs/mahjong_ai)
+[<img src="https://img.shields.io/github/languages/top/esrrhs/mahjong_ai">](https://github.com/esrrhs/mahjong_ai)
+[<img src="https://img.shields.io/maven-central/v/com.github.esrrhs/mahjong_ai">](https://central.sonatype.com/artifact/com.github.esrrhs/mahjong_ai)
+[<img src="https://img.shields.io/github/actions/workflow/status/esrrhs/mahjong_ai/maven.yml?branch=master&label=java%20ci">](https://github.com/esrrhs/mahjong_ai/actions)
+[<img src="https://img.shields.io/github/actions/workflow/status/esrrhs/mahjong_ai/go.yml?branch=master&label=go%20ci">](https://github.com/esrrhs/mahjong_ai/actions)
+[<img src="https://img.shields.io/github/actions/workflow/status/esrrhs/mahjong_ai/cpp.yml?branch=master&label=c%2B%2B%20ci">](https://github.com/esrrhs/mahjong_ai/actions)
+[<img src="https://img.shields.io/github/actions/workflow/status/esrrhs/mahjong_ai/server.yml?branch=master&label=server%20ci">](https://github.com/esrrhs/mahjong_ai/actions)
 
 > High-performance Mahjong winning-hand detection & AI discard algorithm based on **lookup tables**, supporting multiple wildcard tiles (jokers). One algorithm, three implementations — **Java / Go / C++** — kept behavior-identical by shared cross-language tests.
 
@@ -50,7 +50,7 @@ hu/ting/AI results are replayed and asserted by every language
 ```xml
 <dependency>
     <groupId>com.github.esrrhs</groupId>
-    <artifactId>majiang_algorithm</artifactId>
+    <artifactId>mahjong_ai</artifactId>
     <version>1.0.18</version>
 </dependency>
 ```
@@ -89,33 +89,33 @@ boolean isGang = AIUtil.gangAI(cards, gui, gangCard, 0.0d);
 ### Go
 
 ```bash
-go get github.com/esrrhs/majiang_algorithm/go
+go get github.com/esrrhs/mahjong_ai/go
 ```
 
 ```go
 package main
 
 import (
-	majiang "github.com/esrrhs/majiang_algorithm/go"
+	mahjong "github.com/esrrhs/mahjong_ai/go"
 )
 
 func main() {
 	// Load pre-computed tables (looked up in ., ./data, ../data)
-	majiang.Load()
+	mahjong.Load()
 
-	cards := majiang.StringToCards("1万,2万,3万,东,东")
-	gui := majiang.StringToCard("东")
+	cards := mahjong.StringToCards("1万,2万,3万,东,东")
+	gui := mahjong.StringToCard("东")
 
 	// Check if hand is a winning hand
-	isHu := majiang.IsHu(cards, gui)
+	isHu := mahjong.IsHu(cards, gui)
 
 	// Query which tiles complete the hand
-	ting := majiang.IsTing(cards, []int{gui})
+	ting := mahjong.IsTing(cards, []int{gui})
 
 	// AI discard / pong / kong
-	out := majiang.OutAI(cards, []int{gui})
-	isPeng := majiang.PengAI(cards, []int{gui}, pengCard, 0)
-	isGang := majiang.GangAI(cards, []int{gui}, gangCard, 0)
+	out := mahjong.OutAI(cards, []int{gui})
+	isPeng := mahjong.PengAI(cards, []int{gui}, pengCard, 0)
+	isGang := mahjong.GangAI(cards, []int{gui}, gangCard, 0)
 }
 ```
 
@@ -131,26 +131,26 @@ cd go && go test ./...
 cd cpp
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build -j
-./build/majiang_tests   # or: ctest --test-dir build --output-on-failure
+./build/mahjong_tests   # or: ctest --test-dir build --output-on-failure
 ```
 
 ```cpp
-#include "majiang/api.h"
-#include "majiang/def.h"
-#include "majiang/hu_util.h"
-#include "majiang/ai_util.h"
+#include "mahjong/api.h"
+#include "mahjong/def.h"
+#include "mahjong/hu_util.h"
+#include "mahjong/ai_util.h"
 
 // Load pre-computed tables (looked up in ., ./data, ../data)
-majiang::Load();
+mahjong::Load();
 
-std::vector<int> cards = majiang::StringToCards("1万,2万,3万,东,东");
-int gui = majiang::StringToCard("东");
+std::vector<int> cards = mahjong::StringToCards("1万,2万,3万,东,东");
+int gui = mahjong::StringToCard("东");
 
-bool isHu = majiang::IsHu(cards, gui);                 // Check if hand is a winning hand
-std::vector<int> ting = majiang::IsTing(cards, {gui}); // Waiting tiles
-int out = majiang::OutAI(cards, {gui});                // AI discard
-bool isPeng = majiang::PengAI(cards, {gui}, out, 0.0);
-bool isGang = majiang::GangAI(cards, {gui}, out, 0.0);
+bool isHu = mahjong::IsHu(cards, gui);                 // Check if hand is a winning hand
+std::vector<int> ting = mahjong::IsTing(cards, {gui}); // Waiting tiles
+int out = mahjong::OutAI(cards, {gui});                // AI discard
+bool isPeng = mahjong::PengAI(cards, {gui}, out, 0.0);
+bool isGang = mahjong::GangAI(cards, {gui}, out, 0.0);
 ```
 
 ### Table Generation
@@ -158,15 +158,15 @@ bool isGang = majiang::GangAI(cards, {gui}, out, 0.0);
 To regenerate the lookup tables with either implementation, run from the output directory:
 
 ```bash
-# Java: gen() writes majiang_clien_*.txt / majiang_server_*.txt / majiang.db / majiang_ai_*.txt
-# Go:   HuGen() writes majiang_clien_*.txt + majiang_server_*.txt, AiGen() writes majiang_ai_*.txt
+# Java: gen() writes mahjong_clien_*.txt / mahjong_server_*.txt / mahjong.db / mahjong_ai_*.txt
+# Go:   HuGen() writes mahjong_clien_*.txt + mahjong_server_*.txt, AiGen() writes mahjong_ai_*.txt
 ```
 
 ---
 
 ## Interactive Web Platform & Algorithm Playground
 
-> 🌐 **Live Demo Online**: 👉 **[http://majiang.esrrhs.xyz](http://majiang.esrrhs.xyz)**
+> 🌐 **Live Demo Online**: 👉 **[http://mahjong.esrrhs.xyz](http://mahjong.esrrhs.xyz)**
 
 The web battle / algorithm playground is implemented in **FakeLua** (`server/`): game engine, HTTP, lookup tables and AI are **all pure Lua**, with the tables queried per key from sqlite. Java / Go / C++ ship as pure algorithm libraries (`cpp/` also hosts the parity tests; it is not used at runtime).
 
@@ -174,10 +174,10 @@ HTTP API contract: **[server/API.md](./server/API.md)**. Server details: **[serv
 
 ```bash
 # Requires a built FakeLua (see ../../fakelua); flua is at build/bin/flua
-python3 tools/gen_majiang_db.py   # first run: convert lookup txt to sqlite
+python3 tools/gen_mahjong_db.py   # first run: convert lookup txt to sqlite
 cd server
-MAJIANG_SMOKE=1 flua lua --once   # self check: tables + hu/ting/AI + spectator to GAME_OVER
-MAJIANG_PORT=8888 flua lua       # HTTP on :8888 (MAJIANG_PORT to override)
+MAHJONG_SMOKE=1 flua lua --once   # self check: tables + hu/ting/AI + spectator to GAME_OVER
+MAHJONG_PORT=8888 flua lua       # HTTP on :8888 (MAHJONG_PORT to override)
 ```
 Visit in your browser: 👉 **http://localhost:8888**
 
@@ -190,7 +190,7 @@ Measured on macOS arm64 (Release build of `flua`), 4-player games, HTTP over loo
 | Resident memory right after boot | **~24 MB** |
 | Resident memory in steady state | **~29 MB** (flat — 50 games 29.0 MB, 200 games 29.3 MB) |
 | Idle CPU | **~0.1 %** (tick backs off to 20 ms when no request arrives) |
-| Lookup table storage | `data/majiang.db` **32 MB** on disk, queried per key — never fully loaded into RAM |
+| Lookup table storage | `data/mahjong.db` **32 MB** on disk, queried per key — never fully loaded into RAM |
 | Concurrency model | Single-threaded event loop; saturates at one core |
 | Latency, concurrency 1 (p50) | **4.3 – 6.7 ms** across all endpoints |
 | Throughput, concurrency 8 | `/api/game/step` ≈ 1100 QPS, `/api/game/state` ≈ 1020 QPS, `/api/algo/test` ≈ 490 QPS |

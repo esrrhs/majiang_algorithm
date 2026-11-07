@@ -1,3 +1,3 @@
-module github.com/esrrhs/majiang_algorithm/go
+module github.com/esrrhs/mahjong_ai/go
 
 go 1.21

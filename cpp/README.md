@@ -1,6 +1,6 @@
-# majiang_algorithm C++ 实现
+# mahjong_ai C++ 实现
 
-Java 版 [majiang_algorithm](../java) 的 C++17 移植,基于查表的高性能麻将判胡、听牌与 AI 决策。
+Java 版 [mahjong_ai](../java) 的 C++17 移植,基于查表的高性能麻将判胡、听牌与 AI 决策。
 与 Java/Go 版共用 [data/](../data) 下的同一批查表文件,行为逐位对齐(含浮点评分)。
 无第三方依赖,仅需支持 C++17 的编译器与 CMake。
 
@@ -15,36 +15,36 @@ cmake --build build -j
 ## 使用
 
 ```cpp
-#include "majiang/api.h"
-#include "majiang/def.h"
-#include "majiang/hu_util.h"
-#include "majiang/ai_util.h"
+#include "mahjong/api.h"
+#include "mahjong/def.h"
+#include "mahjong/hu_util.h"
+#include "mahjong/ai_util.h"
 
 int main()
 {
     // 加载预计算表(依次在当前目录、data/、../data/ 查找)
-    majiang::Load();
+    mahjong::Load();
 
-    std::vector<int> cards = majiang::StringToCards("1万,2万,3万,东,东");
-    int gui = majiang::StringToCard("东");
+    std::vector<int> cards = mahjong::StringToCards("1万,2万,3万,东,东");
+    int gui = mahjong::StringToCard("东");
 
-    bool isHu = majiang::IsHu(cards, gui);                              // 判断胡牌
-    std::vector<int> ting = majiang::IsTing(cards, {gui});              // 听牌列表
-    int out = majiang::OutAI(cards, {gui});                             // AI 出牌
-    bool peng = majiang::PengAI(cards, {gui}, out, 0.0);                // 是否碰
-    bool gang = majiang::GangAI(cards, {gui}, out, 0.0);                // 是否杠
+    bool isHu = mahjong::IsHu(cards, gui);                              // 判断胡牌
+    std::vector<int> ting = mahjong::IsTing(cards, {gui});              // 听牌列表
+    int out = mahjong::OutAI(cards, {gui});                             // AI 出牌
+    bool peng = mahjong::PengAI(cards, {gui}, out, 0.0);                // 是否碰
+    bool gang = mahjong::GangAI(cards, {gui}, out, 0.0);                // 是否杠
     return 0;
 }
 ```
 
-库目标为静态库 `majiang`,头文件在 `include/majiang/`,链接时把 `cpp/include` 加入头文件搜索路径即可。
+库目标为静态库 `mahjong`,头文件在 `include/mahjong/`,链接时把 `cpp/include` 加入头文件搜索路径即可。
 
 ## 测试
 
 ```bash
 cd cpp
 ctest --test-dir build --output-on-failure
-# 或直接运行: ./build/majiang_tests
+# 或直接运行: ./build/mahjong_tests
 ```
 
 - `def_test.cpp` / `hu_util_test.cpp` / `ai_util_test.cpp`:与 Java JUnit、Go `go test` 用例一一对应。
@@ -55,9 +55,9 @@ ctest --test-dir build --output-on-failure
 ## 表生成
 
 ```cpp
-majiang::HuGen(); // 输出 majiang_clien_*.txt 与 majiang_server_*.txt 到当前目录
-majiang::AiGen(); // 输出 majiang_ai_*.txt 到当前目录
+mahjong::HuGen(); // 输出 mahjong_clien_*.txt 与 mahjong_server_*.txt 到当前目录
+mahjong::AiGen(); // 输出 mahjong_ai_*.txt 到当前目录
 ```
 
-与 Java 的差异:不输出 sqlite 的 `majiang.db`;输出行按键排序(Java 为多线程乱序写入),内容一致。
+与 Java 的差异:不输出 sqlite 的 `mahjong.db`;输出行按键排序(Java 为多线程乱序写入),内容一致。
 编译选项含 `-ffp-contract=off`,保证浮点结果与 Java/Go 逐位一致。

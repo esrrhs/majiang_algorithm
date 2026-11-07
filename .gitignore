@@ -5,7 +5,7 @@ target/
 .project
 .classpath
 .settings/
-majiang.db
+mahjong.db
 dependency-reduced-pom.xml
 *.log
 

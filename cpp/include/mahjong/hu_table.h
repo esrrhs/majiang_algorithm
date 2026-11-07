@@ -6,7 +6,7 @@
 #include <unordered_map>
 #include <vector>
 
-namespace majiang
+namespace mahjong
 {
 
 // 对应 Java HuTableInfo。Hupai 为 nullopt 表示该组合不需要进牌即已胡(对应 Java hupai == null);
@@ -23,4 +23,4 @@ extern std::unordered_map<int64_t, std::vector<HuTableInfo>> HuTable;     // 万
 extern std::unordered_map<int64_t, std::vector<HuTableInfo>> HuTableFeng; // 风
 extern std::unordered_map<int64_t, std::vector<HuTableInfo>> HuTableJian; // 箭
 
-} // namespace majiang
+} // namespace mahjong

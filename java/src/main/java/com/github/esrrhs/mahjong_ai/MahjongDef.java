@@ -1,4 +1,4 @@
-package com.github.esrrhs.majiang_algorithm;
+package com.github.esrrhs.mahjong_ai;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Created by bjzhaoxin on 2017/12/4.
  */
-public class MaJiangDef
+public class MahjongDef
 {
 	public static final int WAN1 = 1;
 	public static final int WAN2 = 2;

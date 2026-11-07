@@ -7,11 +7,11 @@
 #include <vector>
 
 #include "detail.h"
-#include "majiang/ai_util.h"
-#include "majiang/hu_util.h"
+#include "mahjong/ai_util.h"
+#include "mahjong/hu_util.h"
 #include "test_util.h"
 
-using namespace majiang;
+using namespace mahjong;
 
 namespace
 {

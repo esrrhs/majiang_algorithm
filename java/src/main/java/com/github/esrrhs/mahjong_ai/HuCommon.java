@@ -1,4 +1,4 @@
-package com.github.esrrhs.majiang_algorithm;
+package com.github.esrrhs.mahjong_ai;
 
 import java.io.*;
 import java.sql.Connection;
@@ -45,7 +45,7 @@ public class HuCommon
 
 		try
 		{
-			File file = new File("majiang_clien_" + NAME + ".txt");
+			File file = new File("mahjong_clien_" + NAME + ".txt");
 			if (file.exists())
 			{
 				file.delete();
@@ -53,7 +53,7 @@ public class HuCommon
 			file.createNewFile();
 			final FileOutputStream out = new FileOutputStream(file, true);
 
-			File file1 = new File("majiang_server_" + NAME + ".txt");
+			File file1 = new File("mahjong_server_" + NAME + ".txt");
 			if (file1.exists())
 			{
 				file1.delete();
@@ -62,7 +62,7 @@ public class HuCommon
 			final FileOutputStream out1 = new FileOutputStream(file1, true);
 
 			Class.forName("org.sqlite.JDBC");
-			Connection c = DriverManager.getConnection("jdbc:sqlite:majiang.db");
+			Connection c = DriverManager.getConnection("jdbc:sqlite:mahjong.db");
 			Statement stmt = c.createStatement();
 			stmt.executeUpdate(("drop table if exists " + NAME + "; CREATE TABLE [" + NAME
 					+ "] (  [card] INT,   [gui] INT,   [jiang] INT,   [hu] INT);\n\n CREATE INDEX [card" + NAME
@@ -492,7 +492,7 @@ public class HuCommon
 
 	public static void load()
 	{
-		File file = findDataFile("majiang_clien_" + NAME + ".txt");
+		File file = findDataFile("mahjong_clien_" + NAME + ".txt");
 		if (!file.exists())
 		{
 			return;

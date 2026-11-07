@@ -1,9 +1,9 @@
-// 移植自 Java MajiangAlgorithmIntegrationTest / Go aiutil_test.cpp,断言一一对应。
+// 移植自 Java MahjongAiIntegrationTest / Go aiutil_test.cpp,断言一一对应。
 #include "detail.h"
-#include "majiang/ai_util.h"
+#include "mahjong/ai_util.h"
 #include "test_util.h"
 
-using namespace majiang;
+using namespace mahjong;
 
 MAJ_TEST(TestAIOutDecision)
 {

@@ -1,4 +1,4 @@
-package com.github.esrrhs.majiang_algorithm;
+package com.github.esrrhs.mahjong_ai;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Assumptions;
@@ -69,7 +69,7 @@ public class ParityFixtureTest
 			String[] f = line.split("\\|", -1);
 			assertEquals(13, f.length, "field count case " + caseIndex);
 
-			List<Integer> hand = MaJiangDef.stringToCards(f[0]);
+			List<Integer> hand = MahjongDef.stringToCards(f[0]);
 			int gui = Integer.parseInt(f[1]);
 			List<Integer> guiList = Arrays.asList(gui);
 			int chiCard = Integer.parseInt(f[8]);
@@ -77,12 +77,12 @@ public class ParityFixtureTest
 			assertEquals(Integer.parseInt(f[2]), HuUtil.isHu(hand, gui) ? 1 : 0, "isHu case " + caseIndex);
 			assertEquals(Integer.parseInt(f[3]), HuUtil.isHuExtra(hand, guiList, 0) ? 1 : 0,
 					"isHuExtra case " + caseIndex);
-			assertEquals(f[4], MaJiangDef.cardsToString(HuUtil.isTing(hand, gui)), "isTing case " + caseIndex);
-			assertEquals(f[5], MaJiangDef.cardsToString(HuUtil.isTingExtra(hand, guiList)),
+			assertEquals(f[4], MahjongDef.cardsToString(HuUtil.isTing(hand, gui)), "isTing case " + caseIndex);
+			assertEquals(f[5], MahjongDef.cardsToString(HuUtil.isTingExtra(hand, guiList)),
 					"isTingExtra case " + caseIndex);
 			assertEquals(Double.parseDouble(f[6]), AIUtil.calc(hand, guiList), 0.0, "calc case " + caseIndex);
 			assertEquals(Integer.parseInt(f[7]), AIUtil.outAI(hand, guiList), "outAI case " + caseIndex);
-			assertEquals(f[9], MaJiangDef.cardsToString(AIUtil.chiAI(hand, guiList, chiCard)),
+			assertEquals(f[9], MahjongDef.cardsToString(AIUtil.chiAI(hand, guiList, chiCard)),
 					"chiChoices case " + caseIndex);
 			assertEquals(Integer.parseInt(f[10]), AIUtil.chiAI(hand, guiList, chiCard, chiCard - 1,
 					chiCard + 1) ? 1 : 0, "chiBool case " + caseIndex);

@@ -5,7 +5,7 @@ import (
 	"math/rand"
 	"strconv"
 
-	majiang "github.com/esrrhs/majiang_algorithm/go"
+	mahjong "github.com/esrrhs/mahjong_ai/go"
 )
 
 // 对应 Java MahjongGame.Phase。
@@ -92,7 +92,7 @@ func (p *Player) addMeld(meld *Meld) {
 }
 
 func (p *Player) countCard(card int) int {
-	return majiangCardCount(p.hand, card)
+	return mahjongCardCount(p.hand, card)
 }
 
 func (p *Player) getAllTiles() []int {
@@ -103,7 +103,7 @@ func (p *Player) getAllTiles() []int {
 	return all
 }
 
-func majiangCardCount(list []int, card int) int {
+func mahjongCardCount(list []int, card int) int {
 	n := 0
 	for _, c := range list {
 		if c == card {
@@ -212,18 +212,18 @@ func (g *MahjongGame) initGame(guiMode string, customGuiCard int) {
 		g.wall = g.wall[1:]
 		gui := g.calculateNextCard(g.guiIndicator)
 		g.guiCards = append(g.guiCards, gui)
-		g.log("本局鬼牌(癞子)为: 【" + majiang.CardToString(gui) + "】")
+		g.log("本局鬼牌(癞子)为: 【" + mahjong.CardToString(gui) + "】")
 	} else if guiMode == "card" && customGuiCard > 0 && customGuiCard <= 34 {
 		g.guiIndicator = customGuiCard
 		g.guiCards = append(g.guiCards, customGuiCard)
-		g.log("指定宝牌(鬼牌)为: 【" + majiang.CardToString(customGuiCard) + "】")
+		g.log("指定宝牌(鬼牌)为: 【" + mahjong.CardToString(customGuiCard) + "】")
 	} else if guiMode == "bai" {
-		g.guiIndicator = majiang.JianBai
-		g.guiCards = append(g.guiCards, majiang.JianBai)
+		g.guiIndicator = mahjong.JianBai
+		g.guiCards = append(g.guiCards, mahjong.JianBai)
 		g.log("经典白板当鬼: 【白板】")
 	} else if guiMode == "zhong" {
-		g.guiIndicator = majiang.JianZhong
-		g.guiCards = append(g.guiCards, majiang.JianZhong)
+		g.guiIndicator = mahjong.JianZhong
+		g.guiCards = append(g.guiCards, mahjong.JianZhong)
 		g.log("经典红中当鬼: 【红中】")
 	} else {
 		// 无鬼牌
@@ -246,7 +246,7 @@ func (g *MahjongGame) initGame(guiMode string, customGuiCard int) {
 	g.log(g.players[g.dealerSeat].getName() + " 起手14张牌，作为庄家率先出牌")
 
 	// 检查天胡
-	if majiang.IsHuExtra(g.players[g.dealerSeat].getHand(), g.guiCards, 0) {
+	if mahjong.IsHuExtra(g.players[g.dealerSeat].getHand(), g.guiCards, 0) {
 		g.log("🎉 震撼！" + g.players[g.dealerSeat].getName() + " 起手天胡！")
 		g.triggerWin(g.dealerSeat, -1, dealerCard, true, false, false, true, false)
 		return
@@ -264,33 +264,33 @@ func (g *MahjongGame) getFirstGui() int {
 }
 
 func (g *MahjongGame) calculateNextCard(card int) int {
-	if card >= majiang.Wan1 && card <= majiang.Wan9 {
-		if card == majiang.Wan9 {
-			return majiang.Wan1
+	if card >= mahjong.Wan1 && card <= mahjong.Wan9 {
+		if card == mahjong.Wan9 {
+			return mahjong.Wan1
 		}
 		return card + 1
 	}
-	if card >= majiang.Tong1 && card <= majiang.Tong9 {
-		if card == majiang.Tong9 {
-			return majiang.Tong1
+	if card >= mahjong.Tong1 && card <= mahjong.Tong9 {
+		if card == mahjong.Tong9 {
+			return mahjong.Tong1
 		}
 		return card + 1
 	}
-	if card >= majiang.Tiao1 && card <= majiang.Tiao9 {
-		if card == majiang.Tiao9 {
-			return majiang.Tiao1
+	if card >= mahjong.Tiao1 && card <= mahjong.Tiao9 {
+		if card == mahjong.Tiao9 {
+			return mahjong.Tiao1
 		}
 		return card + 1
 	}
-	if card >= majiang.FengDong && card <= majiang.FengBei {
-		if card == majiang.FengBei {
-			return majiang.FengDong
+	if card >= mahjong.FengDong && card <= mahjong.FengBei {
+		if card == mahjong.FengBei {
+			return mahjong.FengDong
 		}
 		return card + 1
 	}
-	if card >= majiang.JianZhong && card <= majiang.JianBai {
-		if card == majiang.JianBai {
-			return majiang.JianZhong
+	if card >= mahjong.JianZhong && card <= mahjong.JianBai {
+		if card == mahjong.JianBai {
+			return mahjong.JianZhong
 		}
 		return card + 1
 	}
@@ -311,7 +311,7 @@ func (g *MahjongGame) Discard(seat int, card int) bool {
 	sortInts(player.hand)
 	g.lastDiscard = card
 	g.lastDiscardSeat = seat
-	g.log(player.getName() + " 打出了 【" + majiang.CardToString(card) + "】")
+	g.log(player.getName() + " 打出了 【" + mahjong.CardToString(card) + "】")
 
 	// 检查全场对该牌的响应
 	g.phase = PhaseResponse
@@ -336,7 +336,7 @@ func (g *MahjongGame) checkResponses(card int, fromSeat int) {
 		hasAction := false
 
 		// 1. 点炮胡
-		if majiang.IsHuExtra(human.getHand(), g.guiCards, card) {
+		if mahjong.IsHuExtra(human.getHand(), g.guiCards, card) {
 			g.userPendingActions.CanHu = true
 			hasAction = true
 		}
@@ -378,8 +378,8 @@ func (g *MahjongGame) processAiResponses(card int, fromSeat int) {
 	for i := 1; i <= 3; i++ {
 		seat := (fromSeat + i) % 4
 		p := g.players[seat]
-		if p.isAI() && majiang.IsHuExtra(p.getHand(), g.guiCards, card) {
-			g.log("🎊 " + p.getName() + " 胡了 " + g.players[fromSeat].getName() + " 点炮的 【" + majiang.CardToString(card) + "】！")
+		if p.isAI() && mahjong.IsHuExtra(p.getHand(), g.guiCards, card) {
+			g.log("🎊 " + p.getName() + " 胡了 " + g.players[fromSeat].getName() + " 点炮的 【" + mahjong.CardToString(card) + "】！")
 			g.triggerWin(seat, fromSeat, card, false, false, g.wallEmpty(), false, false)
 			return
 		}
@@ -390,7 +390,7 @@ func (g *MahjongGame) processAiResponses(card int, fromSeat int) {
 		seat := (fromSeat + i) % 4
 		p := g.players[seat]
 		if p.isAI() && p.countCard(card) == 3 && !containsInt(g.guiCards, card) {
-			if majiang.GangAI(p.getHand(), g.guiCards, card, 0.5) {
+			if mahjong.GangAI(p.getHand(), g.guiCards, card, 0.5) {
 				g.executeGang(seat, fromSeat, card, "MING_GANG")
 				return
 			}
@@ -402,7 +402,7 @@ func (g *MahjongGame) processAiResponses(card int, fromSeat int) {
 		seat := (fromSeat + i) % 4
 		p := g.players[seat]
 		if p.isAI() && p.countCard(card) >= 2 && !containsInt(g.guiCards, card) {
-			if majiang.PengAI(p.getHand(), g.guiCards, card, 0.0) {
+			if mahjong.PengAI(p.getHand(), g.guiCards, card, 0.0) {
 				g.executePeng(seat, fromSeat, card)
 				return
 			}
@@ -413,7 +413,7 @@ func (g *MahjongGame) processAiResponses(card int, fromSeat int) {
 	nextSeat := (fromSeat + 1) % 4
 	nextPlayer := g.players[nextSeat]
 	if nextPlayer.isAI() && !containsInt(g.guiCards, card) {
-		chiPair := majiang.ChiAIChoices(nextPlayer.getHand(), g.guiCards, card)
+		chiPair := mahjong.ChiAIChoices(nextPlayer.getHand(), g.guiCards, card)
 		if len(chiPair) == 2 {
 			g.executeChi(nextSeat, fromSeat, card, chiPair[0], chiPair[1])
 			return
@@ -437,7 +437,7 @@ func (g *MahjongGame) UserAction(action string, card int, chi1 int, chi2 int) bo
 
 	human := g.players[0]
 	if action == "hu" && g.userPendingActions.CanHu {
-		g.log("🎉 恭喜你胡牌了！胡了 " + g.players[g.lastDiscardSeat].getName() + " 点炮的 【" + majiang.CardToString(g.lastDiscard) + "】！")
+		g.log("🎉 恭喜你胡牌了！胡了 " + g.players[g.lastDiscardSeat].getName() + " 点炮的 【" + mahjong.CardToString(g.lastDiscard) + "】！")
 		g.triggerWin(0, g.lastDiscardSeat, g.lastDiscard, false, false, g.wallEmpty(), false, false)
 		return true
 	}
@@ -479,12 +479,12 @@ func (g *MahjongGame) UserSelfAction(action string, card int) bool {
 	human := g.players[0]
 
 	if action == "hu" {
-		if majiang.IsHuExtra(human.getHand(), g.guiCards, 0) {
+		if mahjong.IsHuExtra(human.getHand(), g.guiCards, 0) {
 			winCard := human.getLastDrawnCard()
 			if winCard <= 0 && len(human.getHand()) > 0 {
 				winCard = human.getHand()[len(human.getHand())-1]
 			}
-			g.log("🎉 恭喜你【自摸胡】了！胡牌张: 【" + majiang.CardToString(winCard) + "】")
+			g.log("🎉 恭喜你【自摸胡】了！胡牌张: 【" + mahjong.CardToString(winCard) + "】")
 			g.triggerWin(0, -1, winCard, true, g.lastDrawFromGang, g.wallEmpty(), false, false)
 			return true
 		}
@@ -499,7 +499,7 @@ func (g *MahjongGame) UserSelfAction(action string, card int) bool {
 			meld := &Meld{Type: "AN_GANG", TriggerCard: card, FromSeat: -1, Cards: []int{card, card, card, card}}
 			sortInts(meld.Cards)
 			human.addMeld(meld)
-			g.log(human.getName() + " 【暗杠】: " + majiang.CardToString(card))
+			g.log(human.getName() + " 【暗杠】: " + mahjong.CardToString(card))
 			g.drawNext(0, true)
 			return true
 		}
@@ -509,7 +509,7 @@ func (g *MahjongGame) UserSelfAction(action string, card int) bool {
 				human.removeCard(card)
 				m.Type = "BU_GANG"
 				m.Cards = append(m.Cards, card)
-				g.log(human.getName() + " 【补杠】: " + majiang.CardToString(card))
+				g.log(human.getName() + " 【补杠】: " + mahjong.CardToString(card))
 				g.drawNext(0, true)
 				return true
 			}
@@ -526,7 +526,7 @@ func (g *MahjongGame) executePeng(seat int, fromSeat int, card int) {
 	meld := &Meld{Type: "PENG", TriggerCard: card, FromSeat: fromSeat, Cards: []int{card, card, card}}
 	sortInts(meld.Cards)
 	p.addMeld(meld)
-	g.log(p.getName() + " 【碰】了 " + g.players[fromSeat].getName() + " 的 " + majiang.CardToString(card))
+	g.log(p.getName() + " 【碰】了 " + g.players[fromSeat].getName() + " 的 " + mahjong.CardToString(card))
 	g.currentSeat = seat
 	g.phase = PhaseDiscard
 	g.lastDrawFromGang = false
@@ -543,7 +543,7 @@ func (g *MahjongGame) executeGang(seat int, fromSeat int, card int, meldType str
 		meld := &Meld{Type: "MING_GANG", TriggerCard: card, FromSeat: fromSeat, Cards: []int{card, card, card, card}}
 		sortInts(meld.Cards)
 		p.addMeld(meld)
-		g.log(p.getName() + " 【明杠】了 " + g.players[fromSeat].getName() + " 的 " + majiang.CardToString(card))
+		g.log(p.getName() + " 【明杠】了 " + g.players[fromSeat].getName() + " 的 " + mahjong.CardToString(card))
 	}
 	// 杠后从牌墙尾部摸牌
 	g.drawNext(seat, true)
@@ -556,8 +556,8 @@ func (g *MahjongGame) executeChi(seat int, fromSeat int, card int, c1 int, c2 in
 	meld := &Meld{Type: "CHI", TriggerCard: card, FromSeat: fromSeat, Cards: []int{card, c1, c2}}
 	sortInts(meld.Cards)
 	p.addMeld(meld)
-	g.log(p.getName() + " 【吃】了 " + g.players[fromSeat].getName() + " 的 " + majiang.CardToString(card) +
-		" (组合: " + majiang.CardToString(c1) + "," + majiang.CardToString(card) + "," + majiang.CardToString(c2) + ")")
+	g.log(p.getName() + " 【吃】了 " + g.players[fromSeat].getName() + " 的 " + mahjong.CardToString(card) +
+		" (组合: " + mahjong.CardToString(c1) + "," + mahjong.CardToString(card) + "," + mahjong.CardToString(c2) + ")")
 	g.currentSeat = seat
 	g.phase = PhaseDiscard
 	g.lastDrawFromGang = false
@@ -588,15 +588,15 @@ func (g *MahjongGame) drawNext(seat int, isFromGang bool) {
 	player.addCard(drawn)
 
 	if isFromGang {
-		g.log(player.getName() + " 杠后补摸一张: 【" + majiang.CardToString(drawn) + "】 (剩余 " + strconv.Itoa(len(g.wall)) + " 张)")
+		g.log(player.getName() + " 杠后补摸一张: 【" + mahjong.CardToString(drawn) + "】 (剩余 " + strconv.Itoa(len(g.wall)) + " 张)")
 	} else {
 		g.log(player.getName() + " 摸了一张牌 (剩余 " + strconv.Itoa(len(g.wall)) + " 张)")
 	}
 
 	// 检查摸牌玩家是否自摸
-	if majiang.IsHuExtra(player.getHand(), g.guiCards, 0) {
+	if mahjong.IsHuExtra(player.getHand(), g.guiCards, 0) {
 		if player.isAI() {
-			g.log("🎊 " + player.getName() + boolStr(isFromGang, " 【杠上开花】", " 【自摸胡】") + "！胡牌: 【" + majiang.CardToString(drawn) + "】")
+			g.log("🎊 " + player.getName() + boolStr(isFromGang, " 【杠上开花】", " 【自摸胡】") + "！胡牌: 【" + mahjong.CardToString(drawn) + "】")
 			g.triggerWin(seat, -1, drawn, true, isFromGang, g.wallEmpty(), false, false)
 			return
 		}
@@ -607,14 +607,14 @@ func (g *MahjongGame) drawNext(seat int, isFromGang bool) {
 		// 暗杠判定
 		for card := 1; card <= 34; card++ {
 			if !containsInt(g.guiCards, card) && player.countCard(card) == 4 {
-				if majiang.GangAI(player.getHand(), g.guiCards, card, 0.5) {
+				if mahjong.GangAI(player.getHand(), g.guiCards, card, 0.5) {
 					for k := 0; k < 4; k++ {
 						player.removeCard(card)
 					}
 					meld := &Meld{Type: "AN_GANG", TriggerCard: card, FromSeat: -1, Cards: []int{card, card, card, card}}
 					sortInts(meld.Cards)
 					player.addMeld(meld)
-					g.log(player.getName() + " 【暗杠】: " + majiang.CardToString(card))
+					g.log(player.getName() + " 【暗杠】: " + mahjong.CardToString(card))
 					g.drawNext(seat, true)
 					return
 				}
@@ -623,11 +623,11 @@ func (g *MahjongGame) drawNext(seat int, isFromGang bool) {
 		// 补杠判定
 		for _, m := range player.getMelds() {
 			if m.Type == "PENG" && !containsInt(g.guiCards, m.TriggerCard) && containsInt(player.getHand(), m.TriggerCard) {
-				if majiang.GangAI(player.getHand(), g.guiCards, m.TriggerCard, 0.5) {
+				if mahjong.GangAI(player.getHand(), g.guiCards, m.TriggerCard, 0.5) {
 					player.removeCard(m.TriggerCard)
 					m.Type = "BU_GANG"
 					m.Cards = append(m.Cards, m.TriggerCard)
-					g.log(player.getName() + " 【补杠】: " + majiang.CardToString(m.TriggerCard))
+					g.log(player.getName() + " 【补杠】: " + mahjong.CardToString(m.TriggerCard))
 					g.drawNext(seat, true)
 					return
 				}
@@ -658,7 +658,7 @@ func (g *MahjongGame) Step() bool {
 		current := g.players[g.currentSeat]
 		if current.isAI() {
 			// AI 决策打牌
-			outCard := majiang.OutAI(current.getHand(), g.guiCards)
+			outCard := mahjong.OutAI(current.getHand(), g.guiCards)
 			if outCard == 0 || !containsInt(current.getHand(), outCard) {
 				// 保底打非鬼牌或第一张
 				for _, c := range current.getHand() {
@@ -686,7 +686,7 @@ func (g *MahjongGame) updateTingStatus() {
 	for _, p := range g.players {
 		// 当手牌模3余1时(未摸牌或刚打牌完),直接检测当前是否听牌
 		if len(p.getHand())%3 == 1 {
-			tingCards := majiang.IsTingExtra(p.getHand(), g.guiCards)
+			tingCards := mahjong.IsTingExtra(p.getHand(), g.guiCards)
 			p.setTing(len(tingCards) > 0)
 		} else if len(p.getHand())%3 == 2 {
 			// 摸牌后有14张:如果任打出一张能听牌,也算准听
@@ -698,7 +698,7 @@ func (g *MahjongGame) updateTingStatus() {
 				}
 				seen[c] = true
 				tmp := removeFirstInt(p.getHand(), c)
-				t := majiang.IsTingExtra(tmp, g.guiCards)
+				t := mahjong.IsTingExtra(tmp, g.guiCards)
 				if len(t) > 0 {
 					canTing = true
 					break
@@ -712,21 +712,21 @@ func (g *MahjongGame) updateTingStatus() {
 // findChiOptions 寻找所有合法的吃牌顺子组合。
 func (g *MahjongGame) findChiOptions(hand []int, card int) [][]int {
 	var options [][]int
-	t := majiang.CardType(card)
-	if t != majiang.TypeWan && t != majiang.TypeTong && t != majiang.TypeTiao {
+	t := mahjong.CardType(card)
+	if t != mahjong.TypeWan && t != mahjong.TypeTong && t != mahjong.TypeTiao {
 		return options
 	}
 
 	// [card-2, card-1]
-	if containsInt(hand, card-2) && containsInt(hand, card-1) && majiang.CardType(card-2) == t {
+	if containsInt(hand, card-2) && containsInt(hand, card-1) && mahjong.CardType(card-2) == t {
 		options = append(options, []int{card - 2, card - 1})
 	}
 	// [card-1, card+1]
-	if containsInt(hand, card-1) && containsInt(hand, card+1) && majiang.CardType(card-1) == t && majiang.CardType(card+1) == t {
+	if containsInt(hand, card-1) && containsInt(hand, card+1) && mahjong.CardType(card-1) == t && mahjong.CardType(card+1) == t {
 		options = append(options, []int{card - 1, card + 1})
 	}
 	// [card+1, card+2]
-	if containsInt(hand, card+1) && containsInt(hand, card+2) && majiang.CardType(card+2) == t {
+	if containsInt(hand, card+1) && containsInt(hand, card+2) && mahjong.CardType(card+2) == t {
 		options = append(options, []int{card + 1, card + 2})
 	}
 

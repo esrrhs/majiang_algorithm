@@ -1,8 +1,8 @@
-// 移植自 Java MaJiangDefTest / Go def_test.go,断言一一对应。
-#include "majiang/def.h"
+// 移植自 Java MahjongDefTest / Go def_test.go,断言一一对应。
+#include "mahjong/def.h"
 #include "test_util.h"
 
-using namespace majiang;
+using namespace mahjong;
 
 MAJ_TEST(TestCardConstantsAndTypes)
 {

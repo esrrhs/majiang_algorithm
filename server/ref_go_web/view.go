@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strconv"
 
-	majiang "github.com/esrrhs/majiang_algorithm/go"
+	mahjong "github.com/esrrhs/mahjong_ai/go"
 )
 
 // CreateView 构建发送给前端的完整视图对象。调用方需持锁。
@@ -80,7 +80,7 @@ func (g *MahjongGame) CreateView(requestSeat int) *GameStateView {
 	} else if g.phase == PhaseDiscard && g.currentSeat == 0 && !user.isAI() {
 		actions := newAvailableActions()
 		actions.CanDiscard = true
-		if majiang.IsHuExtra(user.getHand(), g.guiCards, 0) {
+		if mahjong.IsHuExtra(user.getHand(), g.guiCards, 0) {
 			actions.CanHu = true
 		}
 		// 检查暗杠或补杠
@@ -103,7 +103,7 @@ func (g *MahjongGame) CreateView(requestSeat int) *GameStateView {
 	if !user.isAI() || g.spectatorMode {
 		// 1. 如果当前是听牌状态(手牌模3余1),计算当前直接胡哪些牌
 		if len(user.getHand())%3 == 1 {
-			tings := majiang.IsTingExtra(user.getHand(), g.guiCards)
+			tings := mahjong.IsTingExtra(user.getHand(), g.guiCards)
 			targets := []*TingTarget{}
 			for _, t := range tings {
 				targets = append(targets, &TingTarget{Card: t, RemainingCount: remainMap[strconv.Itoa(t)]})
@@ -121,7 +121,7 @@ func (g *MahjongGame) CreateView(requestSeat int) *GameStateView {
 				}
 				seen[c] = true
 				simHand := removeFirstInt(user.getHand(), c)
-				tings := majiang.IsTingExtra(simHand, g.guiCards)
+				tings := mahjong.IsTingExtra(simHand, g.guiCards)
 				if len(tings) > 0 {
 					targets := []*TingTarget{}
 					for _, t := range tings {
@@ -146,7 +146,7 @@ func (g *MahjongGame) CreateView(requestSeat int) *GameStateView {
 				gCard := 0
 				if acts != nil && acts.CanGang {
 					for _, gc := range acts.GangCards {
-						if majiang.GangAI(user.getHand(), g.guiCards, gc, 0.5) {
+						if mahjong.GangAI(user.getHand(), g.guiCards, gc, 0.5) {
 							wantGang = true
 							gCard = gc
 							break
@@ -160,15 +160,15 @@ func (g *MahjongGame) CreateView(requestSeat int) *GameStateView {
 							gCards = append(gCards, c)
 						}
 					}
-					view.AiRecommendation = newRecommendation("gang", gCard, gCards, 888.0, "AI推荐【杠】"+majiang.CardToString(gCard))
+					view.AiRecommendation = newRecommendation("gang", gCard, gCards, 888.0, "AI推荐【杠】"+mahjong.CardToString(gCard))
 				} else {
-					bestOut := majiang.OutAI(user.getHand(), g.guiCards)
+					bestOut := mahjong.OutAI(user.getHand(), g.guiCards)
 					score := 0.0
 					if bestOut != 0 {
 						tmp := removeFirstInt(user.getHand(), bestOut)
-						score = majiang.Calc(tmp, g.guiCards)
+						score = mahjong.Calc(tmp, g.guiCards)
 					}
-					reason := "AI推荐打出【" + majiang.CardToString(bestOut) + "】，打出后手牌期望评分: " + fmt.Sprintf("%.2f", score)
+					reason := "AI推荐打出【" + mahjong.CardToString(bestOut) + "】，打出后手牌期望评分: " + fmt.Sprintf("%.2f", score)
 					view.AiRecommendation = newRecommendation("discard", bestOut, []int{bestOut}, score, reason)
 				}
 			}
@@ -182,7 +182,7 @@ func (g *MahjongGame) CreateView(requestSeat int) *GameStateView {
 				wantGang := false
 				gCard := 0
 				for _, gc := range g.userPendingActions.GangCards {
-					if majiang.GangAI(user.getHand(), g.guiCards, gc, 0.5) {
+					if mahjong.GangAI(user.getHand(), g.guiCards, gc, 0.5) {
 						wantGang = true
 						gCard = gc
 						break
@@ -195,22 +195,22 @@ func (g *MahjongGame) CreateView(requestSeat int) *GameStateView {
 							gCards = append(gCards, c)
 						}
 					}
-					view.AiRecommendation = newRecommendation("gang", gCard, gCards, 888.0, "AI推荐【杠】"+majiang.CardToString(gCard))
-				} else if g.userPendingActions.CanPeng && majiang.PengAI(user.getHand(), g.guiCards, g.lastDiscard, 0.0) {
-					view.AiRecommendation = newRecommendation("peng", g.lastDiscard, []int{g.lastDiscard, g.lastDiscard}, 777.0, "AI推荐【碰】"+majiang.CardToString(g.lastDiscard))
+					view.AiRecommendation = newRecommendation("gang", gCard, gCards, 888.0, "AI推荐【杠】"+mahjong.CardToString(gCard))
+				} else if g.userPendingActions.CanPeng && mahjong.PengAI(user.getHand(), g.guiCards, g.lastDiscard, 0.0) {
+					view.AiRecommendation = newRecommendation("peng", g.lastDiscard, []int{g.lastDiscard, g.lastDiscard}, 777.0, "AI推荐【碰】"+mahjong.CardToString(g.lastDiscard))
 				} else {
 					view.AiRecommendation = newRecommendation("pass", 0, nil, 0.0, "AI建议【过】")
 				}
 			} else if g.userPendingActions.CanPeng {
-				if majiang.PengAI(user.getHand(), g.guiCards, g.lastDiscard, 0.0) {
-					view.AiRecommendation = newRecommendation("peng", g.lastDiscard, []int{g.lastDiscard, g.lastDiscard}, 777.0, "AI推荐【碰】"+majiang.CardToString(g.lastDiscard))
+				if mahjong.PengAI(user.getHand(), g.guiCards, g.lastDiscard, 0.0) {
+					view.AiRecommendation = newRecommendation("peng", g.lastDiscard, []int{g.lastDiscard, g.lastDiscard}, 777.0, "AI推荐【碰】"+mahjong.CardToString(g.lastDiscard))
 				} else {
 					view.AiRecommendation = newRecommendation("pass", 0, nil, 0.0, "AI建议【过】")
 				}
 			} else if g.userPendingActions.CanChi {
-				chiPair := majiang.ChiAIChoices(user.getHand(), g.guiCards, g.lastDiscard)
+				chiPair := mahjong.ChiAIChoices(user.getHand(), g.guiCards, g.lastDiscard)
 				if len(chiPair) == 2 {
-					view.AiRecommendation = newRecommendation("chi", g.lastDiscard, chiPair, 666.0, "AI推荐【吃】"+majiang.CardToString(chiPair[0])+"和"+majiang.CardToString(chiPair[1]))
+					view.AiRecommendation = newRecommendation("chi", g.lastDiscard, chiPair, 666.0, "AI推荐【吃】"+mahjong.CardToString(chiPair[0])+"和"+mahjong.CardToString(chiPair[1]))
 				} else {
 					view.AiRecommendation = newRecommendation("pass", 0, nil, 0.0, "AI建议【过】")
 				}
@@ -227,10 +227,10 @@ func (g *MahjongGame) handleAiResponseForPlayer0() {
 		g.UserAction("hu", g.lastDiscard, 0, 0)
 	} else if g.userPendingActions.CanGang && len(g.userPendingActions.GangCards) > 0 {
 		g.UserAction("gang", g.userPendingActions.GangCards[0], 0, 0)
-	} else if g.userPendingActions.CanPeng && majiang.PengAI(p0.getHand(), g.guiCards, g.lastDiscard, 0.0) {
+	} else if g.userPendingActions.CanPeng && mahjong.PengAI(p0.getHand(), g.guiCards, g.lastDiscard, 0.0) {
 		g.UserAction("peng", g.lastDiscard, 0, 0)
 	} else if g.userPendingActions.CanChi {
-		chiPair := majiang.ChiAIChoices(p0.getHand(), g.guiCards, g.lastDiscard)
+		chiPair := mahjong.ChiAIChoices(p0.getHand(), g.guiCards, g.lastDiscard)
 		if len(chiPair) == 2 {
 			g.UserAction("chi", g.lastDiscard, chiPair[0], chiPair[1])
 		} else {

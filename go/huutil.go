@@ -1,4 +1,4 @@
-package majiang
+package mahjong
 
 // IsHu 判断手牌是否胡(单鬼牌,对应 Java HuUtil.isHu)。
 func IsHu(input []int, guiCard int) bool {

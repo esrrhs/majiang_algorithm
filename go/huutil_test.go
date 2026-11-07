@@ -1,8 +1,8 @@
-package majiang
+package mahjong
 
 import "testing"
 
-// 以下测试移植自 Java MajiangAlgorithmIntegrationTest,断言一一对应。
+// 以下测试移植自 Java MahjongAiIntegrationTest,断言一一对应。
 
 func TestHuDetectionBasic(t *testing.T) {
 	// 1万, 1万 (pair with gui = 1万)

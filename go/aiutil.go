@@ -1,4 +1,4 @@
-package majiang
+package mahjong
 
 import "math"
 

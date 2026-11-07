@@ -1,10 +1,10 @@
 // AI 决策接口,对应 Java AIUtil / Go aiutil.go。
 #pragma once
 
-#include "majiang/def.h"
-#include "majiang/hu_util.h"
+#include "mahjong/def.h"
+#include "mahjong/hu_util.h"
 
-namespace majiang
+namespace mahjong
 {
 
 // 计算手牌向胡牌方向推进的评分:已听牌时返回 听牌数*10,否则为各花色
@@ -26,4 +26,4 @@ bool PengAI(const std::vector<int> &input, const std::vector<int> &guiCard, int 
 // 判断是否应该杠,对应 Java AIUtil.gangAI。
 bool GangAI(const std::vector<int> &input, const std::vector<int> &guiCard, int card, double award);
 
-} // namespace majiang
+} // namespace mahjong

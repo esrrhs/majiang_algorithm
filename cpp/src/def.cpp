@@ -1,9 +1,9 @@
-// 对应 Go def.go / Java MaJiangDef。
-#include "majiang/def.h"
+// 对应 Go def.go / Java MahjongDef。
+#include "mahjong/def.h"
 
 #include <cstdlib>
 
-namespace majiang
+namespace mahjong
 {
 
 namespace
@@ -163,4 +163,4 @@ int CardType(int card)
     return 0;
 }
 
-} // namespace majiang
+} // namespace mahjong

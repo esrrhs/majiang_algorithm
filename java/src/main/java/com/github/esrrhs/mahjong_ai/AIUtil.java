@@ -1,4 +1,4 @@
-package com.github.esrrhs.majiang_algorithm;
+package com.github.esrrhs.mahjong_ai;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,7 +12,7 @@ public class AIUtil
 	public static double calc(List<Integer> input, List<Integer> guiCard)
 	{
 		List<Integer> cards = new ArrayList<>();
-		for (int i = 0; i < MaJiangDef.MAX_NUM; i++)
+		for (int i = 0; i < MahjongDef.MAX_NUM; i++)
 		{
 			cards.add(0);
 		}
@@ -40,27 +40,27 @@ public class AIUtil
 		long feng_key = 0;
 		long jian_key = 0;
 
-		for (int i = MaJiangDef.WAN1; i <= MaJiangDef.WAN9; i++)
+		for (int i = MahjongDef.WAN1; i <= MahjongDef.WAN9; i++)
 		{
 			int num = cards.get(i - 1);
 			wan_key = wan_key * 10 + num;
 		}
-		for (int i = MaJiangDef.TONG1; i <= MaJiangDef.TONG9; i++)
+		for (int i = MahjongDef.TONG1; i <= MahjongDef.TONG9; i++)
 		{
 			int num = cards.get(i - 1);
 			tong_key = tong_key * 10 + num;
 		}
-		for (int i = MaJiangDef.TIAO1; i <= MaJiangDef.TIAO9; i++)
+		for (int i = MahjongDef.TIAO1; i <= MahjongDef.TIAO9; i++)
 		{
 			int num = cards.get(i - 1);
 			tiao_key = tiao_key * 10 + num;
 		}
-		for (int i = MaJiangDef.FENG_DONG; i <= MaJiangDef.FENG_BEI; i++)
+		for (int i = MahjongDef.FENG_DONG; i <= MahjongDef.FENG_BEI; i++)
 		{
 			int num = cards.get(i - 1);
 			feng_key = feng_key * 10 + num;
 		}
-		for (int i = MaJiangDef.JIAN_ZHONG; i <= MaJiangDef.JIAN_BAI; i++)
+		for (int i = MahjongDef.JIAN_ZHONG; i <= MahjongDef.JIAN_BAI; i++)
 		{
 			int num = cards.get(i - 1);
 			jian_key = jian_key * 10 + num;
@@ -131,7 +131,7 @@ public class AIUtil
 	{
 		int ret = 0;
 		double max = -Double.MAX_VALUE;
-		int[] cache = new int[MaJiangDef.MAX_NUM + 1];
+		int[] cache = new int[MahjongDef.MAX_NUM + 1];
 		for (Integer c : input)
 		{
 			if (cache[c] == 0)
@@ -190,8 +190,8 @@ public class AIUtil
 		int card2 = 0;
 
 		if (Collections.frequency(input, card - 2) > 0 && Collections.frequency(input, card - 1) > 0
-				&& MaJiangDef.type(card) == MaJiangDef.type(card - 2)
-				&& MaJiangDef.type(card) == MaJiangDef.type(card - 1))
+				&& MahjongDef.type(card) == MahjongDef.type(card - 2)
+				&& MahjongDef.type(card) == MahjongDef.type(card - 1))
 		{
 			List<Integer> tmp = new ArrayList<>(input);
 			tmp.remove((Integer) (card - 2));
@@ -206,8 +206,8 @@ public class AIUtil
 		}
 
 		if (Collections.frequency(input, card - 1) > 0 && Collections.frequency(input, card + 1) > 0
-				&& MaJiangDef.type(card) == MaJiangDef.type(card - 1)
-				&& MaJiangDef.type(card) == MaJiangDef.type(card + 1))
+				&& MahjongDef.type(card) == MahjongDef.type(card - 1)
+				&& MahjongDef.type(card) == MahjongDef.type(card + 1))
 		{
 			List<Integer> tmp = new ArrayList<>(input);
 			tmp.remove((Integer) (card - 1));
@@ -222,8 +222,8 @@ public class AIUtil
 		}
 
 		if (Collections.frequency(input, card + 1) > 0 && Collections.frequency(input, card + 2) > 0
-				&& MaJiangDef.type(card) == MaJiangDef.type(card + 1)
-				&& MaJiangDef.type(card) == MaJiangDef.type(card + 2))
+				&& MahjongDef.type(card) == MahjongDef.type(card + 1)
+				&& MahjongDef.type(card) == MahjongDef.type(card + 2))
 		{
 			List<Integer> tmp = new ArrayList<>(input);
 			tmp.remove((Integer) (card + 1));
@@ -296,43 +296,43 @@ public class AIUtil
 	{
 		String init = "1万,2万,2万,1条,1条,东";
 		String guiStr = "1万";
-		List<Integer> cards = MaJiangDef.stringToCards(init);
-		List<Integer> gui = MaJiangDef.stringToCards(guiStr);
+		List<Integer> cards = MahjongDef.stringToCards(init);
+		List<Integer> gui = MahjongDef.stringToCards(guiStr);
 
 		int out = outAI(cards, gui);
-		System.out.println(MaJiangDef.cardToString(out));
+		System.out.println(MahjongDef.cardToString(out));
 	}
 
 	public static void testChi()
 	{
 		String init = "1万,2万,2万,1条,1条,1筒,2筒,4筒,4筒,5筒";
 		String guiStr = "1万";
-		List<Integer> cards = MaJiangDef.stringToCards(init);
-		List<Integer> gui = MaJiangDef.stringToCards(guiStr);
+		List<Integer> cards = MahjongDef.stringToCards(init);
+		List<Integer> gui = MahjongDef.stringToCards(guiStr);
 
-		System.out.println(chiAI(cards, gui, MaJiangDef.stringToCard("3筒"), MaJiangDef.stringToCard("2筒"),
-				MaJiangDef.stringToCard("4筒")));
-		System.out.println(MaJiangDef.cardsToString(chiAI(cards, gui, MaJiangDef.stringToCard("3筒"))));
+		System.out.println(chiAI(cards, gui, MahjongDef.stringToCard("3筒"), MahjongDef.stringToCard("2筒"),
+				MahjongDef.stringToCard("4筒")));
+		System.out.println(MahjongDef.cardsToString(chiAI(cards, gui, MahjongDef.stringToCard("3筒"))));
 	}
 
 	public static void testPeng()
 	{
 		String init = "1万,2万,2万,1条,1条,2筒,4筒,4筒";
 		String guiStr = "1万";
-		List<Integer> cards = MaJiangDef.stringToCards(init);
-		List<Integer> gui = MaJiangDef.stringToCards(guiStr);
+		List<Integer> cards = MahjongDef.stringToCards(init);
+		List<Integer> gui = MahjongDef.stringToCards(guiStr);
 
-		System.out.println(pengAI(cards, gui, MaJiangDef.stringToCard("2万"), 0.d));
+		System.out.println(pengAI(cards, gui, MahjongDef.stringToCard("2万"), 0.d));
 	}
 
 	public static void testGang()
 	{
 		String init = "1万,2万,2万,2万,3万,4万,4筒,4筒";
 		String guiStr = "1万";
-		List<Integer> cards = MaJiangDef.stringToCards(init);
-		List<Integer> gui = MaJiangDef.stringToCards(guiStr);
+		List<Integer> cards = MahjongDef.stringToCards(init);
+		List<Integer> gui = MahjongDef.stringToCards(guiStr);
 
-		System.out.println(gangAI(cards, gui, MaJiangDef.stringToCard("2万"), 1.d));
+		System.out.println(gangAI(cards, gui, MahjongDef.stringToCard("2万"), 1.d));
 	}
 
 	public static void gen()
@@ -352,7 +352,7 @@ public class AIUtil
 	private static void testHu()
 	{
 		ArrayList<Integer> total = new ArrayList<>();
-		for (int i = MaJiangDef.WAN1; i <= MaJiangDef.JIAN_BAI; i++)
+		for (int i = MahjongDef.WAN1; i <= MahjongDef.JIAN_BAI; i++)
 		{
 			total.add(i);
 			total.add(i);
@@ -368,7 +368,7 @@ public class AIUtil
 		}
 
 		Collections.sort(cards);
-		System.out.println("before " + MaJiangDef.cardsToString(cards));
+		System.out.println("before " + MahjongDef.cardsToString(cards));
 
 		List<Integer> gui = new ArrayList<>();
 
@@ -378,7 +378,7 @@ public class AIUtil
 			if (HuUtil.isHuExtra(cards, gui, 0))
 			{
 				Collections.sort(cards);
-				System.out.println("after " + MaJiangDef.cardsToString(cards));
+				System.out.println("after " + MahjongDef.cardsToString(cards));
 				System.out.println("step " + step);
 				break;
 			}

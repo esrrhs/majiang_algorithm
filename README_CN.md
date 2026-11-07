@@ -1,12 +1,12 @@
-# 麻将算法 · Majiang Algorithm
+# 麻将算法 · Mahjong AI
 
-[<img src="https://img.shields.io/github/license/esrrhs/majiang_algorithm">](https://github.com/esrrhs/majiang_algorithm)
-[<img src="https://img.shields.io/github/languages/top/esrrhs/majiang_algorithm">](https://github.com/esrrhs/majiang_algorithm)
-[<img src="https://img.shields.io/maven-central/v/com.github.esrrhs/majiang_algorithm">](https://central.sonatype.com/artifact/com.github.esrrhs/majiang_algorithm)
-[<img src="https://img.shields.io/github/actions/workflow/status/esrrhs/majiang_algorithm/maven.yml?branch=master&label=java%20ci">](https://github.com/esrrhs/majiang_algorithm/actions)
-[<img src="https://img.shields.io/github/actions/workflow/status/esrrhs/majiang_algorithm/go.yml?branch=master&label=go%20ci">](https://github.com/esrrhs/majiang_algorithm/actions)
-[<img src="https://img.shields.io/github/actions/workflow/status/esrrhs/majiang_algorithm/cpp.yml?branch=master&label=c%2B%2B%20ci">](https://github.com/esrrhs/majiang_algorithm/actions)
-[<img src="https://img.shields.io/github/actions/workflow/status/esrrhs/majiang_algorithm/server.yml?branch=master&label=server%20ci">](https://github.com/esrrhs/majiang_algorithm/actions)
+[<img src="https://img.shields.io/github/license/esrrhs/mahjong_ai">](https://github.com/esrrhs/mahjong_ai)
+[<img src="https://img.shields.io/github/languages/top/esrrhs/mahjong_ai">](https://github.com/esrrhs/mahjong_ai)
+[<img src="https://img.shields.io/maven-central/v/com.github.esrrhs/mahjong_ai">](https://central.sonatype.com/artifact/com.github.esrrhs/mahjong_ai)
+[<img src="https://img.shields.io/github/actions/workflow/status/esrrhs/mahjong_ai/maven.yml?branch=master&label=java%20ci">](https://github.com/esrrhs/mahjong_ai/actions)
+[<img src="https://img.shields.io/github/actions/workflow/status/esrrhs/mahjong_ai/go.yml?branch=master&label=go%20ci">](https://github.com/esrrhs/mahjong_ai/actions)
+[<img src="https://img.shields.io/github/actions/workflow/status/esrrhs/mahjong_ai/cpp.yml?branch=master&label=c%2B%2B%20ci">](https://github.com/esrrhs/mahjong_ai/actions)
+[<img src="https://img.shields.io/github/actions/workflow/status/esrrhs/mahjong_ai/server.yml?branch=master&label=server%20ci">](https://github.com/esrrhs/mahjong_ai/actions)
 
 > 高性能麻将胡牌 & AI 出牌算法,基于**查表法**实现,支持多张鬼牌(癞子)。一套算法,三种实现 —— **Java / Go / C++**,由跨语言测试保证行为完全一致。
 
@@ -49,7 +49,7 @@ data/    预计算查表文件 + 跨语言对齐样例,所有实现共用
 ```xml
 <dependency>
     <groupId>com.github.esrrhs</groupId>
-    <artifactId>majiang_algorithm</artifactId>
+    <artifactId>mahjong_ai</artifactId>
     <version>1.0.18</version>
 </dependency>
 ```
@@ -88,33 +88,33 @@ boolean isGang = AIUtil.gangAI(cards, gui, gangCard, 0.0d);
 ### Go
 
 ```bash
-go get github.com/esrrhs/majiang_algorithm/go
+go get github.com/esrrhs/mahjong_ai/go
 ```
 
 ```go
 package main
 
 import (
-	majiang "github.com/esrrhs/majiang_algorithm/go"
+	mahjong "github.com/esrrhs/mahjong_ai/go"
 )
 
 func main() {
 	// 加载预计算表(依次在当前目录、./data、../data 查找)
-	majiang.Load()
+	mahjong.Load()
 
-	cards := majiang.StringToCards("1万,2万,3万,东,东")
-	gui := majiang.StringToCard("东")
+	cards := mahjong.StringToCards("1万,2万,3万,东,东")
+	gui := mahjong.StringToCard("东")
 
 	// 判断胡牌
-	isHu := majiang.IsHu(cards, gui)
+	isHu := mahjong.IsHu(cards, gui)
 
 	// 查询听牌
-	ting := majiang.IsTing(cards, []int{gui})
+	ting := mahjong.IsTing(cards, []int{gui})
 
 	// AI 出牌 / 碰 / 杠
-	out := majiang.OutAI(cards, []int{gui})
-	isPeng := majiang.PengAI(cards, []int{gui}, pengCard, 0)
-	isGang := majiang.GangAI(cards, []int{gui}, gangCard, 0)
+	out := mahjong.OutAI(cards, []int{gui})
+	isPeng := mahjong.PengAI(cards, []int{gui}, pengCard, 0)
+	isGang := mahjong.GangAI(cards, []int{gui}, gangCard, 0)
 }
 ```
 
@@ -130,26 +130,26 @@ cd go && go test ./...
 cd cpp
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build -j
-./build/majiang_tests   # 或: ctest --test-dir build --output-on-failure
+./build/mahjong_tests   # 或: ctest --test-dir build --output-on-failure
 ```
 
 ```cpp
-#include "majiang/api.h"
-#include "majiang/def.h"
-#include "majiang/hu_util.h"
-#include "majiang/ai_util.h"
+#include "mahjong/api.h"
+#include "mahjong/def.h"
+#include "mahjong/hu_util.h"
+#include "mahjong/ai_util.h"
 
 // 加载预计算表(依次在当前目录、./data、../data 查找)
-majiang::Load();
+mahjong::Load();
 
-std::vector<int> cards = majiang::StringToCards("1万,2万,3万,东,东");
-int gui = majiang::StringToCard("东");
+std::vector<int> cards = mahjong::StringToCards("1万,2万,3万,东,东");
+int gui = mahjong::StringToCard("东");
 
-bool isHu = majiang::IsHu(cards, gui);                  // 判断胡牌
-std::vector<int> ting = majiang::IsTing(cards, {gui});  // 听牌列表
-int out = majiang::OutAI(cards, {gui});                 // AI 出牌
-bool isPeng = majiang::PengAI(cards, {gui}, out, 0.0);
-bool isGang = majiang::GangAI(cards, {gui}, out, 0.0);
+bool isHu = mahjong::IsHu(cards, gui);                  // 判断胡牌
+std::vector<int> ting = mahjong::IsTing(cards, {gui});  // 听牌列表
+int out = mahjong::OutAI(cards, {gui});                 // AI 出牌
+bool isPeng = mahjong::PengAI(cards, {gui}, out, 0.0);
+bool isGang = mahjong::GangAI(cards, {gui}, out, 0.0);
 ```
 
 ### 重新生成查表文件
@@ -157,8 +157,8 @@ bool isGang = majiang::GangAI(cards, {gui}, out, 0.0);
 三种实现均可离线重新生成查表文件,在输出目录下运行:
 
 ```bash
-# Java: gen() 输出 majiang_clien_*.txt / majiang_server_*.txt / majiang.db / majiang_ai_*.txt
-# Go:   HuGen() 输出 majiang_clien_*.txt + majiang_server_*.txt,AiGen() 输出 majiang_ai_*.txt
+# Java: gen() 输出 mahjong_clien_*.txt / mahjong_server_*.txt / mahjong.db / mahjong_ai_*.txt
+# Go:   HuGen() 输出 mahjong_clien_*.txt + mahjong_server_*.txt,AiGen() 输出 mahjong_ai_*.txt
 # C++:  HuGen() / AiGen() 与 Go 相同
 ```
 
@@ -166,7 +166,7 @@ bool isGang = majiang::GangAI(cards, {gui}, out, 0.0);
 
 ## 网页端对战与算法演示平台
 
-> 🌐 **在线体验地址**：👉 **[http://majiang.esrrhs.xyz](http://majiang.esrrhs.xyz)**
+> 🌐 **在线体验地址**：👉 **[http://mahjong.esrrhs.xyz](http://mahjong.esrrhs.xyz)**
 
 网页对战与算法演示由 **FakeLua** 实现（`server/`：对局引擎、HTTP、查表与 AI **全部为纯 Lua**，查表数据走 sqlite 按 key 点查）。Java / Go / C++ 仅提供纯算法库（`cpp/` 含 parity 测试，不参与服务端运行）。
 
@@ -177,10 +177,10 @@ init / update / fini 生命周期；查表数据走 sqlite 按 key 点查，不�
 
 ```bash
 # 需已编译 fakelua（见 ../../fakelua），flua 在 build/bin/flua
-python3 tools/gen_majiang_db.py            # 首次：txt 查表转 sqlite(data/majiang.db)
+python3 tools/gen_mahjong_db.py            # 首次：txt 查表转 sqlite(data/mahjong.db)
 cd server
-MAJIANG_SMOKE=1 flua lua --once             # 自检：查表 + 判胡/听牌/AI + 观战到 GAME_OVER
-MAJIANG_PORT=8888 flua lua                 # HTTP 默认 :8888（可用 MAJIANG_PORT 覆盖）
+MAHJONG_SMOKE=1 flua lua --once             # 自检：查表 + 判胡/听牌/AI + 观战到 GAME_OVER
+MAHJONG_PORT=8888 flua lua                 # HTTP 默认 :8888（可用 MAHJONG_PORT 覆盖）
 ```
 
 宿主固定调用 `package "main"` 下的 `init`/`update`/`fini`，无需任何参数；
@@ -196,7 +196,7 @@ MAJIANG_PORT=8888 flua lua                 # HTTP 默认 :8888（可用 MAJIANG_
 | 启动后常驻内存（RSS） | **约 24 MB** |
 | 稳态常驻内存 | **约 29 MB**（不再增长：50 局 29.0 MB，200 局 29.3 MB） |
 | 空闲 CPU | **约 0.1%**（无请求时节拍退避到 20ms） |
-| 查表库 | `data/majiang.db` 磁盘 **32 MB**，按 key 点查，不全量载入内存 |
+| 查表库 | `data/mahjong.db` 磁盘 **32 MB**，按 key 点查，不全量载入内存 |
 | 并发模型 | 单线程事件循环，最多吃满 1 核 |
 | 并发 1 延迟（p50） | **4.3 – 6.7 ms**（各接口） |
 | 并发 8 吞吐 | `/api/game/step` ≈ 1100 QPS，`/api/game/state` ≈ 1020 QPS，`/api/algo/test` ≈ 490 QPS |
@@ -209,7 +209,7 @@ MAJIANG_PORT=8888 flua lua                 # HTTP 默认 :8888（可用 MAJIANG_
 
 ### 服务端测试
 
-一次性自检（`MAJIANG_SMOKE=1 flua lua --once`）校验查表库就绪、判胡/听牌/AI 出牌，
+一次性自检（`MAHJONG_SMOKE=1 flua lua --once`）校验查表库就绪、判胡/听牌/AI 出牌，
 以及观战推进到 `GAME_OVER` 且四人分数守恒（4×1000）。
 HTTP 契约测试会自己拉起服务（随机端口），断言与 Go 参考实现
 `server/ref_go_web/web_test.go` 相同的契约：起手发牌、听牌提示、AI 观战结算与分数守恒、

@@ -15,7 +15,7 @@ jobs:
     timeout-minutes: 60
 
     steps:
-    - name: Checkout majiang_algorithm
+    - name: Checkout mahjong_ai
       uses: actions/checkout@v4
 
     # server/ 只是 Lua,宿主是 fakelua 的 flua,所以要把它一起拉下来编译。
@@ -58,15 +58,15 @@ jobs:
       working-directory: fakelua
       run: cmake --build build --target flua
 
-    # data/majiang.db 不再入库,由查表 txt 现场生成
+    # data/mahjong.db 不再入库,由查表 txt 现场生成
     - name: Generate lookup db (txt -> sqlite)
-      run: python3 tools/gen_majiang_db.py
+      run: python3 tools/gen_mahjong_db.py
 
     # 一次性跑 init:校验查表库 + 判胡/听牌/出牌 + 观战到 GAME_OVER 且分数守恒
     - name: Self check (init only, one shot)
       working-directory: server
       env:
-        MAJIANG_SMOKE: "1"
+        MAHJONG_SMOKE: "1"
       run: ${{ github.workspace }}/fakelua/build/bin/flua lua --once
 
     # 起真服务打 HTTP 接口,契约与 ref_go_web/web_test.go 一致

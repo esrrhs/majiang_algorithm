@@ -12,7 +12,7 @@
 #include <string>
 #include <utility>
 
-namespace majiang
+namespace mahjong
 {
 
 std::unordered_map<int64_t, std::vector<AITableInfo>> AITable;
@@ -153,10 +153,10 @@ std::vector<int64_t> sortedAiKeys(const std::unordered_map<int64_t, std::vector<
 bool loadAiTable(std::unordered_map<int64_t, std::vector<AITableInfo>> &m, const AiConfig &cfg)
 {
     m.clear();
-    auto path = findDataFile(std::string("majiang_ai_") + cfg.name + ".txt");
+    auto path = findDataFile(std::string("mahjong_ai_") + cfg.name + ".txt");
     if (!path)
     {
-        std::fprintf(stderr, "找不到查表文件 majiang_ai_%s.txt(已尝试当前目录、data/、../data/)\n", cfg.name);
+        std::fprintf(stderr, "找不到查表文件 mahjong_ai_%s.txt(已尝试当前目录、data/、../data/)\n", cfg.name);
         return false;
     }
     std::ifstream f(*path);
@@ -239,7 +239,7 @@ bool genAi()
     for (const AiTableEntry &t : tables)
     {
         genAiInto(*t.m, *t.cfg);
-        if (!writeLines("majiang_ai_" + std::string(t.cfg->name) + ".txt", buildAiLines(*t.cfg, *t.m)))
+        if (!writeLines("mahjong_ai_" + std::string(t.cfg->name) + ".txt", buildAiLines(*t.cfg, *t.m)))
         {
             return false;
         }
@@ -248,4 +248,4 @@ bool genAi()
 }
 
 } // namespace detail
-} // namespace majiang
+} // namespace mahjong

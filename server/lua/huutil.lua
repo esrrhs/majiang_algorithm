@@ -1,6 +1,6 @@
-package "MajiangHu"
+package "MahjongHu"
 
--- 胡 / 听判定。查表数据放在 sqlite(data/majiang.db),按 key 点查,不再全量载入内存。
+-- 胡 / 听判定。查表数据放在 sqlite(data/mahjong.db),按 key 点查,不再全量载入内存。
 --
 -- 表结构 hu_{normal,feng,jian}(key, seq, need_gui, jiang, val):
 --   key      该花色计数串展开成的十进制整数,万/筒/条共用 normal 表,风、箭各自一张;
@@ -20,7 +20,7 @@ local N_DIGIT = { 9, 4, 3 } -- normal(9 位)/ feng(4 位)/ jian(3 位)
 local TABLE_OF = { 1, 1, 1, 2, 3 }
 
 -- 文件级语句在编译期执行,db 与语句句柄落在常量堆,可跨帧存活
-local db = sqlite.open("data/majiang.db")
+local db = sqlite.open("data/mahjong.db")
 local stmt = {
     db:prepare("SELECT need_gui, jiang, val FROM hu_normal WHERE key=? ORDER BY seq"),
     db:prepare("SELECT need_gui, jiang, val FROM hu_feng WHERE key=? ORDER BY seq"),
@@ -300,7 +300,7 @@ function IsTingCardWithCache(cards, guiNum, ck, cv)
                     while j <= #digits do
                         if digits[j] > 0 then
                             if hit[j] == nil or hit[j] == 0 then
-                                ret[#ret + 1] = MajiangDef.ToCard(t, j - 1)
+                                ret[#ret + 1] = MahjongDef.ToCard(t, j - 1)
                             end
                             hit[j] = (hit[j] or 0) + 1
                         end

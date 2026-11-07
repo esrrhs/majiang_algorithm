@@ -6,8 +6,8 @@
 #include "detail.h"
 #include "test_util.h"
 
-using namespace majiang;
-using namespace majiang::detail;
+using namespace mahjong;
+using namespace mahjong::detail;
 
 namespace
 {
@@ -70,30 +70,30 @@ MAJ_TEST(TestGenHuJianParity)
 {
     std::unordered_map<int64_t, std::vector<HuTableInfo>> m;
     genHuInto(m, huJianCfg);
-    assertSameLines("majiang_clien_jian.txt", buildHuClientLines(m));
-    assertSameLines("majiang_server_jian.txt", buildHuServerLines(huJianCfg, m));
+    assertSameLines("mahjong_clien_jian.txt", buildHuClientLines(m));
+    assertSameLines("mahjong_server_jian.txt", buildHuServerLines(huJianCfg, m));
 }
 
 MAJ_TEST(TestGenHuFengParity)
 {
     std::unordered_map<int64_t, std::vector<HuTableInfo>> m;
     genHuInto(m, huFengCfg);
-    assertSameLines("majiang_clien_feng.txt", buildHuClientLines(m));
-    assertSameLines("majiang_server_feng.txt", buildHuServerLines(huFengCfg, m));
+    assertSameLines("mahjong_clien_feng.txt", buildHuClientLines(m));
+    assertSameLines("mahjong_server_feng.txt", buildHuServerLines(huFengCfg, m));
 }
 
 MAJ_TEST(TestGenAiJianParity)
 {
     std::unordered_map<int64_t, std::vector<AITableInfo>> m;
     genAiInto(m, aiJianCfg);
-    assertSameLines("majiang_ai_jian.txt", buildAiLines(aiJianCfg, m));
+    assertSameLines("mahjong_ai_jian.txt", buildAiLines(aiJianCfg, m));
 }
 
 MAJ_TEST(TestGenAiFengParity)
 {
     std::unordered_map<int64_t, std::vector<AITableInfo>> m;
     genAiInto(m, aiFengCfg);
-    assertSameLines("majiang_ai_feng.txt", buildAiLines(aiFengCfg, m));
+    assertSameLines("mahjong_ai_feng.txt", buildAiLines(aiFengCfg, m));
 }
 
 MAJ_TEST(TestJavaDoubleToString)

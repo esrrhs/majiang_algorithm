@@ -3,12 +3,12 @@
 #include <cstdio>
 #include <string>
 
-#include "majiang/api.h"
+#include "mahjong/api.h"
 #include "test_util.h"
 
 int main()
 {
-    if (!majiang::Load())
+    if (!mahjong::Load())
     {
         std::fprintf(stderr, "加载查表文件失败\n");
         return 1;

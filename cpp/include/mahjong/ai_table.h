@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include <vector>
 
-namespace majiang
+namespace mahjong
 {
 
 // 对应 Java AITableInfo。
@@ -20,4 +20,4 @@ extern std::unordered_map<int64_t, std::vector<AITableInfo>> AITable;     // 万
 extern std::unordered_map<int64_t, std::vector<AITableInfo>> AITableFeng; // 风
 extern std::unordered_map<int64_t, std::vector<AITableInfo>> AITableJian; // 箭
 
-} // namespace majiang
+} // namespace mahjong

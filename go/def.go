@@ -1,14 +1,14 @@
-// Package majiang 是 majiang_algorithm Java 版的 Go 移植:
+// Package mahjong 是 mahjong_ai Java 版的 Go 移植:
 // 基于查表的高性能麻将判胡、听牌与出牌/吃/碰/杠 AI。
 // 查表文件与 Java 版完全共用(仓库根目录 data/ 下),行为逐位对齐。
-package majiang
+package mahjong
 
 import (
 	"strconv"
 	"strings"
 )
 
-// 牌的编号定义,与 Java MaJiangDef 常量一一对应。
+// 牌的编号定义,与 Java MahjongDef 常量一一对应。
 const (
 	Wan1 = 1
 	Wan2 = 2
@@ -70,7 +70,7 @@ const (
 
 var fengJianHuaNames = []string{"东", "南", "西", "北", "中", "发", "白", "春", "夏", "秋", "冬", "梅", "兰", "竹", "菊"}
 
-// ToCard 等价 Java MaJiangDef.toCard。
+// ToCard 等价 Java MahjongDef.toCard。
 func ToCard(t int, index int) int {
 	switch t {
 	case TypeWan:
@@ -89,7 +89,7 @@ func ToCard(t int, index int) int {
 	return 0
 }
 
-// CardToString 等价 Java MaJiangDef.cardToString。
+// CardToString 等价 Java MahjongDef.cardToString。
 func CardToString(card int) string {
 	if card >= Wan1 && card <= Wan9 {
 		return strconv.Itoa(card-Wan1+1) + "万"
@@ -106,7 +106,7 @@ func CardToString(card int) string {
 	return "错误" + strconv.Itoa(card)
 }
 
-// CardsToString 等价 Java MaJiangDef.cardsToString。
+// CardsToString 等价 Java MahjongDef.cardsToString。
 func CardsToString(card []int) string {
 	if card == nil {
 		return ""
@@ -118,7 +118,7 @@ func CardsToString(card []int) string {
 	return ret
 }
 
-// StringToCard 等价 Java MaJiangDef.stringToCard。
+// StringToCard 等价 Java MahjongDef.stringToCard。
 // 与 Java 的解析保持一致:数牌只取字符串第一个字符作为数字。
 func StringToCard(str string) int {
 	if strings.Contains(str, "万") {
@@ -140,7 +140,7 @@ func StringToCard(str string) int {
 	return 0
 }
 
-// StringToCards 等价 Java MaJiangDef.stringToCards。
+// StringToCards 等价 Java MahjongDef.stringToCards。
 func StringToCards(str string) []int {
 	var ret []int
 	for _, s := range strings.Split(str, ",") {
@@ -163,7 +163,7 @@ func leadingDigit(str string) int {
 	return 0
 }
 
-// CardType 等价 Java MaJiangDef.type(Java 的 type 在 Go 里是关键字,故更名)。
+// CardType 等价 Java MahjongDef.type(Java 的 type 在 Go 里是关键字,故更名)。
 func CardType(card int) int {
 	if card >= Wan1 && card <= Wan9 {
 		return TypeWan

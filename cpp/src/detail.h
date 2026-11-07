@@ -7,11 +7,11 @@
 #include <unordered_set>
 #include <vector>
 
-#include "majiang/ai_table.h"
-#include "majiang/def.h"
-#include "majiang/hu_table.h"
+#include "mahjong/ai_table.h"
+#include "mahjong/def.h"
+#include "mahjong/hu_table.h"
 
-namespace majiang
+namespace mahjong
 {
 namespace detail
 {
@@ -100,4 +100,4 @@ std::vector<std::string> buildAiLines(const AiConfig &cfg,
 bool writeLines(const std::string &name, const std::vector<std::string> &lines);
 
 } // namespace detail
-} // namespace majiang
+} // namespace mahjong

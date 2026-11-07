@@ -1,10 +1,10 @@
 // 判胡 / 听牌核心接口,对应 Java HuUtil / Go huutil.go。
 #pragma once
 
-#include "majiang/def.h"
-#include "majiang/hu_table.h"
+#include "mahjong/def.h"
+#include "mahjong/hu_table.h"
 
-namespace majiang
+namespace mahjong
 {
 
 // 判断手牌是否胡(单鬼牌),对应 Java HuUtil.isHu。
@@ -25,4 +25,4 @@ std::vector<int> IsTingExtra(const std::vector<int> &input, const std::vector<in
 // 基于计数数组的查表听牌,对应 Java HuUtil.isTingCard。
 std::vector<int> IsTingCard(const std::vector<int> &cards, int guiNum);
 
-} // namespace majiang
+} // namespace mahjong
